@@ -1,32 +1,10 @@
 ;  ******************************************************************************
 ;  * @file    stm32g431xx.h
-;  * @author  MCD Application Team
+;  * @author  Nguyen Tien Hung
 ;  * @brief   CMSIS STM32G431xx Device Peripheral Access Layer Header File.
-;  *
-;  *          This file contains:
-;  *           - Data structures and the address mapping for all peripherals
-;  *           - Peripheral's registers declarations and bits definition
-;  *           - Macros to access peripheral's registers hardware
-;  *
-;  ******************************************************************************
-;  * @attention
-;  *
-;  * Copyright (c) 2019 STMicroelectronics.
-;  * All rights reserved.
-;  *
-;  * This software is licensed under terms that can be found in the LICENSE file
-;  * in the root directory of this software component.
-;  * If no LICENSE file comes with this software, it is provided AS-IS.
 ;  ******************************************************************************
 
                  AREA    MYDATA, DATA, READONLY
-
-;RCC_PLLN_MUL85                       EQU 0x55 << 8               ; PLLN multiplication factor = 85
-
-;RCC_CFGR_PLLN_Pos                    EQU 0x8
-;RCC_CFGR_PLLN_Msk                    EQU 0x7F << RCC_CFGR_PLLN_Pos
-;RCC_CFGR_PLLN                        EQU RCC_CFGR_PLLN_Msk         ; SW[1:0] bits (System clock Switch) 
-	
 
 RCC_PLLM_DIV1                        EQU 0x00000001              ; PLLM division factor = 1  
 RCC_PLLM_DIV2                        EQU 0x00000002              ; PLLM division factor = 2  
@@ -122,26 +100,6 @@ RCC_HCLK_DIV4                        EQU RCC_CFGR_PPRE1_DIV4     ; HCLK divided 
 RCC_HCLK_DIV8                        EQU RCC_CFGR_PPRE1_DIV8     ; HCLK divided by 8 
 RCC_HCLK_DIV16                       EQU RCC_CFGR_PPRE1_DIV16    ; HCLK divided by 16 
 
-; RCC_APB1_APB2_Clock_Source APB1 APB2 Clock Source
-;RCC_HCLK_DIV1                        EQU RCC_CFGR_PPRE1_DIV1     ; HCLK not divided 
-;RCC_HCLK_DIV2                        EQU RCC_CFGR_PPRE1_DIV2     ; HCLK divided by 2 
-;RCC_HCLK_DIV4                        EQU RCC_CFGR_PPRE1_DIV4     ; HCLK divided by 4 
-;RCC_HCLK_DIV8                        EQU RCC_CFGR_PPRE1_DIV8     ; HCLK divided by 8 
-;RCC_HCLK_DIV16                       EQU RCC_CFGR_PPRE1_DIV16    ; HCLK divided by 16 
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
 RCC_HSI_OFF                          EQU 0x00000000              ; HSI clock deactivation
 RCC_HSI_ON                           EQU RCC_CR_HSION            ; HSI clock activation
 RCC_HSICALIBRATION_DEFAULT           EQU 0x40                    ; Default HSI calibration trimming value
@@ -150,1174 +108,241 @@ RCC_PLLSOURCE_NONE                   EQU 0x00000000              ; No clock sele
 RCC_PLLSOURCE_HSI                    EQU RCC_PLLCFGR_PLLSRC_HSI  ; HSI clock selected as PLL entry clock source
 RCC_PLLSOURCE_HSE                    EQU RCC_PLLCFGR_PLLSRC_HSE  ; HSE clock selected as PLL entry clock source
 
-;  * @brief Configuration of the Cortex-M4 Processor and Core Peripherals
-;   
-;__CM4_REV                 0x0001U  ; Cortex-M4 revision r0p1                       
-;__MPU_PRESENT             1U       ; STM32G4XX provides an MPU                     
-;__NVIC_PRIO_BITS          4U       ; STM32G4XX uses 4 Bits for the Priority Levels 
-;__Vendor_SysTickConfig    0U       ; Set to 1 if different SysTick Config is used  
-;__FPU_PRESENT             1U       ; FPU present                                   
-
-;* @addtogroup Peripheral_interrupt_number_definition
-; * @brief STM32G4XX Interrupt Number Definition, according to the selected device
-; *        in @ref Library_configuration_section
-
-;typedef enum
-;{
-;*****  Cortex-M4 Processor Exceptions Numbers ********************************************************************************
-;  NonMaskableInt_IRQn         = -14,    ; 2 Cortex-M4 Non Maskable Interrupt
-;  HardFault_IRQn              = -13,    ; 3 Cortex-M4 Hard Fault Interrupt                                                   
-;  MemoryManagement_IRQn       = -12,    ; 4 Cortex-M4 Memory Management Interrupt                                            
-;  BusFault_IRQn               = -11,    ; 5 Cortex-M4 Bus Fault Interrupt                                                    
-;  UsageFault_IRQn             = -10,    ; 6 Cortex-M4 Usage Fault Interrupt                                                  
-;  SVCall_IRQn                 = -5,     ; 11 Cortex-M4 SV Call Interrupt                                                     
-;  DebugMonitor_IRQn           = -4,     ; 12 Cortex-M4 Debug Monitor Interrupt                                               
-;  PendSV_IRQn                 = -2,     ; 14 Cortex-M4 Pend SV Interrupt                                                     
-;  SysTick_IRQn                = -1,     ; 15 Cortex-M4 System Tick Interrupt                                                 
-;*****  STM32 specific Interrupt Numbers **************************************************************************************
-;  WWDG_IRQn                   = 0,      ; Window WatchDog Interrupt                                                          
-;  PVD_PVM_IRQn                = 1,      ; PVD/PVM1/PVM2/PVM3/PVM4 through EXTI Line detection Interrupts                     
-;  RTC_TAMP_LSECSS_IRQn        = 2,      ; RTC Tamper and TimeStamp and RCC LSE CSS interrupts through the EXTI               
-;  RTC_WKUP_IRQn               = 3,      ; RTC Wakeup interrupt through the EXTI line                                         
-;  FLASH_IRQn                  = 4,      ; FLASH global Interrupt                                                             
-;  RCC_IRQn                    = 5,      ; RCC global Interrupt                                                               
-;  EXTI0_IRQn                  = 6,      ; EXTI Line0 Interrupt                                                               
-EXTI1_IRQn                   EQU 7       ; EXTI Line1 Interrupt                                                               
-EXTI2_IRQn                   EQU 8       ; EXTI Line2 Interrupt                                                               
-EXTI3_IRQn                   EQU 9       ; EXTI Line3 Interrupt                                                               
-EXTI4_IRQn                   EQU 10      ; EXTI Line4 Interrupt                                                               
-;  DMA1_Channel1_IRQn          = 11,     ; DMA1 Channel 1 global Interrupt                                                    
-;  DMA1_Channel2_IRQn          = 12,     ; DMA1 Channel 2 global Interrupt                                                    
-;  DMA1_Channel3_IRQn          = 13,     ; DMA1 Channel 3 global Interrupt                                                    
-;  DMA1_Channel4_IRQn          = 14,     ; DMA1 Channel 4 global Interrupt                                                    
-;  DMA1_Channel5_IRQn          = 15,     ; DMA1 Channel 5 global Interrupt                                                    
-;  DMA1_Channel6_IRQn          = 16,     ; DMA1 Channel 6 global Interrupt                                                    
-;  ADC1_2_IRQn                 = 18,     ; ADC1 and ADC2 global Interrupt                                                     
-;  USB_HP_IRQn                 = 19,     ; USB HP Interrupt                                                                   
-;  USB_LP_IRQn                 = 20,     ; USB LP  Interrupt                                                                  
-;  FDCAN1_IT0_IRQn             = 21,     ; FDCAN1 IT0 Interrupt                                                               
-;  FDCAN1_IT1_IRQn             = 22,     ; FDCAN1 IT1 Interrupt                                                               
-EXTI9_5_IRQn                 EQU 23      ; External Line[9:5] Interrupts                                                      
-;  TIM1_BRK_TIM15_IRQn         = 24,     ; TIM1 Break, Transition error, Index error and TIM15 global interrupt               
-;  TIM1_UP_TIM16_IRQn          = 25,     ; TIM1 Update Interrupt and TIM16 global interrupt                                   
-;  TIM1_TRG_COM_TIM17_IRQn     = 26,     ; TIM1 TIM1 Trigger, Commutation, Direction change, Index and TIM17 global interrupt 
-TIM1_CC_IRQn                 EQU 27      ; TIM1 Capture Compare Interrupt                                                     
-TIM2_IRQn                    EQU 28      ; TIM2 global Interrupt                                                              
-TIM3_IRQn                    EQU 29      ; TIM3 global Interrupt                                                              
-TIM4_IRQn                    EQU 30     ; TIM4 global Interrupt                                                              
-;  I2C1_EV_IRQn                = 31,     ; I2C1 Event Interrupt                                                               
-;  I2C1_ER_IRQn                = 32,     ; I2C1 Error Interrupt                                                               
-;  I2C2_EV_IRQn                = 33,     ; I2C2 Event Interrupt                                                               
-;  I2C2_ER_IRQn                = 34,     ; I2C2 Error Interrupt                                                               
-;  SPI1_IRQn                   = 35,     ; SPI1 global Interrupt                                                              
-;  SPI2_IRQn                   = 36,     ; SPI2 global Interrupt                                                              
-;  USART1_IRQn                 = 37,     ; USART1 global Interrupt                                                            
-;  USART2_IRQn                 = 38,     ; USART2 global Interrupt                                                            
-;  USART3_IRQn                 = 39,     ; USART3 global Interrupt                                                            
-;  EXTI15_10_IRQn              = 40,     ; External Line[15:10] Interrupts                                                    
-;  RTC_Alarm_IRQn              = 41,     ; RTC Alarm (A and B) through EXTI Line Interrupt                                    
-;  USBWakeUp_IRQn              = 42,     ; USB Wakeup through EXTI line Interrupt                                             
-TIM8_BRK_IRQn                EQU 43      ; TIM8 Break, Transition error and Index error Interrupt                             
-TIM8_UP_IRQn                 EQU 44      ; TIM8 Update Interrupt                                                              
-TIM8_TRG_COM_IRQn            EQU 45      ; TIM8 Trigger, Commutation, Direction change and Index Interrupt                    
-TIM8_CC_IRQn                 EQU 46      ; TIM8 Capture Compare Interrupt                                                     
-;  LPTIM1_IRQn                 = 49,     ; LP TIM1 Interrupt                                                                  
-;  SPI3_IRQn                   = 51,     ; SPI3 global Interrupt                                                              
-;  UART4_IRQn                  = 52,     ; UART4 global Interrupt                                                             
-;  TIM6_DAC_IRQn               = 54,     ; TIM6 global and DAC1&3 underrun error  interrupts                                  
-;  TIM7_IRQn                   = 55,     ; TIM7 global interrupts                                                             
-;  DMA2_Channel1_IRQn          = 56,     ; DMA2 Channel 1 global Interrupt                                                    
-;  DMA2_Channel2_IRQn          = 57,     ; DMA2 Channel 2 global Interrupt                                                    
-;  DMA2_Channel3_IRQn          = 58,     ; DMA2 Channel 3 global Interrupt                                                    
-;  DMA2_Channel4_IRQn          = 59,     ; DMA2 Channel 4 global Interrupt                                                    
-;  DMA2_Channel5_IRQn          = 60,     ; DMA2 Channel 5 global Interrupt                                                    
-;  UCPD1_IRQn                  = 63,     ; UCPD global Interrupt                                                              
-;  COMP1_2_3_IRQn              = 64,     ; COMP1, COMP2 and COMP3 Interrupts                                                  
-;  COMP4_IRQn                  = 65,     ; COMP4                                                                              
-;  CRS_IRQn                    = 75,     ; CRS global interrupt                                                               
-;  SAI1_IRQn                   = 76,     ; Serial Audio Interface global interrupt                                            
-;  FPU_IRQn                    = 81,     ; FPU global interrupt                                                               
-;  RNG_IRQn                    = 90,     ; RNG global interrupt                                                               
-;  LPUART1_IRQn                = 91,     ; LP UART 1 Interrupt                                                                
-;  I2C3_EV_IRQn                = 92,     ; I2C3 Event Interrupt                                                               
-;  I2C3_ER_IRQn                = 93,     ; I2C3 Error interrupt                                                               
-;  DMAMUX_OVR_IRQn             = 94,     ; DMAMUX overrun global interrupt                                                    
-;  DMA2_Channel6_IRQn          = 97,     ; DMA2 Channel 6 interrupt                                                           
-;  CORDIC_IRQn                 = 100,    ; CORDIC global Interrupt                                                            
-;  FMAC_IRQn                   = 101     ; FMAC global Interrupt                                                              
-;} IRQn_Type;
-
-;#include "core_cm4.h"              Cortex-M4 processor and core peripherals 
-;#include "system_stm32g4xx.h"
-;#include <stdint.h>
-
-;* @addtogroup Peripheral_registers_structures
-
-;  * @brief Analog to Digital Converter
-
-;typedef struct
-;{
-ADC_ISR        EQU 0x00 ; ADC interrupt and status register,             Address offset: 0x00 
-;IER;          ; ADC interrupt enable register,                 Address offset: 0x04 
-ADC_CR         EQU 0x08  ; ADC control register,                          Address offset: 0x08 
-ADC_CFGR       EQU 0x0C  ; ADC configuration register 1,                  Address offset: 0x0C 
-ADC_CFGR2      EQU 0x10  ; ADC configuration register 2,                  Address offset: 0x10 
-ADC_SMPR1      EQU 0x14  ; ADC sampling time register 1,                  Address offset: 0x14 
-ADC_SMPR2      EQU 0x18  ; ADC sampling time register 2,                  Address offset: 0x18 
-;       uint32_t RESERVED1;    ; Reserved,                                                      0x1C 
-;TR1;          ; ADC analog watchdog 1 threshold register,      Address offset: 0x20 
-;TR2;          ; ADC analog watchdog 2 threshold register,      Address offset: 0x24 
-;TR3;          ; ADC analog watchdog 3 threshold register,      Address offset: 0x28 
-;       uint32_t RESERVED2;    ; Reserved,                                                      0x2C 
-ADC_SQR1       EQU 0x30  ; ADC group regular sequencer register 1,        Address offset: 0x30 
-ADC_SQR2       EQU 0x34  ; ADC group regular sequencer register 2,        Address offset: 0x34 
-ADC_SQR3       EQU 0x38  ; ADC group regular sequencer register 3,        Address offset: 0x38 
-ADC_SQR4       EQU 0x3C  ; ADC group regular sequencer register 4,        Address offset: 0x3C 
-ADC_DR         EQU 0x40  ; ADC group regular data register,               Address offset: 0x40 
-;       uint32_t RESERVED3;    ; Reserved,                                                      0x44 
-;       uint32_t RESERVED4;    ; Reserved,                                                      0x48 
-;JSQR;         ; ADC group injected sequencer register,         Address offset: 0x4C 
-;       uint32_t RESERVED5[4]; ; Reserved,                                               0x50 - 0x5C 
-;OFR1;         ; ADC offset register 1,                         Address offset: 0x60 
-;OFR2;         ; ADC offset register 2,                         Address offset: 0x64 
-;OFR3;         ; ADC offset register 3,                         Address offset: 0x68 
-;OFR4;         ; ADC offset register 4,                         Address offset: 0x6C 
-;       uint32_t RESERVED6[4]; ; Reserved,                                               0x70 - 0x7C 
-;JDR1;         ; ADC group injected rank 1 data register,       Address offset: 0x80 
-;JDR2;         ; ADC group injected rank 2 data register,       Address offset: 0x84 
-;JDR3;         ; ADC group injected rank 3 data register,       Address offset: 0x88 
-;JDR4;         ; ADC group injected rank 4 data register,       Address offset: 0x8C 
-;       uint32_t RESERVED7[4]; ; Reserved,                                             0x090 - 0x09C 
-;AWD2CR;       ; ADC analog watchdog 2 configuration register,  Address offset: 0xA0 
-;AWD3CR;       ; ADC analog watchdog 3 Configuration Register,  Address offset: 0xA4 
-;       uint32_t RESERVED8;    ; Reserved,                                                     0x0A8 
-;       uint32_t RESERVED9;    ; Reserved,                                                     0x0AC 
-ADC_DIFSEL     EQU 0xB0  ; ADC differential mode selection register,      Address offset: 0xB0 
-;CALFACT;      ; ADC calibration factors,                       Address offset: 0xB4 
-;       uint32_t RESERVED10[2];; Reserved,                                             0x0B8 - 0x0BC 
-;GCOMP;        ; ADC calibration factors,                       Address offset: 0xC0 
-;} ADC_TypeDef;
-
-;typedef struct
-;{
-;CSR;          ; ADC common status register,            Address offset: 0x300 + 0x00 
-;      RESERVED1;    ; Reserved,                              Address offset: 0x300 + 0x04 
-;ADC_CCR        EQU 0x300 + 0x08  ; ADC common configuration register,     Address offset: 0x300 + 0x08 
-ADC_CCR        EQU 0x08  ; ADC common configuration register,     Address offset: 0x300 + 0x08 
-;CDR;          ; ADC common group regular data register Address offset: 0x300 + 0x0C 
-;} ADC_Common_TypeDef;
-
-;*
-;  * @brief FD Controller Area Network
-;  
-
-;typedef struct
-;{
-;CREL;         ; FDCAN Core Release register,                                     Address offset: 0x000 
-;ENDN;         ; FDCAN Endian register,                                           Address offset: 0x004 
-;       uint32_t RESERVED1;    ; Reserved,                                                                        0x008 
-;DBTP;         ; FDCAN Data Bit Timing & Prescaler register,                      Address offset: 0x00C 
-;TEST;         ; FDCAN Test register,                                             Address offset: 0x010 
-;RWD;          ; FDCAN RAM Watchdog register,                                     Address offset: 0x014 
-;CCCR;         ; FDCAN CC Control register,                                       Address offset: 0x018 
-;NBTP;         ; FDCAN Nominal Bit Timing & Prescaler register,                   Address offset: 0x01C 
-;TSCC;         ; FDCAN Timestamp Counter Configuration register,                  Address offset: 0x020 
-;TSCV;         ; FDCAN Timestamp Counter Value register,                          Address offset: 0x024 
-;TOCC;         ; FDCAN Timeout Counter Configuration register,                    Address offset: 0x028 
-;TOCV;         ; FDCAN Timeout Counter Value register,                            Address offset: 0x02C 
-;       uint32_t RESERVED2[4]; ; Reserved,                                                                0x030 - 0x03C 
-;ECR;          ; FDCAN Error Counter register,                                    Address offset: 0x040 
-;PSR;          ; FDCAN Protocol Status register,                                  Address offset: 0x044 
-;TDCR;         ; FDCAN Transmitter Delay Compensation register,                   Address offset: 0x048 
-;       uint32_t RESERVED3;    ; Reserved,                                                                        0x04C 
-;IR;           ; FDCAN Interrupt register,                                        Address offset: 0x050 
-;IE;           ; FDCAN Interrupt Enable register,                                 Address offset: 0x054 
-;ILS;          ; FDCAN Interrupt Line Select register,                            Address offset: 0x058 
-;ILE;          ; FDCAN Interrupt Line Enable register,                            Address offset: 0x05C 
-;       uint32_t RESERVED4[8]; ; Reserved,                                                                0x060 - 0x07C 
-;RXGFC;        ; FDCAN Global Filter Configuration register,                      Address offset: 0x080 
-;XIDAM;        ; FDCAN Extended ID AND Mask register,                             Address offset: 0x084 
-;HPMS;         ; FDCAN High Priority Message Status register,                     Address offset: 0x088 
-;       uint32_t RESERVED5;    ; Reserved,                                                                        0x08C 
-;RXF0S;        ; FDCAN Rx FIFO 0 Status register,                                 Address offset: 0x090 
-;RXF0A;        ; FDCAN Rx FIFO 0 Acknowledge register,                            Address offset: 0x094 
-;RXF1S;        ; FDCAN Rx FIFO 1 Status register,                                 Address offset: 0x098 
-;RXF1A;        ; FDCAN Rx FIFO 1 Acknowledge register,                            Address offset: 0x09C 
-;       uint32_t RESERVED6[8]; ; Reserved,                                                                0x0A0 - 0x0BC 
-;TXBC;         ; FDCAN Tx Buffer Configuration register,                          Address offset: 0x0C0 
-;TXFQS;        ; FDCAN Tx FIFO/Queue Status register,                             Address offset: 0x0C4 
-;TXBRP;        ; FDCAN Tx Buffer Request Pending register,                        Address offset: 0x0C8 
-;TXBAR;        ; FDCAN Tx Buffer Add Request register,                            Address offset: 0x0CC 
-;TXBCR;        ; FDCAN Tx Buffer Cancellation Request register,                   Address offset: 0x0D0 
-;TXBTO;        ; FDCAN Tx Buffer Transmission Occurred register,                  Address offset: 0x0D4 
-;TXBCF;        ; FDCAN Tx Buffer Cancellation Finished register,                  Address offset: 0x0D8 
-;TXBTIE;       ; FDCAN Tx Buffer Transmission Interrupt Enable register,          Address offset: 0x0DC 
-;TXBCIE;       ; FDCAN Tx Buffer Cancellation Finished Interrupt Enable register, Address offset: 0x0E0 
-;TXEFS;        ; FDCAN Tx Event FIFO Status register,                             Address offset: 0x0E4 
-;TXEFA;        ; FDCAN Tx Event FIFO Acknowledge register,                        Address offset: 0x0E8 
-;} FDCAN_GlobalTypeDef;
-
-;*
-;  * @brief FD Controller Area Network Configuration
-;  
-
-;typedef struct
-;{
-;CKDIV;        ; FDCAN clock divider register,                            Address offset: 0x100 + 0x000 
-;} FDCAN_Config_TypeDef;
-
-;*
-;  * @brief Comparator
-;  
-
-;typedef struct
-;{
-;CSR;         ; COMP control and status register, Address offset: 0x00 
-;} COMP_TypeDef;
-
-;*
-;  * @brief CRC calculation unit
-;  
-
-;typedef struct
-;{
-;DR;          ; CRC Data register,                           Address offset: 0x00 
-;IDR;         ; CRC Independent data register,               Address offset: 0x04 
-;CR;          ; CRC Control register,                        Address offset: 0x08 
-;      RESERVED0;   ; Reserved,                                                    0x0C 
-;INIT;        ; Initial CRC value register,                  Address offset: 0x10 
-;POL;         ; CRC polynomial register,                     Address offset: 0x14 
-;} CRC_TypeDef;
-
-;*
-;  * @brief Clock Recovery System
-;  
-;typedef struct
-;{
-;CR;          ; CRS ccontrol register,              Address offset: 0x00 
-;CFGR;        ; CRS configuration register,         Address offset: 0x04 
-;ISR;         ; CRS interrupt and status register,  Address offset: 0x08 
-;ICR;         ; CRS interrupt flag clear register,  Address offset: 0x0C 
-;} CRS_TypeDef;
-
-;*
-;  * @brief Digital to Analog Converter
-;  
-
-;typedef struct
-;{
-DAC_CR          EQU 0x00 ; DAC control register,                           Address offset: 0x00 
-DAC_SWTRIGR     EQU 0x04 ; DAC software trigger register,                           Address offset: 0x04 
-DAC_DHR12R1     EQU 0x08 ; DAC channel1 12-bit right-aligned data holding register, Address offset: 0x08 
-DAC_DHR12L1     EQU 0x0C ; DAC channel1 12-bit left aligned data holding register,  Address offset: 0x0C 
-DAC_DHR8R1      EQU 0x10 ; DAC channel1 8-bit right aligned data holding register,  Address offset: 0x10 
-DAC_DHR12R2     EQU 0x14 ; DAC channel2 12-bit right aligned data holding register, Address offset: 0x14 
-DAC_DHR12L2     EQU 0x18 ; DAC channel2 12-bit left aligned data holding register,  Address offset: 0x18 
-DAC_DHR8R2      EQU 0x1C ; DAC channel2 8-bit right-aligned data holding register,  Address offset: 0x1C 
-DAC_DHR12RD     EQU 0x20 ; Dual DAC 12-bit right-aligned data holding register,     Address offset: 0x20 
-DAC_DHR12LD     EQU 0x24 ; DUAL DAC 12-bit left aligned data holding register,      Address offset: 0x24 
-DAC_DHR8RD      EQU 0x28 ; DUAL DAC 8-bit right aligned data holding register,      Address offset: 0x28 
-DAC_DOR1        EQU 0x2C ; DAC channel1 data output register,                       Address offset: 0x2C 
-DAC_DOR2        EQU 0x30 ; DAC channel2 data output register,                       Address offset: 0x30 
-DAC_SR          EQU 0x34 ; DAC status register,                                     Address offset: 0x34 
-DAC_CCR         EQU 0x38 ; DAC calibration control register,                        Address offset: 0x38 
-DAC_MCR         EQU 0x3C ; DAC mode control register,                               Address offset: 0x3C 
-DAC_SHSR1       EQU 0x40 ; DAC Sample and Hold sample time register 1,              Address offset: 0x40 
-DAC_SHSR2       EQU 0x44 ; DAC Sample and Hold sample time register 2,              Address offset: 0x44 
-DAC_SHHR        EQU 0x48 ; DAC Sample and Hold hold time register,                  Address offset: 0x48 
-DAC_SHRR        EQU 0x4C ; DAC Sample and Hold refresh time register,               Address offset: 0x4C 
-;RESERVED[2];
-DAC_STR1        EQU 0x58 ; DAC Sawtooth register,                                   Address offset: 0x58 
-DAC_STR2        EQU 0x5C ; DAC Sawtooth register,                                   Address offset: 0x5C 
-DAC_STMODR      EQU 0x60 ; DAC Sawtooth Mode register,                              Address offset: 0x60 
-;} DAC_TypeDef;
-
-;*
-;  * @brief Debug MCU
-;  
-
-;typedef struct
-;{
-;IDCODE;      ; MCU device ID code,                 Address offset: 0x00 
-;CR;          ; Debug MCU configuration register,   Address offset: 0x04 
-;APB1FZR1;    ; Debug MCU APB1 freeze register 1,   Address offset: 0x08 
-;APB1FZR2;    ; Debug MCU APB1 freeze register 2,   Address offset: 0x0C 
-;APB2FZ;      ; Debug MCU APB2 freeze register,     Address offset: 0x10 
-;} DBGMCU_TypeDef;
-
-;*
-;  * @brief DMA Controller
-;  
-
-;typedef struct
-;{
-;CCR;         ; DMA channel x configuration register        
-;CNDTR;       ; DMA channel x number of data register       
-;CPAR;        ; DMA channel x peripheral address register   
-;CMAR;        ; DMA channel x memory address register       
-;} DMA_Channel_TypeDef;
-
-;typedef struct
-;{
-;ISR;         ; DMA interrupt status register,                 Address offset: 0x00 
-;IFCR;        ; DMA interrupt flag clear register,             Address offset: 0x04 
-;} DMA_TypeDef;
-
-;*
-;  * @brief DMA Multiplexer
-;  
-
-;typedef struct
-;{
-;  CCR;       ; DMA Multiplexer Channel x Control Register    Address offset: 0x0004 * (channel x) 
-;}DMAMUX_Channel_TypeDef;
-
-;typedef struct
-;{
-;  CSR;      ; DMA Channel Status Register                    Address offset: 0x0080   
-;  CFR;      ; DMA Channel Clear Flag Register                Address offset: 0x0084   
-;}DMAMUX_ChannelStatus_TypeDef;
-
-;typedef struct
-;{
-;  RGCR;        ; DMA Request Generator x Control Register     Address offset: 0x0100 + 0x0004 * (Req Gen x) 
-;}DMAMUX_RequestGen_TypeDef;
-
-;typedef struct
-;{
-;  RGSR;        ; DMA Request Generator Status Register        Address offset: 0x0140   
-;  RGCFR;        ; DMA Request Generator Clear Flag Register    Address offset: 0x0144   
-;}DMAMUX_RequestGenStatus_TypeDef;
-
-;*
-;  * @brief External Interrupt/Event Controller
-;  
-
-;typedef struct
-;{
-EXTI_IM1        EQU 0x00; EXTI Interrupt mask register 1,             Address offset: 0x00 
-EXTI_EM1        EQU 0x04; EXTI Event mask register 1,                 Address offset: 0x04 
-EXTI_RTS1       EQU 0x08; EXTI Rising trigger selection register 1,   Address offset: 0x08 
-EXTI_FTS1       EQU 0x0C; EXTI Falling trigger selection register 1,  Address offset: 0x0C 
-EXTI_SWIE1      EQU 0x10; EXTI Software interrupt event register 1,   Address offset: 0x10 
-EXTI_P1         EQU 0x14; EXTI Pending register 1,                    Address offset: 0x14 
-;      RESERVED1;   ; Reserved, 0x18                                                   
-;      RESERVED2;   ; Reserved, 0x1C                                                   
-EXTI_IM2        EQU 0x20; EXTI Interrupt mask register 2,             Address offset: 0x20 
-EXTI_EM2        EQU 0x24; EXTI Event mask register 2,                 Address offset: 0x24 
-EXTI_RTS2       EQU 0x28; EXTI Rising trigger selection register 2,   Address offset: 0x28 
-EXTI_FTS2       EQU 0x2C; EXTI Falling trigger selection register 2,  Address offset: 0x2C 
-EXTI_SWIE2      EQU 0x30; EXTI Software interrupt event register 2,   Address offset: 0x30 
-EXTI_P2         EQU 0x34; EXTI Pending register 2,                    Address offset: 0x34 
-;} EXTI_TypeDef;
-
-;*
-;  * @brief FLASH Registers
-;  
-
-;typedef struct
-;{
-ACR                EQU 0x00              ; FLASH access control register,            Address offset: 0x00 
-;PDKEYR;           ; FLASH power down key register,            Address offset: 0x04 
-;KEYR;             ; FLASH key register,                       Address offset: 0x08 
-;OPTKEYR;          ; FLASH option key register,                Address offset: 0x0C 
-;SR;               ; FLASH status register,                    Address offset: 0x10 
-;CR;               ; FLASH control register,                   Address offset: 0x14 
-;ECCR;             ; FLASH ECC register,                       Address offset: 0x18 
-;       uint32_t RESERVED1;        ; Reserved1,                                Address offset: 0x1C 
-;OPTR;             ; FLASH option register,                    Address offset: 0x20 
-;PCROP1SR;         ; FLASH bank1 PCROP start address register, Address offset: 0x24 
-;PCROP1ER;         ; FLASH bank1 PCROP end address register,   Address offset: 0x28 
-;WRP1AR;           ; FLASH bank1 WRP area A address register,  Address offset: 0x2C 
-;WRP1BR;           ; FLASH bank1 WRP area B address register,  Address offset: 0x30 
-;       uint32_t RESERVED2[15];    ; Reserved2,                                Address offset: 0x34 
-;SEC1R;            ; FLASH Securable memory register bank1,    Address offset: 0x70 
-;} FLASH_TypeDef;
-
-;*
-;  * @brief FMAC
-;  
-;typedef struct
-;{
-;X1BUFCFG;        ; FMAC X1 Buffer Configuration register, Address offset: 0x00          
-;X2BUFCFG;        ; FMAC X2 Buffer Configuration register, Address offset: 0x04          
-;YBUFCFG;         ; FMAC Y Buffer Configuration register,  Address offset: 0x08          
-;PARAM;           ; FMAC Parameter register,               Address offset: 0x0C          
-;CR;              ; FMAC Control register,                 Address offset: 0x10          
-;SR;              ; FMAC Status register,                  Address offset: 0x14          
-;WDATA;           ; FMAC Write Data register,              Address offset: 0x18          
-;RDATA;           ; FMAC Read Data register,               Address offset: 0x1C          
-;} FMAC_TypeDef;
-
-
-;*
-;  * @brief General Purpose I/O
-;  
-
-;typedef struct
-;{
-MODER              EQU 0x00  ; GPIO port mode register, Address offset: 0x00      
-OTYPER             EQU 0x04  ; GPIO port output type register,        Address offset: 0x04      
-OSPEEDR            EQU 0x08  ; GPIO port output speed register,       Address offset: 0x08      
-PUPDR              EQU 0x0C  ; GPIO port pull-up/pull-down register,  Address offset: 0x0C      
-IDR                EQU 0x10  ; GPIO port input data register,         Address offset: 0x10      
-ODR                EQU 0x14  ; GPIO port output data register, Address offset: 0x14      
-;BSRR;        ; GPIO port bit set/reset  register,     Address offset: 0x18      
-;LCKR;        ; GPIO port configuration lock register, Address offset: 0x1C      
-;AFR[2];      ; GPIO alternate function registers,     Address offset: 0x20-0x24 
-AFRL               EQU 0x20 ; GPIO alternate function registers,     Address offset: 0x20-0x24 
-AFRH               EQU 0x24 ; GPIO alternate function registers,     Address offset: 0x20-0x24 
-;BRR;         ; GPIO Bit Reset register,               Address offset: 0x28      
-;} GPIO_TypeDef;
-
-;*
-;  * @brief Inter-integrated Circuit Interface
-;  
-
-;typedef struct
-;{
-I2C_CR1         EQU 0x00 ; I2C Control register 1,            Address offset: 0x00 
-I2C_CR2         EQU 0x04 ; I2C Control register 2,            Address offset: 0x04 
-I2C_OAR1        EQU 0x08 ; I2C Own address 1 register,        Address offset: 0x08 
-I2C_OAR2        EQU 0x0C ; I2C Own address 2 register,        Address offset: 0x0C 
-I2C_TIMINGR     EQU 0x10 ; I2C Timing register,               Address offset: 0x10 
-I2C_TIMEOUTR    EQU 0x14 ; I2C Timeout register,              Address offset: 0x14 
-I2C_ISR         EQU 0x18 ; I2C Interrupt and status register, Address offset: 0x18 
-I2C_ICR         EQU 0x1C ; I2C Interrupt clear register,      Address offset: 0x1C 
-I2C_PECR        EQU 0x20 ; I2C PEC register,                  Address offset: 0x20 
-I2C_RXDR        EQU 0x24 ; I2C Receive data register,         Address offset: 0x24 
-I2C_TXDR        EQU 0x28 ; I2C Transmit data register,        Address offset: 0x28 
-;} I2C_TypeDef;
-
-;*
-;  * @brief Independent WATCHDOG
-;  
-
-;typedef struct
-;{
-;KR;          ; IWDG Key register,       Address offset: 0x00 
-;PR;          ; IWDG Prescaler register, Address offset: 0x04 
-;RLR;         ; IWDG Reload register,    Address offset: 0x08 
-;SR;          ; IWDG Status register,    Address offset: 0x0C 
-;WINR;        ; IWDG Window register,    Address offset: 0x10 
-;} IWDG_TypeDef;
-
-;*
-;  * @brief LPTIMER
-;  
-
-;typedef struct
-;{
-;ISR;              ; LPTIM Interrupt and Status register,                Address offset: 0x00 
-;ICR;              ; LPTIM Interrupt Clear register,                     Address offset: 0x04 
-;IER;              ; LPTIM Interrupt Enable register,                    Address offset: 0x08 
-;CFGR;             ; LPTIM Configuration register,                       Address offset: 0x0C 
-;CR;               ; LPTIM Control register,                             Address offset: 0x10 
-;CMP;              ; LPTIM Compare register,                             Address offset: 0x14 
-;ARR;              ; LPTIM Autoreload register,                          Address offset: 0x18 
-;CNT;              ; LPTIM Counter register,                             Address offset: 0x1C 
-;OR;               ; LPTIM Option register,                              Address offset: 0x20 
-;} LPTIM_TypeDef;
-
-;*
-;  * @brief Operational Amplifier (OPAMP)
-;  
-
-;typedef struct
-;{
-;CSR;           ; OPAMP control/status register,                     Address offset: 0x00 
-;RESERVED[5];   ; OPAMP offset trimming register for normal mode,    Address offset: 0x04 
-;TCMR;          ; OPAMP timer controlled mux mode register,          Address offset: 0x18 
-;} OPAMP_TypeDef;
-
-;*
-;  * @brief Power Control
-;  
-
-;typedef struct
-;{
-PWR_C1     EQU 0x00  ; PWR power control register 1, Address offset: 0x00 
-PWR_C2     EQU 0x04  ; PWR power control register 2, Address offset: 0x04 
-PWR_C3     EQU 0x08  ; PWR power control register 3, Address offset: 0x08 
-PWR_C4     EQU 0x0C  ; PWR power control register 4, Address offset: 0x0C 
-;SR1;      ; PWR power status register 1,         Address offset: 0x10 
-;SR2;      ; PWR power status register 2,         Address offset: 0x14 
-;SCR;      ; PWR power status reset register,     Address offset: 0x18 
-; RESERVED;      ; Reserved,                            Address offset: 0x1C 
-;PUCRA;    ; Pull_up control register of portA,   Address offset: 0x20 
-;PDCRA;    ; Pull_Down control register of portA, Address offset: 0x24 
-;PUCRB;    ; Pull_up control register of portB,   Address offset: 0x28 
-;PDCRB;    ; Pull_Down control register of portB, Address offset: 0x2C 
-;PUCRC;    ; Pull_up control register of portC,   Address offset: 0x30 
-;PDCRC;    ; Pull_Down control register of portC, Address offset: 0x34 
-;PUCRD;    ; Pull_up control register of portD,   Address offset: 0x38 
-;PDCRD;    ; Pull_Down control register of portD, Address offset: 0x3C 
-;PUCRE;    ; Pull_up control register of portE,   Address offset: 0x40 
-;PDCRE;    ; Pull_Down control register of portE, Address offset: 0x44 
-;PUCRF;    ; Pull_up control register of portF,   Address offset: 0x48 
-;PDCRF;    ; Pull_Down control register of portF, Address offset: 0x4C 
-;PUCRG;    ; Pull_up control register of portG,   Address offset: 0x50 
-;PDCRG;    ; Pull_Down control register of portG, Address offset: 0x54 
-; RESERVED1[10]; ; Reserved                             Address offset: 0x58 - 0x7C 
-PWR_C5     EQU 0x80  ; PWR power control register 5, Address offset: 0x80 
-;} PWR_TypeDef;
-
-
-;*
-;  * @brief Reset and Clock Control
-;  
-
-;typedef struct
-;{
-RCC_C           EQU 0x00 ; RCC clock control register, Address offset: 0x00 
-RCC_ICSC        EQU 0x04 ; RCC internal clock sources calibration register,                         Address offset: 0x04 
-RCC_CFG         EQU 0x08 ; RCC clock configuration register,                                        Address offset: 0x08 
-RCC_PLLCFG      EQU 0x0C ; RCC system PLL configuration register,                                   Address offset: 0x0C 
-;RCC_RESERVED0  EQU 0x10 ; Reserved,                                                                Address offset: 0x10 
-;RCC_RESERVED1  EQU 0x14 ; Reserved,                                                                Address offset: 0x14 
-RCC_CIER        EQU 0x18 ; RCC clock interrupt enable register,                                     Address offset: 0x18 
-RCC_CIFR        EQU 0x1C ; RCC clock interrupt flag register,                                       Address offset: 0x1C 
-RCC_CICR        EQU 0x20 ; RCC clock interrupt clear register,                                      Address offset: 0x20 
-;RCC_RESERVED2  EQU 0x24 ; Reserved,                                                                Address offset: 0x24 
-RCC_AHB1RSTR    EQU 0x28 ; RCC AHB1 peripheral reset register,                                      Address offset: 0x28 
-RCC_AHB2RSTR    EQU 0x2C ; RCC AHB2 peripheral reset register,                                      Address offset: 0x2C 
-RCC_AHB3RSTR    EQU 0x30 ; RCC AHB3 peripheral reset register,                                      Address offset: 0x30 
-;RCC_RESERVED3  EQU 0x34 ; Reserved,                                                                Address offset: 0x34 
-RCC_APB1RST1   EQU 0x38 ; RCC APB1 peripheral reset register 1,                                    Address offset: 0x38 
-RCC_APB1RST2   EQU 0x3C ; RCC APB1 peripheral reset register 2,                                    Address offset: 0x3C 
-RCC_APB2RSTR    EQU 0x40 ; RCC APB2 peripheral reset register,                                      Address offset: 0x40 
-;RCC_RESERVED4  EQU 0x44 ; Reserved,                                                                Address offset: 0x44 
-RCC_AHB1ENR     EQU 0x48 ; RCC AHB1 peripheral clocks enable register,                              Address offset: 0x48 
-RCC_AHB2EN      EQU 0x4C ; RCC AHB2 peripheral clocks enable register,                              Address offset: 0x4C 
-RCC_AHB3ENR     EQU 0x50 ; RCC AHB3 peripheral clocks enable register,                              Address offset: 0x50 
-;RESERVED5      EQU 0x54 ; Reserved,                                                                Address offset: 0x54 
-RCC_APB1EN1     EQU 0x58 ; RCC APB1 peripheral clocks enable register 1,                            Address offset: 0x58 
-RCC_APB1EN2     EQU 0x5C ; RCC APB1 peripheral clocks enable register 2,                            Address offset: 0x5C 
-RCC_APB2EN      EQU 0x60 ; RCC APB2 peripheral clocks enable register,                              Address offset: 0x60 
-;RESERVED6      EQU 0x64 ; Reserved,                                                                Address offset: 0x64 
-RCC_AHB1SMENR   EQU 0x68 ; RCC AHB1 peripheral clocks enable in sleep and stop modes register,      Address offset: 0x68 
-RCC_AHB2SMENR   EQU 0x6C ; RCC AHB2 peripheral clocks enable in sleep and stop modes register,      Address offset: 0x6C 
-RCC_AHB3SMENR   EQU 0x70 ; RCC AHB3 peripheral clocks enable in sleep and stop modes register,      Address offset: 0x70 
-;RESERVED7      EQU 0x74 ; Reserved,                                                                Address offset: 0x74 
-RCC_APB1SMENR1  EQU 0x78 ; RCC APB1 peripheral clocks enable in sleep mode and stop modes register 1, Address offset: 0x78 
-RCC_APB1SMENR2  EQU 0x7C ; RCC APB1 peripheral clocks enable in sleep mode and stop modes register 2, Address offset: 0x7C 
-RCC_APB2SMENR   EQU 0x80 ; RCC APB2 peripheral clocks enable in sleep mode and stop modes register, Address offset: 0x80 
-;RESERVED8      EQU 0x84 ; Reserved,                                                                Address offset: 0x84 
-RCC_CCIP        EQU 0x88 ; RCC peripherals independent clock configuration register,                Address offset: 0x88 
-;RESERVED9      EQU 0x8C ; Reserved,                                                                Address offset: 0x8C 
-RCC_BDCR        EQU 0x90 ; RCC backup domain control register,                                      Address offset: 0x90 
-RCC_CSR         EQU 0x94 ; RCC clock control & status register,                                     Address offset: 0x94 
-RCC_CRRCR       EQU 0x98 ; RCC clock recovery RC register,                                          Address offset: 0x98 
-RCC_CCIP2       EQU 0x9C ; RCC peripherals independent clock configuration register 2,              Address offset: 0x9C 
-
-;} RCC_TypeDef;
-
-;*
-;  * @brief Real-Time Clock
-;  
-;
-;* @brief Specific device feature definitions
-;
-;RTC_TAMP_INT_6_SUPPORT
-;RTC_TAMP_INT_NB        4u
-
-;RTC_TAMP_NB            3u
-;RTC_BACKUP_NB          16u
-
-
-;typedef struct
-;{
-;TR;          ; RTC time register,                                         Address offset: 0x00 
-;DR;          ; RTC date register,                                         Address offset: 0x04 
-;SSR;         ; RTC sub second register,                                   Address offset: 0x08 
-;ICSR;        ; RTC initialization control and status register,            Address offset: 0x0C 
-;PRER;        ; RTC prescaler register,                                    Address offset: 0x10 
-;WUTR;        ; RTC wakeup timer register,                                 Address offset: 0x14 
-;CR;          ; RTC control register,                                      Address offset: 0x18 
-;       uint32_t RESERVED0;   ; Reserved                                                   Address offset: 0x1C 
-;       uint32_t RESERVED1;   ; Reserved                                                   Address offset: 0x20 
-;WPR;         ; RTC write protection register,                             Address offset: 0x24 
-;CALR;        ; RTC calibration register,                                  Address offset: 0x28 
-;SHIFTR;      ; RTC shift control register,                                Address offset: 0x2C 
-;TSTR;        ; RTC time stamp time register,                              Address offset: 0x30 
-;TSDR;        ; RTC time stamp date register,                              Address offset: 0x34 
-;TSSSR;       ; RTC time-stamp sub second register,                        Address offset: 0x38 
-;       uint32_t RESERVED2;   ; Reserved                                                   Address offset: 0x3C 
-;ALRMAR;      ; RTC alarm A register,                                      Address offset: 0x40 
-;ALRMASSR;    ; RTC alarm A sub second register,                           Address offset: 0x44 
-;ALRMBR;      ; RTC alarm B register,                                      Address offset: 0x48 
-;ALRMBSSR;    ; RTC alarm B sub second register,                           Address offset: 0x4C 
-;SR;          ; RTC Status register,                                       Address offset: 0x50 
-;MISR;        ; RTC Masked Interrupt Status register,                      Address offset: 0x54 
-;       uint32_t RESERVED3;   ; Reserved                                                   Address offset: 0x58 
-;SCR;         ; RTC Status Clear register,                                 Address offset: 0x5C 
-;} RTC_TypeDef;
-
-;*
-;  * @brief Tamper and backup registers
-;  
-
-;typedef struct
-;{
-;CR1;                     ; TAMP configuration register 1,          Address offset: 0x00 
-;CR2;                     ; TAMP configuration register 2,          Address offset: 0x04 
-;       uint32_t RESERVED0;               ; no configuration register 3,            Address offset: 0x08 
-;FLTCR;                   ; TAMP filter control register,           Address offset: 0x0C 
-;       uint32_t RESERVED1[6];            ; Reserved                                Address offset: 0x10 - 0x24 
-;       uint32_t RESERVED2;               ; Reserved                                Address offset: 0x28 
-;IER;                     ; TAMP Interrupt enable register,         Address offset: 0x2C 
-;SR;                      ; TAMP Status register,                   Address offset: 0x30 
-;MISR;                    ; TAMP Masked Interrupt Status register   Address offset: 0x34 
-;       uint32_t RESERVED3;               ; Reserved                                Address offset: 0x38 
-;SCR;                     ; TAMP Status clear register,             Address offset: 0x3C 
-;       uint32_t RESERVED4[48];           ; Reserved                                Address offset: 0x040 - 0xFC 
-;BKP0R;                   ; TAMP backup register 0,                 Address offset: 0x100 
-;BKP1R;                   ; TAMP backup register 1,                 Address offset: 0x104 
-;BKP2R;                   ; TAMP backup register 2,                 Address offset: 0x108 
-;BKP3R;                   ; TAMP backup register 3,                 Address offset: 0x10C 
-;BKP4R;                   ; TAMP backup register 4,                 Address offset: 0x110 
-;BKP5R;                   ; TAMP backup register 5,                 Address offset: 0x114 
-;BKP6R;                   ; TAMP backup register 6,                 Address offset: 0x118 
-;BKP7R;                   ; TAMP backup register 7,                 Address offset: 0x11C 
-;BKP8R;                   ; TAMP backup register 8,                 Address offset: 0x120 
-;BKP9R;                   ; TAMP backup register 9,                 Address offset: 0x124 
-;BKP10R;                  ; TAMP backup register 10,                Address offset: 0x128 
-;BKP11R;                  ; TAMP backup register 11,                Address offset: 0x12C 
-;BKP12R;                  ; TAMP backup register 12,                Address offset: 0x130 
-;BKP13R;                  ; TAMP backup register 13,                Address offset: 0x134 
-;BKP14R;                  ; TAMP backup register 14,                Address offset: 0x138 
-;BKP15R;                  ; TAMP backup register 15,                Address offset: 0x13C 
-;} TAMP_TypeDef;
-
-;*
-;  * @brief Serial Audio Interface
-;  
-
-;typedef struct
-;{
-;GCR;          ; SAI global configuration register,        Address offset: 0x00 
-;      RESERVED[16]; ; Reserved,                         Address offset: 0x04 to 0x40 
-;PDMCR;        ; SAI PDM control register,                 Address offset: 0x44 
-;PDMDLY;       ; SAI PDM delay register,                   Address offset: 0x48 
-;} SAI_TypeDef;
-
-;typedef struct
-;{
-;CR1;         ; SAI block x configuration register 1,     Address offset: 0x04 
-;CR2;         ; SAI block x configuration register 2,     Address offset: 0x08 
-;FRCR;        ; SAI block x frame configuration register, Address offset: 0x0C 
-;SLOTR;       ; SAI block x slot register,                Address offset: 0x10 
-;IMR;         ; SAI block x interrupt mask register,      Address offset: 0x14 
-;SR;          ; SAI block x status register,              Address offset: 0x18 
-;CLRFR;       ; SAI block x clear flag register,          Address offset: 0x1C 
-;DR;          ; SAI block x data register,                Address offset: 0x20 
-;} SAI_Block_TypeDef;
-
-;*
-;  * @brief Serial Peripheral Interface
-;  
-
-;typedef struct
-;{
-SPI_CR1       EQU 0x00 ; SPI Control register 1, Address offset: 0x00 
-SPI_CR2       EQU 0x04 ; SPI Control register 2, Address offset: 0x04 
-SPI_SR        EQU 0x08 ; SPI Status register, Address offset: 0x08 
-SPI_DR        EQU 0x0C ; SPI data register, Address offset: 0x0C 
-SPI_CRCPR     EQU 0x10 ; SPI CRC polynomial register, Address offset: 0x10 
-SPI_RXCRCR    EQU 0x14 ; SPI Rx CRC register, Address offset: 0x14 
-SPI_TXCRCR    EQU 0x18 ; SPI Tx CRC register, Address offset: 0x18 
-SPI_I2SCFGR   EQU 0x1C ; SPI_I2S configuration register, Address offset: 0x1C 
-SPI_I2SPR     EQU 0x20 ; SPI_I2S prescaler register, Address offset: 0x20 
-;} SPI_TypeDef;
-
-;*
-;  * @brief System configuration controller
-;  
-
-;typedef struct
-;{
-SYSCFG_MEMRMP      EQU 0x00 ; SYSCFG memory remap register,                        Address offset: 0x00      
-SYSCFG_CFG1        EQU 0x04 ; SYSCFG configuration register 1,                     Address offset: 0x04      
-SYSCFG_EXTIC1      EQU 0x08 ; SYSCFG external interrupt configuration registers,   Address offset: 0x08-0x14 
-SYSCFG_EXTIC2      EQU 0x0C ; SYSCFG external interrupt configuration registers,   Address offset: 0x08-0x14 
-SYSCFG_EXTIC3      EQU 0x10 ; SYSCFG external interrupt configuration registers,   Address offset: 0x08-0x14 
-SYSCFG_EXTIC4      EQU 0x14 ; SYSCFG external interrupt configuration registers,   Address offset: 0x08-0x14 
-SYSCFG_SCS         EQU 0x18 ; SYSCFG CCMSRAM control and status register,          Address offset: 0x18      
-SYSCFG_CFG2        EQU 0x1C ; SYSCFG configuration register 2,                     Address offset: 0x1C      
-SYSCFG_SWP         EQU 0x20 ; SYSCFG CCMSRAM write protection register,            Address offset: 0x20      
-SYSCFG_SK          EQU 0x24 ; SYSCFG CCMSRAM Key Register,                         Address offset: 0x24      
-;} SYSCFG_TypeDef;
-
-;*
-;  * @brief TIM
-;  
-
-;typedef struct
-;{
-TIM_CR1       EQU 0x00 ; TIM control register 1, Address offset: 0x00 
-TIM_CR2       EQU 0x04 ; TIM control register 2, Address offset: 0x04 
-TIM_SMCR      EQU 0x08 ; TIM slave mode control register, Address offset: 0x08 
-TIM_DIER      EQU 0x0C ; TIM DMA/interrupt enable register, Address offset: 0x0C 
-TIM_SR        EQU 0x10 ; TIM status register, Address offset: 0x10 
-TIM_EGR       EQU 0x14 ; TIM event generation register, Address offset: 0x14 
-TIM_CCMR1     EQU 0x18 ; TIM capture/compare mode register 1, Address offset: 0x18 
-TIM_CCMR2     EQU 0x1C ; TIM capture/compare mode register 2, Address offset: 0x1C 
-TIM_CCER      EQU 0x20 ; TIM capture/compare enable register, Address offset: 0x20 
-TIM_CNT       EQU 0x24 ; TIM counter register, Address offset: 0x24 
-TIM_PSC       EQU 0x28 ; TIM prescaler, Address offset: 0x28 
-TIM_ARR       EQU 0x2C ; TIM auto-reload register, Address offset: 0x2C 
-TIM_RCR       EQU 0x30 ; TIM repetition counter register,          Address offset: 0x30 
-TIM_CCR1      EQU 0x34 ; TIM capture/compare register 1,           Address offset: 0x34 
-TIM_CCR2      EQU 0x38 ; TIM capture/compare register 2,           Address offset: 0x38 
-TIM_CCR3      EQU 0x3C ; TIM capture/compare register 3,           Address offset: 0x3C 
-TIM_CCR4      EQU 0x40 ; TIM capture/compare register 4,           Address offset: 0x40 
-TIM_BDTR      EQU 0x44 ; TIM break and dead-time register,         Address offset: 0x44 
-TIM_CCR5      EQU 0x48 ; TIM capture/compare register 5,           Address offset: 0x48 
-TIM_CCR6      EQU 0x4C ; TIM capture/compare register 6,           Address offset: 0x4C 
-TIM_CCMR3     EQU 0x50 ; TIM capture/compare mode register 3,      Address offset: 0x50 
-TIM_DTR2      EQU 0x54 ; TIM deadtime register 2,                  Address offset: 0x54 
-TIM_ECR       EQU 0x58 ; TIM encoder control register,             Address offset: 0x58 
-TIM_TISEL     EQU 0x5C ; TIM Input Selection register,             Address offset: 0x5C 
-TIM_AF1       EQU 0x60 ; TIM alternate function option register 1, Address offset: 0x60 
-TIM_AF2       EQU 0x64 ; TIM alternate function option register 2, Address offset: 0x64 
-TIM_OR        EQU 0x68 ; TIM option register,                      Address offset: 0x68 
-;       uint32_t RESERVED0[220];; Reserved,                               Address offset: 0x6C 
-;DCR;         ; TIM DMA control register,                 Address offset: 0x3DC 
-;DMAR;        ; TIM DMA address for full transfer,        Address offset: 0x3E0 
-;} TIM_TypeDef;
-
-;*
-;  * @brief Universal Synchronous Asynchronous Receiver Transmitter
-;  
-;typedef struct
-;{
-USART_CR1         EQU 0x00 ; USART Control register 1,                 Address offset: 0x00  
-USART_CR2         EQU 0x04 ; USART Control register 2,                 Address offset: 0x04  
-USART_CR3         EQU 0x05 ; USART Control register 3,                 Address offset: 0x08  
-USART_BRR         EQU 0x0C ; USART Baud rate register,                 Address offset: 0x0C  
-USART_GTPR        EQU 0x10 ; USART Guard time and prescaler register,  Address offset: 0x10  
-USART_RTOR        EQU 0x14 ; USART Receiver Timeout register,          Address offset: 0x14  
-USART_RQR         EQU 0x18 ; USART Request register,                   Address offset: 0x18  
-USART_ISR         EQU 0x1C ; USART Interrupt and status register,      Address offset: 0x1C  
-USART_ICR         EQU 0x20 ; USART Interrupt flag Clear register,      Address offset: 0x20  
-USART_RDR         EQU 0x24 ; USART Receive Data register,              Address offset: 0x24  
-USART_TDR         EQU 0x28 ; USART Transmit Data register,             Address offset: 0x28  
-USART_PRESC       EQU 0x2C ; USART Prescaler register,                 Address offset: 0x2C  
-;} USART_TypeDef;
-
-;*
-;  * @brief Universal Serial Bus Full Speed Device
-;  
-
-;typedef struct
-;{
-;  __IO uint16_t EP0R;            ; USB Endpoint 0 register,                Address offset: 0x00 
-;  __IO uint16_t RESERVED0;       ; Reserved 
-;  __IO uint16_t EP1R;            ; USB Endpoint 1 register,                Address offset: 0x04 
-;  __IO uint16_t RESERVED1;       ; Reserved 
-;  __IO uint16_t EP2R;            ; USB Endpoint 2 register,                Address offset: 0x08 
-;  __IO uint16_t RESERVED2;       ; Reserved 
-;  __IO uint16_t EP3R;            ; USB Endpoint 3 register,                Address offset: 0x0C 
-;  __IO uint16_t RESERVED3;       ; Reserved 
-;  __IO uint16_t EP4R;            ; USB Endpoint 4 register,                Address offset: 0x10 
-;  __IO uint16_t RESERVED4;       ; Reserved 
-;  __IO uint16_t EP5R;            ; USB Endpoint 5 register,                Address offset: 0x14 
-;  __IO uint16_t RESERVED5;       ; Reserved 
-;  __IO uint16_t EP6R;            ; USB Endpoint 6 register,                Address offset: 0x18 
-;  __IO uint16_t RESERVED6;       ; Reserved 
-;  __IO uint16_t EP7R;            ; USB Endpoint 7 register,                Address offset: 0x1C 
-;  __IO uint16_t RESERVED7[17];   ; Reserved 
-;  __IO uint16_t CNTR;            ; Control register,                       Address offset: 0x40 
-;  __IO uint16_t RESERVED8;       ; Reserved 
-;  __IO uint16_t ISTR;            ; Interrupt status register,              Address offset: 0x44 
-;  __IO uint16_t RESERVED9;       ; Reserved 
-;  __IO uint16_t FNR;             ; Frame number register,                  Address offset: 0x48 
-;  __IO uint16_t RESERVEDA;       ; Reserved 
-;  __IO uint16_t DADDR;           ; Device address register,                Address offset: 0x4C 
-;  __IO uint16_t RESERVEDB;       ; Reserved 
-;  __IO uint16_t BTABLE;          ; Buffer Table address register,          Address offset: 0x50 
-;  __IO uint16_t RESERVEDC;       ; Reserved 
-;  __IO uint16_t LPMCSR;          ; LPM Control and Status register,        Address offset: 0x54 
-;  __IO uint16_t RESERVEDD;       ; Reserved 
-;  __IO uint16_t BCDR;            ; Battery Charging detector register,     Address offset: 0x58 
-;  __IO uint16_t RESERVEDE;       ; Reserved 
-;} USB_TypeDef;
-
-;*
-;  * @brief VREFBUF
-;  
-
-;typedef struct
-;{
-;CSR;         ; VREFBUF control and status register,         Address offset: 0x00 
-;CCR;         ; VREFBUF calibration and control register,    Address offset: 0x04 
-;} VREFBUF_TypeDef;
-
-;*
-;  * @brief Window WATCHDOG
-;  
-
-;typedef struct
-;{
-;CR;          ; WWDG Control register,       Address offset: 0x00 
-;CFR;         ; WWDG Configuration register, Address offset: 0x04 
-;SR;          ; WWDG Status register,        Address offset: 0x08 
-;} WWDG_TypeDef;
-
-
-;*
-;  * @brief RNG
-;  
-;typedef struct
-;{
-;CR;  ; RNG control register, Address offset: 0x00 
-;SR;  ; RNG status register,  Address offset: 0x04 
-;DR;  ; RNG data register,    Address offset: 0x08 
-;} RNG_TypeDef;
-
-;*
-;  * @brief CORDIC
-;  
-
-;typedef struct
-;{
-;CSR;          ; CORDIC control and status register,        Address offset: 0x00 
-;WDATA;        ; CORDIC argument register,                  Address offset: 0x04 
-;RDATA;        ; CORDIC result register,                    Address offset: 0x08 
-;} CORDIC_TypeDef;
-
-;*
-;  * @brief UCPD
-;  
-
-;typedef struct
-;{
-;CFG1;          ; UCPD configuration register 1,             Address offset: 0x00 
-;CFG2;          ; UCPD configuration register 2,             Address offset: 0x04 
-;RESERVED0;     ; UCPD reserved register,                    Address offset: 0x08 
-;CR;            ; UCPD control register,                     Address offset: 0x0C 
-;IMR;           ; UCPD interrupt mask register,              Address offset: 0x10 
-;SR;            ; UCPD status register,                      Address offset: 0x14 
-;ICR;           ; UCPD interrupt flag clear register         Address offset: 0x18 
-;TX_ORDSET;     ; UCPD Tx ordered set type register,         Address offset: 0x1C 
-;TX_PAYSZ;      ; UCPD Tx payload size register,             Address offset: 0x20 
-;TXDR;          ; UCPD Tx data register,                     Address offset: 0x24 
-;RX_ORDSET;     ; UCPD Rx ordered set type register,         Address offset: 0x28 
-;RX_PAYSZ;      ; UCPD Rx payload size register,             Address offset: 0x2C 
-;RXDR;          ; UCPD Rx data register,                     Address offset: 0x30 
-;RX_ORDEXT1;    ; UCPD Rx ordered set extension 1 register,  Address offset: 0x34 
-;RX_ORDEXT2;    ; UCPD Rx ordered set extension 2 register,  Address offset: 0x38 
-;} UCPD_TypeDef;
-
-
-;*
-;  * @}
-;  
-
-;* @addtogroup Peripheral_memory_map
-;  * @{
-;  
-
-FLASH_BASE            EQU 0x08000000 ; FLASH (up to 128 kB) base address 
-;SRAM1_BASE            (0x20000000UL) ; SRAM1(up to 16 KB) base address 
-;SRAM2_BASE            (0x20004000UL) ; SRAM2(6 KB) base address 
-;CCMSRAM_BASE          (0x10000000UL) ; CCMSRAM(10 KB) base address 
-PERIPH_BASE           EQU 0x40000000 ; Peripheral base address
-
-;SRAM1_BB_BASE         (0x22000000UL) ; SRAM1(16 KB) base address in the bit-band region 
-;SRAM2_BB_BASE         (0x22080000UL) ; SRAM2(6 KB) base address in the bit-band region 
-;CCMSRAM_BB_BASE       (0x220B0000UL) ; CCMSRAM(10 KB) base address in the bit-band region 
-;PERIPH_BB_BASE        (0x42000000UL) ; Peripheral base address in the bit-band region 
-; Legacy defines 
-;SRAM_BASE             SRAM1_BASE
-;SRAM_BB_BASE          SRAM1_BB_BASE
-
-;SRAM1_SIZE_MAX        (0x00004000UL) ; maximum SRAM1 size (up to 16 KBytes) 
-;SRAM2_SIZE            (0x00001800UL) ; SRAM2 size (6 KBytes) 
-;CCMSRAM_SIZE          (0x00002800UL) ; CCMSRAM size (10 KBytes) 
+                                                      
+EXTI1_IRQn                           EQU 7       ; EXTI Line1 Interrupt                                                               
+EXTI2_IRQn                           EQU 8       ; EXTI Line2 Interrupt                                                               
+EXTI3_IRQn                           EQU 9       ; EXTI Line3 Interrupt                                                               
+EXTI4_IRQn                           EQU 10      ; EXTI Line4 Interrupt                                                               
+EXTI9_5_IRQn                         EQU 23      ; External Line[9:5] Interrupts                                                      
+TIM1_CC_IRQn                         EQU 27      ; TIM1 Capture Compare Interrupt                                                     
+TIM2_IRQn                            EQU 28      ; TIM2 global Interrupt                                                              
+TIM3_IRQn                            EQU 29      ; TIM3 global Interrupt                                                              
+TIM4_IRQn                            EQU 30     ; TIM4 global Interrupt                                                              
+TIM8_BRK_IRQn                        EQU 43      ; TIM8 Break, Transition error and Index error Interrupt                             
+TIM8_UP_IRQn                         EQU 44      ; TIM8 Update Interrupt                                                              
+TIM8_TRG_COM_IRQn                    EQU 45      ; TIM8 Trigger, Commutation, Direction change and Index Interrupt                    
+TIM8_CC_IRQn                         EQU 46      ; TIM8 Capture Compare Interrupt                                                     
+ADC_ISR                              EQU 0x00 ; ADC interrupt and status register,             Address offset: 0x00 
+ADC_CR                               EQU 0x08  ; ADC control register,                          Address offset: 0x08 
+ADC_CFGR                             EQU 0x0C  ; ADC configuration register 1,                  Address offset: 0x0C 
+ADC_CFGR2                            EQU 0x10  ; ADC configuration register 2,                  Address offset: 0x10 
+ADC_SMPR1                            EQU 0x14  ; ADC sampling time register 1,                  Address offset: 0x14 
+ADC_SMPR2                            EQU 0x18  ; ADC sampling time register 2,                  Address offset: 0x18 
+ADC_SQR1                             EQU 0x30  ; ADC group regular sequencer register 1,        Address offset: 0x30 
+ADC_SQR2                             EQU 0x34  ; ADC group regular sequencer register 2,        Address offset: 0x34 
+ADC_SQR3                             EQU 0x38  ; ADC group regular sequencer register 3,        Address offset: 0x38 
+ADC_SQR4                             EQU 0x3C  ; ADC group regular sequencer register 4,        Address offset: 0x3C 
+ADC_DR                               EQU 0x40  ; ADC group regular data register,               Address offset: 0x40 
+
+DAC_CR                               EQU 0x00 ; DAC control register,                           Address offset: 0x00 
+DAC_SWTRIGR                          EQU 0x04 ; DAC software trigger register,                           Address offset: 0x04 
+DAC_DHR12R1                          EQU 0x08 ; DAC channel1 12-bit right-aligned data holding register, Address offset: 0x08 
+DAC_DHR12L1                          EQU 0x0C ; DAC channel1 12-bit left aligned data holding register,  Address offset: 0x0C 
+DAC_DHR8R1                           EQU 0x10 ; DAC channel1 8-bit right aligned data holding register,  Address offset: 0x10 
+DAC_DHR12R2                          EQU 0x14 ; DAC channel2 12-bit right aligned data holding register, Address offset: 0x14 
+DAC_DHR12L2                          EQU 0x18 ; DAC channel2 12-bit left aligned data holding register,  Address offset: 0x18 
+DAC_DHR8R2                           EQU 0x1C ; DAC channel2 8-bit right-aligned data holding register,  Address offset: 0x1C 
+DAC_DHR12RD                          EQU 0x20 ; Dual DAC 12-bit right-aligned data holding register,     Address offset: 0x20 
+DAC_DHR12LD                          EQU 0x24 ; DUAL DAC 12-bit left aligned data holding register,      Address offset: 0x24 
+DAC_DHR8RD                           EQU 0x28 ; DUAL DAC 8-bit right aligned data holding register,      Address offset: 0x28 
+DAC_DOR1                             EQU 0x2C ; DAC channel1 data output register,                       Address offset: 0x2C 
+DAC_DOR2                             EQU 0x30 ; DAC channel2 data output register,                       Address offset: 0x30 
+DAC_SR                               EQU 0x34 ; DAC status register,                                     Address offset: 0x34 
+DAC_CCR                              EQU 0x38 ; DAC calibration control register,                        Address offset: 0x38 
+DAC_MCR                              EQU 0x3C ; DAC mode control register,                               Address offset: 0x3C 
+DAC_SHSR1                            EQU 0x40 ; DAC Sample and Hold sample time register 1,              Address offset: 0x40 
+DAC_SHSR2                            EQU 0x44 ; DAC Sample and Hold sample time register 2,              Address offset: 0x44 
+DAC_SHHR                             EQU 0x48 ; DAC Sample and Hold hold time register,                  Address offset: 0x48 
+DAC_SHRR                             EQU 0x4C ; DAC Sample and Hold refresh time register,               Address offset: 0x4C 
+DAC_STR1                             EQU 0x58 ; DAC Sawtooth register,                                   Address offset: 0x58 
+DAC_STR2                             EQU 0x5C ; DAC Sawtooth register,                                   Address offset: 0x5C 
+DAC_STMODR                           EQU 0x60 ; DAC Sawtooth Mode register,                              Address offset: 0x60 
+
+EXTI_IM1                             EQU 0x00; EXTI Interrupt mask register 1,             Address offset: 0x00 
+EXTI_EM1                             EQU 0x04; EXTI Event mask register 1,                 Address offset: 0x04 
+EXTI_RTS1                            EQU 0x08; EXTI Rising trigger selection register 1,   Address offset: 0x08 
+EXTI_FTS1                            EQU 0x0C; EXTI Falling trigger selection register 1,  Address offset: 0x0C 
+EXTI_SWIE1                           EQU 0x10; EXTI Software interrupt event register 1,   Address offset: 0x10 
+EXTI_P1                              EQU 0x14; EXTI Pending register 1,                    Address offset: 0x14 
+EXTI_IM2                             EQU 0x20; EXTI Interrupt mask register 2,             Address offset: 0x20 
+EXTI_EM2                             EQU 0x24; EXTI Event mask register 2,                 Address offset: 0x24 
+EXTI_RTS2                            EQU 0x28; EXTI Rising trigger selection register 2,   Address offset: 0x28 
+EXTI_FTS2                            EQU 0x2C; EXTI Falling trigger selection register 2,  Address offset: 0x2C 
+EXTI_SWIE2                           EQU 0x30; EXTI Software interrupt event register 2,   Address offset: 0x30 
+EXTI_P2                              EQU 0x34; EXTI Pending register 2,                    Address offset: 0x34 
+
+ACR                                  EQU 0x00              ; FLASH access control register,            Address offset: 0x00 
+
+MODER                                EQU 0x00  ; GPIO port mode register, Address offset: 0x00      
+OTYPER                               EQU 0x04  ; GPIO port output type register,        Address offset: 0x04      
+OSPEEDR                              EQU 0x08  ; GPIO port output speed register,       Address offset: 0x08      
+PUPDR                                EQU 0x0C  ; GPIO port pull-up/pull-down register,  Address offset: 0x0C      
+IDR                                  EQU 0x10  ; GPIO port input data register,         Address offset: 0x10      
+ODR                                  EQU 0x14  ; GPIO port output data register, Address offset: 0x14      
+AFRL                                 EQU 0x20 ; GPIO alternate function registers,     Address offset: 0x20-0x24 
+AFRH                                 EQU 0x24 ; GPIO alternate function registers,     Address offset: 0x20-0x24 
+
+I2C_CR1                             EQU 0x00 ; I2C Control register 1,            Address offset: 0x00 
+I2C_CR2                             EQU 0x04 ; I2C Control register 2,            Address offset: 0x04 
+I2C_OAR1                            EQU 0x08 ; I2C Own address 1 register,        Address offset: 0x08 
+I2C_OAR2                            EQU 0x0C ; I2C Own address 2 register,        Address offset: 0x0C 
+I2C_TIMINGR                         EQU 0x10 ; I2C Timing register,               Address offset: 0x10 
+I2C_TIMEOUTR                        EQU 0x14 ; I2C Timeout register,              Address offset: 0x14 
+I2C_ISR                             EQU 0x18 ; I2C Interrupt and status register, Address offset: 0x18 
+I2C_ICR                             EQU 0x1C ; I2C Interrupt clear register,      Address offset: 0x1C 
+I2C_PECR                            EQU 0x20 ; I2C PEC register,                  Address offset: 0x20 
+I2C_RXDR                            EQU 0x24 ; I2C Receive data register,         Address offset: 0x24 
+I2C_TXDR                            EQU 0x28 ; I2C Transmit data register,        Address offset: 0x28 
+
+PWR_C1                              EQU 0x00  ; PWR power control register 1, Address offset: 0x00 
+PWR_C2                              EQU 0x04  ; PWR power control register 2, Address offset: 0x04 
+PWR_C3                              EQU 0x08  ; PWR power control register 3, Address offset: 0x08 
+PWR_C4                              EQU 0x0C  ; PWR power control register 4, Address offset: 0x0C 
+PWR_C5                              EQU 0x80  ; PWR power control register 5, Address offset: 0x80 
+
+RCC_C                               EQU 0x00 ; RCC clock control register, Address offset: 0x00 
+RCC_ICSC                            EQU 0x04 ; RCC internal clock sources calibration register,                         Address offset: 0x04 
+RCC_CFG                             EQU 0x08 ; RCC clock configuration register,                                        Address offset: 0x08 
+RCC_PLLCFG                          EQU 0x0C ; RCC system PLL configuration register,                                   Address offset: 0x0C 
+RCC_CIER                            EQU 0x18 ; RCC clock interrupt enable register,                                     Address offset: 0x18 
+RCC_CIFR                            EQU 0x1C ; RCC clock interrupt flag register,                                       Address offset: 0x1C 
+RCC_CICR                            EQU 0x20 ; RCC clock interrupt clear register,                                      Address offset: 0x20 
+RCC_AHB1RSTR                        EQU 0x28 ; RCC AHB1 peripheral reset register,                                      Address offset: 0x28 
+RCC_AHB2RSTR                        EQU 0x2C ; RCC AHB2 peripheral reset register,                                      Address offset: 0x2C 
+RCC_AHB3RSTR                        EQU 0x30 ; RCC AHB3 peripheral reset register,                                      Address offset: 0x30 
+RCC_APB1RST1                        EQU 0x38 ; RCC APB1 peripheral reset register 1,                                    Address offset: 0x38 
+RCC_APB1RST2                        EQU 0x3C ; RCC APB1 peripheral reset register 2,                                    Address offset: 0x3C 
+RCC_APB2RSTR                        EQU 0x40 ; RCC APB2 peripheral reset register,                                      Address offset: 0x40 
+RCC_AHB1ENR                         EQU 0x48 ; RCC AHB1 peripheral clocks enable register,                              Address offset: 0x48 
+RCC_AHB2EN                          EQU 0x4C ; RCC AHB2 peripheral clocks enable register,                              Address offset: 0x4C 
+RCC_AHB3ENR                         EQU 0x50 ; RCC AHB3 peripheral clocks enable register,                              Address offset: 0x50 
+RCC_APB1EN1                         EQU 0x58 ; RCC APB1 peripheral clocks enable register 1,                            Address offset: 0x58 
+RCC_APB1EN2                         EQU 0x5C ; RCC APB1 peripheral clocks enable register 2,                            Address offset: 0x5C 
+RCC_APB2EN                          EQU 0x60 ; RCC APB2 peripheral clocks enable register,                              Address offset: 0x60 
+RCC_AHB1SMENR                       EQU 0x68 ; RCC AHB1 peripheral clocks enable in sleep and stop modes register,      Address offset: 0x68 
+RCC_AHB2SMENR                       EQU 0x6C ; RCC AHB2 peripheral clocks enable in sleep and stop modes register,      Address offset: 0x6C 
+RCC_AHB3SMENR                       EQU 0x70 ; RCC AHB3 peripheral clocks enable in sleep and stop modes register,      Address offset: 0x70 
+RCC_APB1SMENR1                      EQU 0x78 ; RCC APB1 peripheral clocks enable in sleep mode and stop modes register 1, Address offset: 0x78 
+RCC_APB1SMENR2                      EQU 0x7C ; RCC APB1 peripheral clocks enable in sleep mode and stop modes register 2, Address offset: 0x7C 
+RCC_APB2SMENR                       EQU 0x80 ; RCC APB2 peripheral clocks enable in sleep mode and stop modes register, Address offset: 0x80 
+RCC_CCIP                            EQU 0x88 ; RCC peripherals independent clock configuration register,                Address offset: 0x88 
+RCC_BDCR                            EQU 0x90 ; RCC backup domain control register,                                      Address offset: 0x90 
+RCC_CSR                             EQU 0x94 ; RCC clock control & status register,                                     Address offset: 0x94 
+RCC_CRRCR                           EQU 0x98 ; RCC clock recovery RC register,                                          Address offset: 0x98 
+RCC_CCIP2                           EQU 0x9C ; RCC peripherals independent clock configuration register 2,              Address offset: 0x9C 
+
+SPI_CR1                             EQU 0x00 ; SPI Control register 1, Address offset: 0x00 
+SPI_CR2                             EQU 0x04 ; SPI Control register 2, Address offset: 0x04 
+SPI_SR                              EQU 0x08 ; SPI Status register, Address offset: 0x08 
+SPI_DR                              EQU 0x0C ; SPI data register, Address offset: 0x0C 
+SPI_CRCPR                           EQU 0x10 ; SPI CRC polynomial register, Address offset: 0x10 
+SPI_RXCRCR                          EQU 0x14 ; SPI Rx CRC register, Address offset: 0x14 
+SPI_TXCRCR                          EQU 0x18 ; SPI Tx CRC register, Address offset: 0x18 
+SPI_I2SCFGR                         EQU 0x1C ; SPI_I2S configuration register, Address offset: 0x1C 
+SPI_I2SPR                           EQU 0x20 ; SPI_I2S prescaler register, Address offset: 0x20 
+
+SYSCFG_MEMRMP                       EQU 0x00 ; SYSCFG memory remap register,                        Address offset: 0x00      
+SYSCFG_CFG1                         EQU 0x04 ; SYSCFG configuration register 1,                     Address offset: 0x04      
+SYSCFG_EXTIC1                       EQU 0x08 ; SYSCFG external interrupt configuration registers,   Address offset: 0x08-0x14 
+SYSCFG_EXTIC2                       EQU 0x0C ; SYSCFG external interrupt configuration registers,   Address offset: 0x08-0x14 
+SYSCFG_EXTIC3                       EQU 0x10 ; SYSCFG external interrupt configuration registers,   Address offset: 0x08-0x14 
+SYSCFG_EXTIC4                       EQU 0x14 ; SYSCFG external interrupt configuration registers,   Address offset: 0x08-0x14 
+SYSCFG_SCS                          EQU 0x18 ; SYSCFG CCMSRAM control and status register,          Address offset: 0x18      
+SYSCFG_CFG2                         EQU 0x1C ; SYSCFG configuration register 2,                     Address offset: 0x1C      
+SYSCFG_SWP                          EQU 0x20 ; SYSCFG CCMSRAM write protection register,            Address offset: 0x20      
+SYSCFG_SK                           EQU 0x24 ; SYSCFG CCMSRAM Key Register,                         Address offset: 0x24      
+
+TIM_CR1                             EQU 0x00 ; TIM control register 1, Address offset: 0x00 
+TIM_CR2                             EQU 0x04 ; TIM control register 2, Address offset: 0x04 
+TIM_SMCR                            EQU 0x08 ; TIM slave mode control register, Address offset: 0x08 
+TIM_DIER                            EQU 0x0C ; TIM DMA/interrupt enable register, Address offset: 0x0C 
+TIM_SR                              EQU 0x10 ; TIM status register, Address offset: 0x10 
+TIM_EGR                             EQU 0x14 ; TIM event generation register, Address offset: 0x14 
+TIM_CCMR1                           EQU 0x18 ; TIM capture/compare mode register 1, Address offset: 0x18 
+TIM_CCMR2                           EQU 0x1C ; TIM capture/compare mode register 2, Address offset: 0x1C 
+TIM_CCER                            EQU 0x20 ; TIM capture/compare enable register, Address offset: 0x20 
+TIM_CNT                             EQU 0x24 ; TIM counter register, Address offset: 0x24 
+TIM_PSC                             EQU 0x28 ; TIM prescaler, Address offset: 0x28 
+TIM_ARR                             EQU 0x2C ; TIM auto-reload register, Address offset: 0x2C 
+TIM_RCR                             EQU 0x30 ; TIM repetition counter register,          Address offset: 0x30 
+TIM_CCR1                            EQU 0x34 ; TIM capture/compare register 1,           Address offset: 0x34 
+TIM_CCR2                            EQU 0x38 ; TIM capture/compare register 2,           Address offset: 0x38 
+TIM_CCR3                            EQU 0x3C ; TIM capture/compare register 3,           Address offset: 0x3C 
+TIM_CCR4                            EQU 0x40 ; TIM capture/compare register 4,           Address offset: 0x40 
+TIM_BDTR                            EQU 0x44 ; TIM break and dead-time register,         Address offset: 0x44 
+TIM_CCR5                            EQU 0x48 ; TIM capture/compare register 5,           Address offset: 0x48 
+TIM_CCR6                            EQU 0x4C ; TIM capture/compare register 6,           Address offset: 0x4C 
+TIM_CCMR3                           EQU 0x50 ; TIM capture/compare mode register 3,      Address offset: 0x50 
+TIM_DTR2                            EQU 0x54 ; TIM deadtime register 2,                  Address offset: 0x54 
+TIM_ECR                             EQU 0x58 ; TIM encoder control register,             Address offset: 0x58 
+TIM_TISEL                           EQU 0x5C ; TIM Input Selection register,             Address offset: 0x5C 
+TIM_AF1                             EQU 0x60 ; TIM alternate function option register 1, Address offset: 0x60 
+TIM_AF2                             EQU 0x64 ; TIM alternate function option register 2, Address offset: 0x64 
+TIM_OR                              EQU 0x68 ; TIM option register,                      Address offset: 0x68 
+
+USART_CR1                           EQU 0x00 ; USART Control register 1,                 Address offset: 0x00  
+USART_CR2                           EQU 0x04 ; USART Control register 2,                 Address offset: 0x04  
+USART_CR3                           EQU 0x05 ; USART Control register 3,                 Address offset: 0x08  
+USART_BRR                           EQU 0x0C ; USART Baud rate register,                 Address offset: 0x0C  
+USART_GTPR                          EQU 0x10 ; USART Guard time and prescaler register,  Address offset: 0x10  
+USART_RTOR                          EQU 0x14 ; USART Receiver Timeout register,          Address offset: 0x14  
+USART_RQR                           EQU 0x18 ; USART Request register,                   Address offset: 0x18  
+USART_ISR                           EQU 0x1C ; USART Interrupt and status register,      Address offset: 0x1C  
+USART_ICR                           EQU 0x20 ; USART Interrupt flag Clear register,      Address offset: 0x20  
+USART_RDR                           EQU 0x24 ; USART Receive Data register,              Address offset: 0x24  
+USART_TDR                           EQU 0x28 ; USART Transmit Data register,             Address offset: 0x28  
+USART_PRESC                         EQU 0x2C ; USART Prescaler register,                 Address offset: 0x2C  
+
+FLASH_BASE                          EQU 0x08000000 ; FLASH (up to 128 kB) base address 
+PERIPH_BASE                         EQU 0x40000000 ; Peripheral base address
 
 ;; Peripheral memory map 
-APB1PERIPH_BASE       EQU PERIPH_BASE
-APB2PERIPH_BASE       EQU PERIPH_BASE + 0x00010000
-AHB1PERIPH_BASE       EQU PERIPH_BASE + 0x00020000
-AHB2PERIPH_BASE       EQU PERIPH_BASE + 0x08000000
+APB1PERIPH_BASE                     EQU PERIPH_BASE
+APB2PERIPH_BASE                     EQU PERIPH_BASE + 0x00010000
+AHB1PERIPH_BASE                     EQU PERIPH_BASE + 0x00020000
+AHB2PERIPH_BASE                     EQU PERIPH_BASE + 0x08000000
 
 
 ;; APB1 peripherals 
-TIM2_BASE             EQU APB1PERIPH_BASE + 0x0000
-TIM3_BASE             EQU APB1PERIPH_BASE + 0x0400
-TIM4_BASE             EQU APB1PERIPH_BASE + 0x0800
-;TIM6_BASE             (APB1PERIPH_BASE + 0x1000UL)
-;TIM7_BASE             (APB1PERIPH_BASE + 0x1400UL)
-;CRS_BASE              (APB1PERIPH_BASE + 0x2000UL)
-;TAMP_BASE             (APB1PERIPH_BASE + 0x2400UL)
-;RTC_BASE              (APB1PERIPH_BASE + 0x2800UL)
-;WWDG_BASE             (APB1PERIPH_BASE + 0x2C00UL)
-;IWDG_BASE             (APB1PERIPH_BASE + 0x3000UL)
-SPI2_BASE             EQU APB1PERIPH_BASE + 0x3800
-SPI3_BASE             EQU APB1PERIPH_BASE + 0x3C00
-USART2_BASE           EQU APB1PERIPH_BASE + 0x4400
-USART3_BASE           EQU APB1PERIPH_BASE + 0x4800
-;UART4_BASE            (APB1PERIPH_BASE + 0x4C00UL)
-I2C1_BASE             EQU APB1PERIPH_BASE + 0x5400
-I2C2_BASE             EQU APB1PERIPH_BASE + 0x5800
-;USB_BASE              (APB1PERIPH_BASE + 0x5C00UL)  ; USB_IP Peripheral Registers base address 
-;USB_PMAADDR           (APB1PERIPH_BASE + 0x6000UL)  ; USB_IP Packet Memory Area base address 
-;FDCAN1_BASE           (APB1PERIPH_BASE + 0x6400UL)
-;FDCAN_CONFIG_BASE     (APB1PERIPH_BASE + 0x6500UL)  ; FDCAN configuration registers base address 
-PWR_BASE               EQU APB1PERIPH_BASE + 0x7000
-I2C3_BASE             EQU APB1PERIPH_BASE + 0x7800
-;LPTIM1_BASE           (APB1PERIPH_BASE + 0x7C00UL)
-LPUART1_BASE          EQU APB1PERIPH_BASE + 0x8000
-;UCPD1_BASE            (APB1PERIPH_BASE + 0xA000UL)
-;SRAMCAN_BASE          (APB1PERIPH_BASE + 0xA400UL)
+TIM2_BASE                           EQU APB1PERIPH_BASE + 0x0000
+TIM3_BASE                           EQU APB1PERIPH_BASE + 0x0400
+TIM4_BASE                           EQU APB1PERIPH_BASE + 0x0800
+SPI2_BASE                           EQU APB1PERIPH_BASE + 0x3800
+SPI3_BASE                           EQU APB1PERIPH_BASE + 0x3C00
+USART2_BASE                         EQU APB1PERIPH_BASE + 0x4400
+USART3_BASE                         EQU APB1PERIPH_BASE + 0x4800
+I2C1_BASE                           EQU APB1PERIPH_BASE + 0x5400
+I2C2_BASE                           EQU APB1PERIPH_BASE + 0x5800
+PWR_BASE                            EQU APB1PERIPH_BASE + 0x7000
+I2C3_BASE                           EQU APB1PERIPH_BASE + 0x7800
+LPUART1_BASE                        EQU APB1PERIPH_BASE + 0x8000
 
 ;; APB2 peripherals 
-SYSCFG_BASE            EQU APB2PERIPH_BASE + 0x0000
-;VREFBUF_BASE          (APB2PERIPH_BASE + 0x0030UL)
-;COMP1_BASE            (APB2PERIPH_BASE + 0x0200UL)
-;COMP2_BASE            (APB2PERIPH_BASE + 0x0204UL)
-;COMP3_BASE            (APB2PERIPH_BASE + 0x0208UL)
-;COMP4_BASE            (APB2PERIPH_BASE + 0x020CUL)
-;OPAMP_BASE            (APB2PERIPH_BASE + 0x0300UL)
-;OPAMP1_BASE           (APB2PERIPH_BASE + 0x0300UL)
-;OPAMP2_BASE           (APB2PERIPH_BASE + 0x0304UL)
-;OPAMP3_BASE           (APB2PERIPH_BASE + 0x0308UL)
-
-EXTI_BASE             EQU APB2PERIPH_BASE + 0x0400
-TIM1_BASE             EQU APB2PERIPH_BASE + 0x2C00
-;SPI1_BASE             (APB2PERIPH_BASE + 0x3000UL)
-TIM8_BASE             EQU APB2PERIPH_BASE + 0x3400
-USART1_BASE           EQU APB2PERIPH_BASE + 0x3800
-;TIM15_BASE            (APB2PERIPH_BASE + 0x4000UL)
-;TIM16_BASE            (APB2PERIPH_BASE + 0x4400UL)
-;TIM17_BASE            (APB2PERIPH_BASE + 0x4800UL)
-;SAI1_BASE             (APB2PERIPH_BASE + 0x5400UL)
-;SAI1_Block_A_BASE     (SAI1_BASE + 0x0004UL)
-;SAI1_Block_B_BASE     (SAI1_BASE + 0x0024UL)
+SYSCFG_BASE                         EQU APB2PERIPH_BASE + 0x0000
+EXTI_BASE                           EQU APB2PERIPH_BASE + 0x0400
+TIM1_BASE                           EQU APB2PERIPH_BASE + 0x2C00
+TIM8_BASE                           EQU APB2PERIPH_BASE + 0x3400
+USART1_BASE                         EQU APB2PERIPH_BASE + 0x3800
 
 ;; AHB1 peripherals 
-;DMA1_BASE             (AHB1PERIPH_BASE)
-;DMA2_BASE             (AHB1PERIPH_BASE + 0x0400UL)
-;DMAMUX1_BASE          (AHB1PERIPH_BASE + 0x0800UL)
-;CORDIC_BASE           (AHB1PERIPH_BASE + 0x0C00UL)
-RCC_BASE              EQU AHB1PERIPH_BASE + 0x1000
-;FMAC_BASE             (AHB1PERIPH_BASE + 0x1400UL)
-FLASH_R_BASE          EQU AHB1PERIPH_BASE + 0x2000
-;CRC_BASE              (AHB1PERIPH_BASE + 0x3000UL)
-
-;DMA1_Channel1_BASE    (DMA1_BASE + 0x0008UL)
-;DMA1_Channel2_BASE    (DMA1_BASE + 0x001CUL)
-;DMA1_Channel3_BASE    (DMA1_BASE + 0x0030UL)
-;DMA1_Channel4_BASE    (DMA1_BASE + 0x0044UL)
-;DMA1_Channel5_BASE    (DMA1_BASE + 0x0058UL)
-;DMA1_Channel6_BASE    (DMA1_BASE + 0x006CUL)
-
-;DMA2_Channel1_BASE    (DMA2_BASE + 0x0008UL)
-;DMA2_Channel2_BASE    (DMA2_BASE + 0x001CUL)
-;DMA2_Channel3_BASE    (DMA2_BASE + 0x0030UL)
-;DMA2_Channel4_BASE    (DMA2_BASE + 0x0044UL)
-;DMA2_Channel5_BASE    (DMA2_BASE + 0x0058UL)
-;DMA2_Channel6_BASE    (DMA2_BASE + 0x006CUL)
-
-;DMAMUX1_Channel0_BASE    (DMAMUX1_BASE)
-;DMAMUX1_Channel1_BASE    (DMAMUX1_BASE + 0x0004UL)
-;DMAMUX1_Channel2_BASE    (DMAMUX1_BASE + 0x0008UL)
-;DMAMUX1_Channel3_BASE    (DMAMUX1_BASE + 0x000CUL)
-;DMAMUX1_Channel4_BASE    (DMAMUX1_BASE + 0x0010UL)
-;DMAMUX1_Channel5_BASE    (DMAMUX1_BASE + 0x0014UL)
-;DMAMUX1_Channel6_BASE    (DMAMUX1_BASE + 0x0020UL)
-;DMAMUX1_Channel7_BASE    (DMAMUX1_BASE + 0x0024UL)
-;DMAMUX1_Channel8_BASE    (DMAMUX1_BASE + 0x0028UL)
-;DMAMUX1_Channel9_BASE    (DMAMUX1_BASE + 0x002CUL)
-;DMAMUX1_Channel10_BASE   (DMAMUX1_BASE + 0x0030UL)
-;DMAMUX1_Channel11_BASE   (DMAMUX1_BASE + 0x0034UL)
-;DMAMUX1_RequestGenerator0_BASE  (DMAMUX1_BASE + 0x0100UL)
-;DMAMUX1_RequestGenerator1_BASE  (DMAMUX1_BASE + 0x0104UL)
-;DMAMUX1_RequestGenerator2_BASE  (DMAMUX1_BASE + 0x0108UL)
-;DMAMUX1_RequestGenerator3_BASE  (DMAMUX1_BASE + 0x010CUL)
-
-;DMAMUX1_ChannelStatus_BASE      (DMAMUX1_BASE + 0x0080UL)
-;DMAMUX1_RequestGenStatus_BASE   (DMAMUX1_BASE + 0x0140UL)
+RCC_BASE                            EQU AHB1PERIPH_BASE + 0x1000
 
 ;; AHB2 peripherals 
-GPIOA_BASE            EQU AHB2PERIPH_BASE + 0x0000
-GPIOB_BASE            EQU AHB2PERIPH_BASE + 0x0400
-GPIOC_BASE            EQU AHB2PERIPH_BASE + 0x0800
-GPIOD_BASE            EQU AHB2PERIPH_BASE + 0x0C00
-GPIOE_BASE            EQU AHB2PERIPH_BASE + 0x1000
-GPIOF_BASE            EQU AHB2PERIPH_BASE + 0x1400
-GPIOG_BASE            EQU AHB2PERIPH_BASE + 0x1800
+GPIOA_BASE                          EQU AHB2PERIPH_BASE + 0x0000
+GPIOB_BASE                          EQU AHB2PERIPH_BASE + 0x0400
+GPIOC_BASE                          EQU AHB2PERIPH_BASE + 0x0800
+GPIOD_BASE                          EQU AHB2PERIPH_BASE + 0x0C00
+GPIOE_BASE                          EQU AHB2PERIPH_BASE + 0x1000
+GPIOF_BASE                          EQU AHB2PERIPH_BASE + 0x1400
+GPIOG_BASE                          EQU AHB2PERIPH_BASE + 0x1800
 
-ADC1_BASE             EQU AHB2PERIPH_BASE + 0x08000000
-ADC2_BASE             EQU AHB2PERIPH_BASE + 0x08000100
-ADC12_COMMON_BASE     EQU AHB2PERIPH_BASE + 0x08000300
+ADC1_BASE                           EQU AHB2PERIPH_BASE + 0x08000000
+ADC2_BASE                           EQU AHB2PERIPH_BASE + 0x08000100
+ADC12_COMMON_BASE                   EQU AHB2PERIPH_BASE + 0x08000300
 
-DAC_BASE              EQU AHB2PERIPH_BASE + 0x08000800
-DAC1_BASE             EQU AHB2PERIPH_BASE + 0x08000800
-DAC3_BASE             EQU AHB2PERIPH_BASE + 0x08001000
-
-;RNG_BASE              (AHB2PERIPH_BASE + 0x08060800UL)
-; Debug MCU registers base address 
-;DBGMCU_BASE           (0xE0042000UL)
-
-;PACKAGE_BASE          (0x1FFF7500UL)        ; Package data register base address     
-;UID_BASE              (0x1FFF7590UL)        ; Unique device ID register base address 
-;FLASHSIZE_BASE        (0x1FFF75E0UL)        ; Flash size data register base address  
-;*
-;  * @}
-;  
-
-;* @addtogroup Peripheral_declaration
-;  * @{
-;  
-;TIM2                ((TIM_TypeDef *) TIM2_BASE)
-;TIM3                ((TIM_TypeDef *) TIM3_BASE)
-;TIM4                ((TIM_TypeDef *) TIM4_BASE)
-;TIM6                ((TIM_TypeDef *) TIM6_BASE)
-;TIM7                ((TIM_TypeDef *) TIM7_BASE)
-;CRS                 ((CRS_TypeDef *) CRS_BASE)
-;TAMP                ((TAMP_TypeDef *) TAMP_BASE)
-;RTC                 ((RTC_TypeDef *) RTC_BASE)
-;WWDG                ((WWDG_TypeDef *) WWDG_BASE)
-;IWDG                ((IWDG_TypeDef *) IWDG_BASE)
-;SPI2                ((SPI_TypeDef *) SPI2_BASE)
-;SPI3                ((SPI_TypeDef *) SPI3_BASE)
-;USART2              ((USART_TypeDef *) USART2_BASE)
-;USART3              ((USART_TypeDef *) USART3_BASE)
-;UART4               ((USART_TypeDef *) UART4_BASE)
-;I2C1                ((I2C_TypeDef *) I2C1_BASE)
-;I2C2                ((I2C_TypeDef *) I2C2_BASE)
-;USB                 ((USB_TypeDef *) USB_BASE)
-;FDCAN1              ((FDCAN_GlobalTypeDef *) FDCAN1_BASE)
-;FDCAN_CONFIG        ((FDCAN_Config_TypeDef *) FDCAN_CONFIG_BASE)
-;PWR                 ((PWR_TypeDef *) PWR_BASE)
-;I2C3                ((I2C_TypeDef *) I2C3_BASE)
-;LPTIM1              ((LPTIM_TypeDef *) LPTIM1_BASE)
-;LPUART1             ((USART_TypeDef *) LPUART1_BASE)
-;UCPD1              ((UCPD_TypeDef *) UCPD1_BASE)
-
-;SYSCFG              ((SYSCFG_TypeDef *) SYSCFG_BASE)
-;VREFBUF             ((VREFBUF_TypeDef *) VREFBUF_BASE)
-;COMP1               ((COMP_TypeDef *) COMP1_BASE)
-;COMP2               ((COMP_TypeDef *) COMP2_BASE)
-;COMP3               ((COMP_TypeDef *) COMP3_BASE)
-;COMP4               ((COMP_TypeDef *) COMP4_BASE)
-
-;OPAMP               ((OPAMP_TypeDef *) OPAMP_BASE)
-;OPAMP1              ((OPAMP_TypeDef *) OPAMP1_BASE)
-;OPAMP2              ((OPAMP_TypeDef *) OPAMP2_BASE)
-;OPAMP3              ((OPAMP_TypeDef *) OPAMP3_BASE)
-
-;EXTI                ((EXTI_TypeDef *) EXTI_BASE)
-;TIM1                ((TIM_TypeDef *) TIM1_BASE)
-;SPI1                ((SPI_TypeDef *) SPI1_BASE)
-;TIM8                ((TIM_TypeDef *) TIM8_BASE)
-;USART1              ((USART_TypeDef *) USART1_BASE)
-;TIM15               ((TIM_TypeDef *) TIM15_BASE)
-;TIM16               ((TIM_TypeDef *) TIM16_BASE)
-;TIM17               ((TIM_TypeDef *) TIM17_BASE)
-;SAI1                ((SAI_TypeDef *) SAI1_BASE)
-;SAI1_Block_A        ((SAI_Block_TypeDef *)SAI1_Block_A_BASE)
-;SAI1_Block_B        ((SAI_Block_TypeDef *)SAI1_Block_B_BASE)
-;DMA1                ((DMA_TypeDef *) DMA1_BASE)
-;DMA2                ((DMA_TypeDef *) DMA2_BASE)
-;DMAMUX1             ((DMAMUX_Channel_TypeDef *) DMAMUX1_BASE)
-;CORDIC              ((CORDIC_TypeDef *) CORDIC_BASE)
-;RCC                 ((RCC_TypeDef *) RCC_BASE)
-;FMAC                ((FMAC_TypeDef *) FMAC_BASE)
-;FLASH               ((FLASH_TypeDef *) FLASH_R_BASE)
-;CRC                 ((CRC_TypeDef *) CRC_BASE)
-
-;GPIOA               ((GPIO_TypeDef *) GPIOA_BASE)
-;GPIOB               ((GPIO_TypeDef *) GPIOB_BASE)
-;GPIOC               ((GPIO_TypeDef *) GPIOC_BASE)
-;GPIOD               ((GPIO_TypeDef *) GPIOD_BASE)
-;GPIOE               ((GPIO_TypeDef *) GPIOE_BASE)
-;GPIOF               ((GPIO_TypeDef *) GPIOF_BASE)
-;GPIOG               ((GPIO_TypeDef *) GPIOG_BASE)
-;ADC1                ((ADC_TypeDef *) ADC1_BASE)
-;ADC2                ((ADC_TypeDef *) ADC2_BASE)
-;ADC12_COMMON        ((ADC_Common_TypeDef *) ADC12_COMMON_BASE)
-;DAC                 ((DAC_TypeDef *) DAC_BASE)
-;DAC1                ((DAC_TypeDef *) DAC1_BASE)
-;DAC3                ((DAC_TypeDef *) DAC3_BASE)
-;RNG                 ((RNG_TypeDef *) RNG_BASE)
-
-;DMA1_Channel1       ((DMA_Channel_TypeDef *) DMA1_Channel1_BASE)
-;DMA1_Channel2       ((DMA_Channel_TypeDef *) DMA1_Channel2_BASE)
-;DMA1_Channel3       ((DMA_Channel_TypeDef *) DMA1_Channel3_BASE)
-;DMA1_Channel4       ((DMA_Channel_TypeDef *) DMA1_Channel4_BASE)
-;DMA1_Channel5       ((DMA_Channel_TypeDef *) DMA1_Channel5_BASE)
-;DMA1_Channel6       ((DMA_Channel_TypeDef *) DMA1_Channel6_BASE)
-
-;DMA2_Channel1       ((DMA_Channel_TypeDef *) DMA2_Channel1_BASE)
-;DMA2_Channel2       ((DMA_Channel_TypeDef *) DMA2_Channel2_BASE)
-;DMA2_Channel3       ((DMA_Channel_TypeDef *) DMA2_Channel3_BASE)
-;DMA2_Channel4       ((DMA_Channel_TypeDef *) DMA2_Channel4_BASE)
-;DMA2_Channel5       ((DMA_Channel_TypeDef *) DMA2_Channel5_BASE)
-;DMA2_Channel6       ((DMA_Channel_TypeDef *) DMA2_Channel6_BASE)
-
-;DMAMUX1_Channel0    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel0_BASE)
-;DMAMUX1_Channel1    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel1_BASE)
-;DMAMUX1_Channel2    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel2_BASE)
-;DMAMUX1_Channel3    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel3_BASE)
-;DMAMUX1_Channel4    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel4_BASE)
-;DMAMUX1_Channel5    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel5_BASE)
-;DMAMUX1_Channel6    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel6_BASE)
-;DMAMUX1_Channel7    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel7_BASE)
-;DMAMUX1_Channel8    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel8_BASE)
-;DMAMUX1_Channel9    ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel9_BASE)
-;DMAMUX1_Channel10   ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel10_BASE)
-;DMAMUX1_Channel11   ((DMAMUX_Channel_TypeDef *) DMAMUX1_Channel11_BASE)
-
-;DMAMUX1_RequestGenerator0  ((DMAMUX_RequestGen_TypeDef *) DMAMUX1_RequestGenerator0_BASE)
-;DMAMUX1_RequestGenerator1  ((DMAMUX_RequestGen_TypeDef *) DMAMUX1_RequestGenerator1_BASE)
-;DMAMUX1_RequestGenerator2  ((DMAMUX_RequestGen_TypeDef *) DMAMUX1_RequestGenerator2_BASE)
-;DMAMUX1_RequestGenerator3  ((DMAMUX_RequestGen_TypeDef *) DMAMUX1_RequestGenerator3_BASE)
-
-;DMAMUX1_ChannelStatus      ((DMAMUX_ChannelStatus_TypeDef *) DMAMUX1_ChannelStatus_BASE)
-;DMAMUX1_RequestGenStatus   ((DMAMUX_RequestGenStatus_TypeDef *) DMAMUX1_RequestGenStatus_BASE)
-
-
-
-;DBGMCU              ((DBGMCU_TypeDef *) DBGMCU_BASE)
-
-;*
-;  * @}
-;  
-
-;* @addtogroup Exported_constants
-;  * @{
-;  
-
-;  * @addtogroup Hardware_Constant_Definition
-;    * @{
-;    
-;LSI_STARTUP_TIME 130U ; LSI Maximum startup time in us 
-
-;  *
-;    * @}
-;    
-
-;* @addtogroup Peripheral_Registers_Bits_Definition
-;  * @{
-;  
-
-;****************************************************************************
-;                         Peripheral Registers_Bits_Definition               
-;****************************************************************************
-
-;****************************************************************************
-;                                                                            
-;                        Analog to Digital Converter                         
-;                                                                            
-;****************************************************************************
-
-;
-; * @brief Specific device feature definitions (not present on all devices in the STM32G4 serie)
-; 
-;ADC_MULTIMODE_SUPPORT                          ; ADC feature available only on specific devices: multimode available on devices with several ADC instances 
+DAC_BASE                            EQU AHB2PERIPH_BASE + 0x08000800
+DAC1_BASE                           EQU AHB2PERIPH_BASE + 0x08000800
+DAC3_BASE                           EQU AHB2PERIPH_BASE + 0x08001000
 
 ;*******************  Bit definition for ADC_ISR register  ******************
 ADC_ISR_ADRDY_Pos              EQU 0
@@ -1354,41 +379,6 @@ ADC_ISR_JQOVF_Pos              EQU 10
 ADC_ISR_JQOVF_Msk              EQU 0x1 << ADC_ISR_JQOVF_Pos            ; 0x00000400 
 ADC_ISR_JQOVF                  EQU ADC_ISR_JQOVF_Msk                       ; ADC group injected contexts queue overflow flag 
 
-;*******************  Bit definition for ADC_IER register  ******************
-;ADC_IER_ADRDYIE_Pos            (0
-;ADC_IER_ADRDYIE_Msk            (0x1 << ADC_IER_ADRDYIE_Pos          ; 0x00000001 
-;ADC_IER_ADRDYIE                ADC_IER_ADRDYIE_Msk                     ; ADC ready interrupt 
-;ADC_IER_EOSMPIE_Pos            (1
-;ADC_IER_EOSMPIE_Msk            (0x1 << ADC_IER_EOSMPIE_Pos          ; 0x00000002 
-;ADC_IER_EOSMPIE                ADC_IER_EOSMPIE_Msk                     ; ADC group regular end of sampling interrupt 
-;ADC_IER_EOCIE_Pos              (2
-;ADC_IER_EOCIE_Msk              (0x1 << ADC_IER_EOCIE_Pos            ; 0x00000004 
-;ADC_IER_EOCIE                  ADC_IER_EOCIE_Msk                       ; ADC group regular end of unitary conversion interrupt 
-;ADC_IER_EOSIE_Pos              (3
-;ADC_IER_EOSIE_Msk              (0x1 << ADC_IER_EOSIE_Pos            ; 0x00000008 
-;ADC_IER_EOSIE                  ADC_IER_EOSIE_Msk                       ; ADC group regular end of sequence conversions interrupt 
-;ADC_IER_OVRIE_Pos              (4
-;ADC_IER_OVRIE_Msk              (0x1 << ADC_IER_OVRIE_Pos            ; 0x00000010 
-;ADC_IER_OVRIE                  ADC_IER_OVRIE_Msk                       ; ADC group regular overrun interrupt 
-;ADC_IER_JEOCIE_Pos             (5
-;ADC_IER_JEOCIE_Msk             (0x1 << ADC_IER_JEOCIE_Pos           ; 0x00000020 
-;ADC_IER_JEOCIE                 ADC_IER_JEOCIE_Msk                      ; ADC group injected end of unitary conversion interrupt 
-;ADC_IER_JEOSIE_Pos             (6
-;ADC_IER_JEOSIE_Msk             (0x1 << ADC_IER_JEOSIE_Pos           ; 0x00000040 
-;ADC_IER_JEOSIE                 ADC_IER_JEOSIE_Msk                      ; ADC group injected end of sequence conversions interrupt 
-;ADC_IER_AWD1IE_Pos             (7
-;ADC_IER_AWD1IE_Msk             (0x1 << ADC_IER_AWD1IE_Pos           ; 0x00000080 
-;ADC_IER_AWD1IE                 ADC_IER_AWD1IE_Msk                      ; ADC analog watchdog 1 interrupt 
-;ADC_IER_AWD2IE_Pos             (8
-;ADC_IER_AWD2IE_Msk             (0x1 << ADC_IER_AWD2IE_Pos           ; 0x00000100 
-;ADC_IER_AWD2IE                 ADC_IER_AWD2IE_Msk                      ; ADC analog watchdog 2 interrupt 
-;ADC_IER_AWD3IE_Pos             (9
-;ADC_IER_AWD3IE_Msk             (0x1 << ADC_IER_AWD3IE_Pos           ; 0x00000200 
-;ADC_IER_AWD3IE                 ADC_IER_AWD3IE_Msk                      ; ADC analog watchdog 3 interrupt 
-;ADC_IER_JQOVFIE_Pos            (10
-;ADC_IER_JQOVFIE_Msk            (0x1 << ADC_IER_JQOVFIE_Pos          ; 0x00000400 
-;ADC_IER_JQOVFIE                ADC_IER_JQOVFIE_Msk                     ; ADC group injected contexts queue overflow interrupt 
-
 ;*******************  Bit definition for ADC_CR register  *******************
 ADC_CR_ADEN_Pos                EQU 0
 ADC_CR_ADEN_Msk                EQU 0x1 << ADC_CR_ADEN_Pos              ; 0x00000001 
@@ -1422,132 +412,23 @@ ADC_CR_ADCAL_Msk               EQU 0x1 << ADC_CR_ADCAL_Pos             ; 0x80000
 ADC_CR_ADCAL                   EQU ADC_CR_ADCAL_Msk                        ; ADC calibration 
 
 ;*******************  Bit definition for ADC_CFGR register  *****************
-;ADC_CFGR_DMAEN_Pos             (0
-;ADC_CFGR_DMAEN_Msk             (0x1 << ADC_CFGR_DMAEN_Pos           ; 0x00000001 
-;ADC_CFGR_DMAEN                 ADC_CFGR_DMAEN_Msk                      ; ADC DMA transfer enable 
-;ADC_CFGR_DMACFG_Pos            (1
-;ADC_CFGR_DMACFG_Msk            (0x1 << ADC_CFGR_DMACFG_Pos          ; 0x00000002 
-;ADC_CFGR_DMACFG                ADC_CFGR_DMACFG_Msk                     ; ADC DMA transfer configuration 
-
-;ADC_CFGR_RES_Pos               (3
-;ADC_CFGR_RES_Msk               (0x3UL << ADC_CFGR_RES_Pos             ; 0x00000018 
-;ADC_CFGR_RES                   ADC_CFGR_RES_Msk                        ; ADC data resolution 
-;ADC_CFGR_RES_0                 (0x1 << ADC_CFGR_RES_Pos             ; 0x00000008 
-;ADC_CFGR_RES_1                 (0x2UL << ADC_CFGR_RES_Pos             ; 0x00000010 
-
-;ADC_CFGR_EXTSEL_Pos            (5
-;ADC_CFGR_EXTSEL_Msk            (0x1FUL << ADC_CFGR_EXTSEL_Pos         ; 0x000003E0 
-;ADC_CFGR_EXTSEL                ADC_CFGR_EXTSEL_Msk                     ; ADC group regular external trigger source 
-;ADC_CFGR_EXTSEL_0              (0x1 << ADC_CFGR_EXTSEL_Pos          ; 0x00000020 
-;ADC_CFGR_EXTSEL_1              (0x2UL << ADC_CFGR_EXTSEL_Pos          ; 0x00000040 
-;ADC_CFGR_EXTSEL_2              (0x4UL << ADC_CFGR_EXTSEL_Pos          ; 0x00000080 
-;ADC_CFGR_EXTSEL_3              (0x8UL << ADC_CFGR_EXTSEL_Pos          ; 0x00000100 
-;ADC_CFGR_EXTSEL_4              (0x10UL << ADC_CFGR_EXTSEL_Pos         ; 0x00000200 
-
 ADC_CFGR_EXTEN_Pos             EQU 10
 ADC_CFGR_EXTEN_Msk             EQU 0x3 << ADC_CFGR_EXTEN_Pos           ; 0x00000C00 
 ADC_CFGR_EXTEN                 EQU ADC_CFGR_EXTEN_Msk                      ; ADC group regular external trigger polarity 
 ADC_CFGR_EXTEN_0               EQU 0x1 << ADC_CFGR_EXTEN_Pos           ; 0x00000400 
 ADC_CFGR_EXTEN_1               EQU 0x2 << ADC_CFGR_EXTEN_Pos           ; 0x00000800 
 
-;ADC_CFGR_OVRMOD_Pos            (12
-;ADC_CFGR_OVRMOD_Msk            (0x1 << ADC_CFGR_OVRMOD_Pos          ; 0x00001000 
-;ADC_CFGR_OVRMOD                ADC_CFGR_OVRMOD_Msk                     ; ADC group regular overrun configuration 
 ADC_CFGR_CONT_Pos              EQU 13
 ADC_CFGR_CONT_Msk              EQU 0x1 << ADC_CFGR_CONT_Pos            ; 0x00002000 
 ADC_CFGR_CONT                  EQU ADC_CFGR_CONT_Msk                       ; ADC group regular continuous conversion mode 
 ADC_CFGR_AUTDLY_Pos            EQU 14
 ADC_CFGR_AUTDLY_Msk            EQU 0x1 << ADC_CFGR_AUTDLY_Pos          ; 0x00004000 
 ADC_CFGR_AUTDLY                EQU ADC_CFGR_AUTDLY_Msk                     ; ADC low power auto wait 
-;ADC_CFGR_ALIGN_Pos             (15
-;ADC_CFGR_ALIGN_Msk             (0x1 << ADC_CFGR_ALIGN_Pos           ; 0x00008000 
-;ADC_CFGR_ALIGN                 ADC_CFGR_ALIGN_Msk                      ; ADC data alignement 
-;ADC_CFGR_DISCEN_Pos            (16
-;ADC_CFGR_DISCEN_Msk            (0x1 << ADC_CFGR_DISCEN_Pos          ; 0x00010000 
-;ADC_CFGR_DISCEN                ADC_CFGR_DISCEN_Msk                     ; ADC group regular sequencer discontinuous mode 
-
-;ADC_CFGR_DISCNUM_Pos           (17
-;ADC_CFGR_DISCNUM_Msk           (0x7UL << ADC_CFGR_DISCNUM_Pos         ; 0x000E0000 
-;ADC_CFGR_DISCNUM               ADC_CFGR_DISCNUM_Msk                    ; ADC group regular sequencer discontinuous number of ranks 
-;ADC_CFGR_DISCNUM_0             (0x1 << ADC_CFGR_DISCNUM_Pos         ; 0x00020000 
-;ADC_CFGR_DISCNUM_1             (0x2UL << ADC_CFGR_DISCNUM_Pos         ; 0x00040000 
-;ADC_CFGR_DISCNUM_2             (0x4UL << ADC_CFGR_DISCNUM_Pos         ; 0x00080000 
-
-;ADC_CFGR_JDISCEN_Pos           (20
-;ADC_CFGR_JDISCEN_Msk           (0x1 << ADC_CFGR_JDISCEN_Pos         ; 0x00100000 
-;ADC_CFGR_JDISCEN               ADC_CFGR_JDISCEN_Msk                    ; ADC group injected sequencer discontinuous mode 
-;ADC_CFGR_JQM_Pos               (21
-;ADC_CFGR_JQM_Msk               (0x1 << ADC_CFGR_JQM_Pos             ; 0x00200000 
-;ADC_CFGR_JQM                   ADC_CFGR_JQM_Msk                        ; ADC group injected contexts queue mode 
-;ADC_CFGR_AWD1SGL_Pos           (22
-;ADC_CFGR_AWD1SGL_Msk           (0x1 << ADC_CFGR_AWD1SGL_Pos         ; 0x00400000 
-;ADC_CFGR_AWD1SGL               ADC_CFGR_AWD1SGL_Msk                    ; ADC analog watchdog 1 monitoring a single channel or all channels 
-;ADC_CFGR_AWD1EN_Pos            (23
-;ADC_CFGR_AWD1EN_Msk            (0x1 << ADC_CFGR_AWD1EN_Pos          ; 0x00800000 
-;ADC_CFGR_AWD1EN                ADC_CFGR_AWD1EN_Msk                     ; ADC analog watchdog 1 enable on scope ADC group regular 
-;ADC_CFGR_JAWD1EN_Pos           (24
-;ADC_CFGR_JAWD1EN_Msk           (0x1 << ADC_CFGR_JAWD1EN_Pos         ; 0x01000000 
-;ADC_CFGR_JAWD1EN               ADC_CFGR_JAWD1EN_Msk                    ; ADC analog watchdog 1 enable on scope ADC group injected 
-;ADC_CFGR_JAUTO_Pos             (25
-;ADC_CFGR_JAUTO_Msk             (0x1 << ADC_CFGR_JAUTO_Pos           ; 0x02000000 
-;ADC_CFGR_JAUTO                 ADC_CFGR_JAUTO_Msk                      ; ADC group injected automatic trigger mode 
-
-;ADC_CFGR_AWD1CH_Pos            (26
-;ADC_CFGR_AWD1CH_Msk            (0x1FUL << ADC_CFGR_AWD1CH_Pos         ; 0x7C000000 
-;ADC_CFGR_AWD1CH                ADC_CFGR_AWD1CH_Msk                     ; ADC analog watchdog 1 monitored channel selection 
-;ADC_CFGR_AWD1CH_0              (0x01UL << ADC_CFGR_AWD1CH_Pos         ; 0x04000000 
-;ADC_CFGR_AWD1CH_1              (0x02UL << ADC_CFGR_AWD1CH_Pos         ; 0x08000000 
-;ADC_CFGR_AWD1CH_2              (0x04UL << ADC_CFGR_AWD1CH_Pos         ; 0x10000000 
-;ADC_CFGR_AWD1CH_3              (0x08UL << ADC_CFGR_AWD1CH_Pos         ; 0x20000000 
-;ADC_CFGR_AWD1CH_4              (0x10UL << ADC_CFGR_AWD1CH_Pos         ; 0x40000000 
-
-;ADC_CFGR_JQDIS_Pos             (31
-;ADC_CFGR_JQDIS_Msk             (0x1 << ADC_CFGR_JQDIS_Pos           ; 0x80000000 
-;ADC_CFGR_JQDIS                 ADC_CFGR_JQDIS_Msk                      ; ADC group injected contexts queue disable 
 
 ;*******************  Bit definition for ADC_CFGR2 register  ****************
-;ADC_CFGR2_ROVSE_Pos            (0
-;ADC_CFGR2_ROVSE_Msk            (0x1 << ADC_CFGR2_ROVSE_Pos          ; 0x00000001 
-;ADC_CFGR2_ROVSE                ADC_CFGR2_ROVSE_Msk                     ; ADC oversampler enable on scope ADC group regular 
-;ADC_CFGR2_JOVSE_Pos            (1
-;ADC_CFGR2_JOVSE_Msk            (0x1 << ADC_CFGR2_JOVSE_Pos          ; 0x00000002 
-;ADC_CFGR2_JOVSE                ADC_CFGR2_JOVSE_Msk                     ; ADC oversampler enable on scope ADC group injected 
-
-;ADC_CFGR2_OVSR_Pos             (2
-;ADC_CFGR2_OVSR_Msk             (0x7UL << ADC_CFGR2_OVSR_Pos           ; 0x0000001C 
-;ADC_CFGR2_OVSR                 ADC_CFGR2_OVSR_Msk                      ; ADC oversampling ratio 
-;ADC_CFGR2_OVSR_0               (0x1 << ADC_CFGR2_OVSR_Pos           ; 0x00000004 
-;ADC_CFGR2_OVSR_1               (0x2UL << ADC_CFGR2_OVSR_Pos           ; 0x00000008 
-;ADC_CFGR2_OVSR_2               (0x4UL << ADC_CFGR2_OVSR_Pos           ; 0x00000010 
-
-;ADC_CFGR2_OVSS_Pos             (5
-;ADC_CFGR2_OVSS_Msk             (0xFUL << ADC_CFGR2_OVSS_Pos           ; 0x000001E0 
-;ADC_CFGR2_OVSS                 ADC_CFGR2_OVSS_Msk                      ; ADC oversampling shift 
-;ADC_CFGR2_OVSS_0               (0x1 << ADC_CFGR2_OVSS_Pos           ; 0x00000020 
-;ADC_CFGR2_OVSS_1               (0x2UL << ADC_CFGR2_OVSS_Pos           ; 0x00000040 
-;ADC_CFGR2_OVSS_2               (0x4UL << ADC_CFGR2_OVSS_Pos           ; 0x00000080 
-;ADC_CFGR2_OVSS_3               (0x8UL << ADC_CFGR2_OVSS_Pos           ; 0x00000100 
-
-;ADC_CFGR2_TROVS_Pos            (9
-;ADC_CFGR2_TROVS_Msk            (0x1 << ADC_CFGR2_TROVS_Pos          ; 0x00000200 
-;ADC_CFGR2_TROVS                ADC_CFGR2_TROVS_Msk                     ; ADC oversampling discontinuous mode (triggered mode) for ADC group regular 
-;ADC_CFGR2_ROVSM_Pos            (10
-;ADC_CFGR2_ROVSM_Msk            (0x1 << ADC_CFGR2_ROVSM_Pos          ; 0x00000400 
-;ADC_CFGR2_ROVSM                ADC_CFGR2_ROVSM_Msk                     ; ADC oversampling mode managing interlaced conversions of ADC group regular and group injected 
-
-;ADC_CFGR2_GCOMP_Pos            (16
-;ADC_CFGR2_GCOMP_Msk            (0x1 << ADC_CFGR2_GCOMP_Pos          ; 0x00010000 
-;ADC_CFGR2_GCOMP                ADC_CFGR2_GCOMP_Msk                     ; ADC Gain Compensation mode 
-
 ADC_CFGR2_SWTRIG_Pos           EQU 25
 ADC_CFGR2_SWTRIG_Msk           EQU 0x1 << ADC_CFGR2_SWTRIG_Pos         ; 0x02000000 
 ADC_CFGR2_SWTRIG               EQU ADC_CFGR2_SWTRIG_Msk                    ; ADC Software Trigger Bit for Sample time control trigger mode 
-;ADC_CFGR2_BULB_Pos             (26
-;ADC_CFGR2_BULB_Msk             (0x1 << ADC_CFGR2_BULB_Pos           ; 0x04000000 
-;ADC_CFGR2_BULB                 ADC_CFGR2_BULB_Msk                      ; ADC Bulb sampling mode 
-;ADC_CFGR2_SMPTRIG_Pos          (27
-;ADC_CFGR2_SMPTRIG_Msk          (0x1 << ADC_CFGR2_SMPTRIG_Pos        ; 0x08000000 
-;ADC_CFGR2_SMPTRIG              ADC_CFGR2_SMPTRIG_Msk                   ; ADC Sample Time Control Trigger mode 
 
 ;*******************  Bit definition for ADC_SMPR1 register  ****************
 ADC_SMPR1_SMP0_Pos             EQU 0
@@ -1625,41 +506,6 @@ ADC_SMPR1_SMPPLUS_Msk          EQU 0x1 << ADC_SMPR1_SMPPLUS_Pos        ; 0x80000
 ADC_SMPR1_SMPPLUS              EQU ADC_SMPR1_SMPPLUS_Msk                   ; ADC channels sampling time additional setting 
 
 ;*******************  Bit definition for ADC_SMPR2 register  ****************
-;ADC_SMPR2_SMP10_Pos            (0
-;ADC_SMPR2_SMP10_Msk            (0x7UL << ADC_SMPR2_SMP10_Pos          ; 0x00000007 
-;ADC_SMPR2_SMP10                ADC_SMPR2_SMP10_Msk                     ; ADC channel 10 sampling time selection  
-;ADC_SMPR2_SMP10_0              (0x1 << ADC_SMPR2_SMP10_Pos          ; 0x00000001 
-;ADC_SMPR2_SMP10_1              (0x2UL << ADC_SMPR2_SMP10_Pos          ; 0x00000002 
-;ADC_SMPR2_SMP10_2              (0x4UL << ADC_SMPR2_SMP10_Pos          ; 0x00000004 
-
-;ADC_SMPR2_SMP11_Pos            (3
-;ADC_SMPR2_SMP11_Msk            (0x7UL << ADC_SMPR2_SMP11_Pos          ; 0x00000038 
-;ADC_SMPR2_SMP11                ADC_SMPR2_SMP11_Msk                     ; ADC channel 11 sampling time selection  
-;ADC_SMPR2_SMP11_0              (0x1 << ADC_SMPR2_SMP11_Pos          ; 0x00000008 
-;ADC_SMPR2_SMP11_1              (0x2UL << ADC_SMPR2_SMP11_Pos          ; 0x00000010 
-;ADC_SMPR2_SMP11_2              (0x4UL << ADC_SMPR2_SMP11_Pos          ; 0x00000020 
-
-;ADC_SMPR2_SMP12_Pos            (6
-;ADC_SMPR2_SMP12_Msk            (0x7UL << ADC_SMPR2_SMP12_Pos          ; 0x000001C0 
-;ADC_SMPR2_SMP12                ADC_SMPR2_SMP12_Msk                     ; ADC channel 12 sampling time selection  
-;ADC_SMPR2_SMP12_0              (0x1 << ADC_SMPR2_SMP12_Pos          ; 0x00000040 
-;ADC_SMPR2_SMP12_1              (0x2UL << ADC_SMPR2_SMP12_Pos          ; 0x00000080 
-;ADC_SMPR2_SMP12_2              (0x4UL << ADC_SMPR2_SMP12_Pos          ; 0x00000100 
-
-;ADC_SMPR2_SMP13_Pos            (9
-;ADC_SMPR2_SMP13_Msk            (0x7UL << ADC_SMPR2_SMP13_Pos          ; 0x00000E00 
-;ADC_SMPR2_SMP13                ADC_SMPR2_SMP13_Msk                     ; ADC channel 13 sampling time selection  
-;ADC_SMPR2_SMP13_0              (0x1 << ADC_SMPR2_SMP13_Pos          ; 0x00000200 
-;ADC_SMPR2_SMP13_1              (0x2UL << ADC_SMPR2_SMP13_Pos          ; 0x00000400 
-;ADC_SMPR2_SMP13_2              (0x4UL << ADC_SMPR2_SMP13_Pos          ; 0x00000800 
-
-;ADC_SMPR2_SMP14_Pos            (12
-;ADC_SMPR2_SMP14_Msk            (0x7UL << ADC_SMPR2_SMP14_Pos          ; 0x00007000 
-;ADC_SMPR2_SMP14                ADC_SMPR2_SMP14_Msk                     ; ADC channel 14 sampling time selection  
-;ADC_SMPR2_SMP14_0              (0x1 << ADC_SMPR2_SMP14_Pos          ; 0x00001000 
-;ADC_SMPR2_SMP14_1              (0x2UL << ADC_SMPR2_SMP14_Pos          ; 0x00002000 
-;ADC_SMPR2_SMP14_2              (0x4UL << ADC_SMPR2_SMP14_Pos          ; 0x00004000 
-
 ADC_SMPR2_SMP15_Pos            EQU 15
 ADC_SMPR2_SMP15_Msk            EQU 0x7 << ADC_SMPR2_SMP15_Pos          ; 0x00038000 
 ADC_SMPR2_SMP15                EQU ADC_SMPR2_SMP15_Msk                     ; ADC channel 15 sampling time selection  
@@ -1667,61 +513,7 @@ ADC_SMPR2_SMP15_0              EQU 0x1 << ADC_SMPR2_SMP15_Pos          ; 0x00008
 ADC_SMPR2_SMP15_1              EQU 0x2 << ADC_SMPR2_SMP15_Pos          ; 0x00010000 
 ADC_SMPR2_SMP15_2              EQU 0x4 << ADC_SMPR2_SMP15_Pos          ; 0x00020000 
 
-;ADC_SMPR2_SMP16_Pos            (18
-;ADC_SMPR2_SMP16_Msk            (0x7UL << ADC_SMPR2_SMP16_Pos          ; 0x001C0000 
-;ADC_SMPR2_SMP16                ADC_SMPR2_SMP16_Msk                     ; ADC channel 16 sampling time selection  
-;ADC_SMPR2_SMP16_0              (0x1 << ADC_SMPR2_SMP16_Pos          ; 0x00040000 
-;ADC_SMPR2_SMP16_1              (0x2UL << ADC_SMPR2_SMP16_Pos          ; 0x00080000 
-;ADC_SMPR2_SMP16_2              (0x4UL << ADC_SMPR2_SMP16_Pos          ; 0x00100000 
-
-;ADC_SMPR2_SMP17_Pos            (21
-;ADC_SMPR2_SMP17_Msk            (0x7UL << ADC_SMPR2_SMP17_Pos          ; 0x00E00000 
-;ADC_SMPR2_SMP17                ADC_SMPR2_SMP17_Msk                     ; ADC channel 17 sampling time selection  
-;ADC_SMPR2_SMP17_0              (0x1 << ADC_SMPR2_SMP17_Pos          ; 0x00200000 
-;ADC_SMPR2_SMP17_1              (0x2UL << ADC_SMPR2_SMP17_Pos          ; 0x00400000 
-;ADC_SMPR2_SMP17_2              (0x4UL << ADC_SMPR2_SMP17_Pos          ; 0x00800000 
-
-;ADC_SMPR2_SMP18_Pos            (24
-;ADC_SMPR2_SMP18_Msk            (0x7UL << ADC_SMPR2_SMP18_Pos          ; 0x07000000 
-;ADC_SMPR2_SMP18                ADC_SMPR2_SMP18_Msk                     ; ADC channel 18 sampling time selection  
-;ADC_SMPR2_SMP18_0              (0x1 << ADC_SMPR2_SMP18_Pos          ; 0x01000000 
-;ADC_SMPR2_SMP18_1              (0x2UL << ADC_SMPR2_SMP18_Pos          ; 0x02000000 
-;ADC_SMPR2_SMP18_2              (0x4UL << ADC_SMPR2_SMP18_Pos          ; 0x04000000 
-
 ;*******************  Bit definition for ADC_TR1 register  ******************
-;ADC_TR1_LT1_Pos                (0
-;ADC_TR1_LT1_Msk                (0xFFFUL << ADC_TR1_LT1_Pos            ; 0x00000FFF 
-;ADC_TR1_LT1                    ADC_TR1_LT1_Msk                         ; ADC analog watchdog 1 threshold low 
-
-;ADC_TR1_AWDFILT_Pos            (12
-;ADC_TR1_AWDFILT_Msk            (0x7UL << ADC_TR1_AWDFILT_Pos          ; 0x00007000 
-;ADC_TR1_AWDFILT                ADC_TR1_AWDFILT_Msk                     ; ADC analog watchdog filtering parameter  
-;ADC_TR1_AWDFILT_0              (0x1 << ADC_TR1_AWDFILT_Pos          ; 0x00001000 
-;ADC_TR1_AWDFILT_1              (0x2UL << ADC_TR1_AWDFILT_Pos          ; 0x00002000 
-;ADC_TR1_AWDFILT_2              (0x4UL << ADC_TR1_AWDFILT_Pos          ; 0x00004000 
-
-;ADC_TR1_HT1_Pos                (16
-;ADC_TR1_HT1_Msk                (0xFFFUL << ADC_TR1_HT1_Pos            ; 0x0FFF0000 
-;ADC_TR1_HT1                    ADC_TR1_HT1_Msk                         ; ADC analog watchdog 1 threshold high 
-
-;*******************  Bit definition for ADC_TR2 register  ******************
-;ADC_TR2_LT2_Pos                (0
-;ADC_TR2_LT2_Msk                (0xFFUL << ADC_TR2_LT2_Pos             ; 0x000000FF 
-;ADC_TR2_LT2                    ADC_TR2_LT2_Msk                         ; ADC analog watchdog 2 threshold low 
-
-;ADC_TR2_HT2_Pos                (16
-;ADC_TR2_HT2_Msk                (0xFFUL << ADC_TR2_HT2_Pos             ; 0x00FF0000 
-;ADC_TR2_HT2                    ADC_TR2_HT2_Msk                         ; ADC analog watchdog 2 threshold high 
-
-;*******************  Bit definition for ADC_TR3 register  ******************
-;ADC_TR3_LT3_Pos                (0
-;ADC_TR3_LT3_Msk                (0xFFUL << ADC_TR3_LT3_Pos             ; 0x000000FF 
-;ADC_TR3_LT3                    ADC_TR3_LT3_Msk                         ; ADC analog watchdog 3 threshold low 
-
-;ADC_TR3_HT3_Pos                (16
-;ADC_TR3_HT3_Msk                (0xFFUL << ADC_TR3_HT3_Pos             ; 0x00FF0000 
-;ADC_TR3_HT3                    ADC_TR3_HT3_Msk                         ; ADC analog watchdog 3 threshold high 
-
 ;*******************  Bit definition for ADC_SQR1 register  *****************
 ADC_SQR1_L_Pos                 EQU 0
 ADC_SQR1_L_Msk                 EQU 0xF << ADC_SQR1_L_Pos               ; 0x0000000F 
@@ -1733,13 +525,8 @@ ADC_SQR1_L_3                   EQU 0x8 << ADC_SQR1_L_Pos               ; 0x00000
 
 ADC_SQR1_SQ1_Pos               EQU 6
 ADC_SQR1_SQ1_Msk               EQU 0x1F << ADC_SQR1_SQ1_Pos            ; 0x000007C0 
-;ADC_SQR1_SQ1                   EQU ADC_SQR1_SQ1_Msk                        ; ADC group regular sequencer rank 1 
-ADC_SQ1                   EQU ADC_SQR1_SQ1_Msk                        ; ADC group regular sequencer rank 1 
-;ADC_SQR1_SQ1_0                 EQU 0x01 << ADC_SQR1_SQ1_Pos            ; 0x00000040 
-;ADC_SQR1_SQ1_1                 EQU 0x02 << ADC_SQR1_SQ1_Pos            ; 0x00000080 
-;ADC_SQR1_SQ1_2                 EQU 0x04 << ADC_SQR1_SQ1_Pos            ; 0x00000100 
-;ADC_SQR1_SQ1_3                 EQU 0x08 << ADC_SQR1_SQ1_Pos            ; 0x00000200 
-;ADC_SQR1_SQ1_4                 EQU 0x10 << ADC_SQR1_SQ1_Pos            ; 0x00000400 
+ADC_SQR1_SQ1                   EQU ADC_SQR1_SQ1_Msk                        ; ADC group regular sequencer rank 1 
+ADC_SQ1                        EQU ADC_SQR1_SQ1_Msk                        ; ADC group regular sequencer rank 1 
 
 ADC_SQ1_0                      EQU 0x01 << ADC_SQR1_SQ1_Pos            ; 0x00000040 
 ADC_SQ1_1                      EQU 0x02 << ADC_SQR1_SQ1_Pos            ; 0x00000080 
@@ -1749,390 +536,38 @@ ADC_SQ1_4                      EQU 0x10 << ADC_SQR1_SQ1_Pos            ; 0x00000
 
 ADC_SQR1_SQ2_Pos               EQU 12
 ADC_SQR1_SQ2_Msk               EQU 0x1F << ADC_SQR1_SQ2_Pos            ; 0x0001F000 
-;ADC_SQR1_SQ2                   EQU ADC_SQR1_SQ2_Msk                        ; ADC group regular sequencer rank 2 
-ADC_SQ2                   EQU ADC_SQR1_SQ2_Msk                        ; ADC group regular sequencer rank 2 
-;ADC_SQR1_SQ2_0                 EQU 0x01 << ADC_SQR1_SQ2_Pos            ; 0x00001000 
-;ADC_SQR1_SQ2_1                 EQU 0x02 << ADC_SQR1_SQ2_Pos            ; 0x00002000 
-;ADC_SQR1_SQ2_2                 EQU 0x04 << ADC_SQR1_SQ2_Pos            ; 0x00004000 
-;ADC_SQR1_SQ2_3                 EQU 0x08 << ADC_SQR1_SQ2_Pos            ; 0x00008000 
-;ADC_SQR1_SQ2_4                 EQU 0x10 << ADC_SQR1_SQ2_Pos            ; 0x00010000 
-ADC_SQ2_0                 EQU 0x01 << ADC_SQR1_SQ2_Pos            ; 0x00001000 
-ADC_SQ2_1                 EQU 0x02 << ADC_SQR1_SQ2_Pos            ; 0x00002000 
-ADC_SQ2_2                 EQU 0x04 << ADC_SQR1_SQ2_Pos            ; 0x00004000 
-ADC_SQ2_3                 EQU 0x08 << ADC_SQR1_SQ2_Pos            ; 0x00008000 
-ADC_SQ2_4                 EQU 0x10 << ADC_SQR1_SQ2_Pos            ; 0x00010000 
+ADC_SQR1_SQ2                   EQU ADC_SQR1_SQ2_Msk                        ; ADC group regular sequencer rank 2 
+ADC_SQ2                        EQU ADC_SQR1_SQ2_Msk                        ; ADC group regular sequencer rank 2 
+ADC_SQ2_0                      EQU 0x01 << ADC_SQR1_SQ2_Pos            ; 0x00001000 
+ADC_SQ2_1                      EQU 0x02 << ADC_SQR1_SQ2_Pos            ; 0x00002000 
+ADC_SQ2_2                      EQU 0x04 << ADC_SQR1_SQ2_Pos            ; 0x00004000 
+ADC_SQ2_3                      EQU 0x08 << ADC_SQR1_SQ2_Pos            ; 0x00008000 
+ADC_SQ2_4                      EQU 0x10 << ADC_SQR1_SQ2_Pos            ; 0x00010000 
 
 ADC_SQR1_SQ3_Pos               EQU 18
 ADC_SQR1_SQ3_Msk               EQU 0x1F << ADC_SQR1_SQ3_Pos            ; 0x007C0000 
-;ADC_SQR1_SQ3                   EQU ADC_SQR1_SQ3_Msk                        ; ADC group regular sequencer rank 3 
-;ADC_SQR1_SQ3_0                 EQU 0x01 << ADC_SQR1_SQ3_Pos            ; 0x00040000 
-;ADC_SQR1_SQ3_1                 EQU 0x02 << ADC_SQR1_SQ3_Pos            ; 0x00080000 
-;ADC_SQR1_SQ3_2                 EQU 0x04 << ADC_SQR1_SQ3_Pos            ; 0x00100000 
-;ADC_SQR1_SQ3_3                 EQU 0x08 << ADC_SQR1_SQ3_Pos            ; 0x00200000 
-;ADC_SQR1_SQ3_4                 EQU 0x10<< ADC_SQR1_SQ3_Pos             ; 0x00400000 
-ADC_SQ3                   EQU ADC_SQR1_SQ3_Msk                        ; ADC group regular sequencer rank 3 
-ADC_SQ3_0                 EQU 0x01 << ADC_SQR1_SQ3_Pos            ; 0x00040000 
-ADC_SQ3_1                 EQU 0x02 << ADC_SQR1_SQ3_Pos            ; 0x00080000 
-ADC_SQ3_2                 EQU 0x04 << ADC_SQR1_SQ3_Pos            ; 0x00100000 
-ADC_SQ3_3                 EQU 0x08 << ADC_SQR1_SQ3_Pos            ; 0x00200000 
-ADC_SQ3_4                 EQU 0x10<< ADC_SQR1_SQ3_Pos             ; 0x00400000
+ADC_SQR1_SQ3                   EQU ADC_SQR1_SQ3_Msk                        ; ADC group regular sequencer rank 3 
+ADC_SQ3                        EQU ADC_SQR1_SQ3_Msk                        ; ADC group regular sequencer rank 3 
+ADC_SQ3_0                      EQU 0x01 << ADC_SQR1_SQ3_Pos            ; 0x00040000 
+ADC_SQ3_1                      EQU 0x02 << ADC_SQR1_SQ3_Pos            ; 0x00080000 
+ADC_SQ3_2                      EQU 0x04 << ADC_SQR1_SQ3_Pos            ; 0x00100000 
+ADC_SQ3_3                      EQU 0x08 << ADC_SQR1_SQ3_Pos            ; 0x00200000 
+ADC_SQ3_4                      EQU 0x10<< ADC_SQR1_SQ3_Pos             ; 0x00400000
 
 ADC_SQR1_SQ4_Pos               EQU 24
 ADC_SQR1_SQ4_Msk               EQU 0x1F << ADC_SQR1_SQ4_Pos            ; 0x1F000000 
-;ADC_SQR1_SQ4                   EQU ADC_SQR1_SQ4_Msk                        ; ADC group regular sequencer rank 4 
-;ADC_SQR1_SQ4_0                 EQU 0x01 << ADC_SQR1_SQ4_Pos            ; 0x01000000 
-;ADC_SQR1_SQ4_1                 EQU 0x02 << ADC_SQR1_SQ4_Pos            ; 0x02000000 
-;ADC_SQR1_SQ4_2                 EQU 0x04 << ADC_SQR1_SQ4_Pos            ; 0x04000000 
-;ADC_SQR1_SQ4_3                 EQU 0x08 << ADC_SQR1_SQ4_Pos            ; 0x08000000 
-;ADC_SQR1_SQ4_4                 EQU 0x10 << ADC_SQR1_SQ4_Pos            ; 0x10000000 
-ADC_SQ4                   EQU ADC_SQR1_SQ4_Msk                        ; ADC group regular sequencer rank 4 
-ADC_SQ4_0                 EQU 0x01 << ADC_SQR1_SQ4_Pos            ; 0x01000000 
-ADC_SQ4_1                 EQU 0x02 << ADC_SQR1_SQ4_Pos            ; 0x02000000 
-ADC_SQ4_2                 EQU 0x04 << ADC_SQR1_SQ4_Pos            ; 0x04000000 
-ADC_SQ4_3                 EQU 0x08 << ADC_SQR1_SQ4_Pos            ; 0x08000000 
-ADC_SQ4_4                 EQU 0x10 << ADC_SQR1_SQ4_Pos            ; 0x10000000 
-
-;*******************  Bit definition for ADC_SQR2 register  *****************
-;ADC_SQR2_SQ5_Pos               (0
-;ADC_SQR2_SQ5_Msk               (0x1FUL << ADC_SQR2_SQ5_Pos            ; 0x0000001F 
-;ADC_SQR2_SQ5                   ADC_SQR2_SQ5_Msk                        ; ADC group regular sequencer rank 5 
-;ADC_SQR2_SQ5_0                 (0x01UL << ADC_SQR2_SQ5_Pos            ; 0x00000001 
-;ADC_SQR2_SQ5_1                 (0x02UL << ADC_SQR2_SQ5_Pos            ; 0x00000002 
-;ADC_SQR2_SQ5_2                 (0x04UL << ADC_SQR2_SQ5_Pos            ; 0x00000004 
-;ADC_SQR2_SQ5_3                 (0x08UL << ADC_SQR2_SQ5_Pos            ; 0x00000008 
-;ADC_SQR2_SQ5_4                 (0x10UL << ADC_SQR2_SQ5_Pos            ; 0x00000010 
-
-;ADC_SQR2_SQ6_Pos               (6
-;ADC_SQR2_SQ6_Msk               (0x1FUL << ADC_SQR2_SQ6_Pos            ; 0x000007C0 
-;ADC_SQR2_SQ6                   ADC_SQR2_SQ6_Msk                        ; ADC group regular sequencer rank 6 
-;ADC_SQR2_SQ6_0                 (0x01UL << ADC_SQR2_SQ6_Pos            ; 0x00000040 
-;ADC_SQR2_SQ6_1                 (0x02UL << ADC_SQR2_SQ6_Pos            ; 0x00000080 
-;ADC_SQR2_SQ6_2                 (0x04UL << ADC_SQR2_SQ6_Pos            ; 0x00000100 
-;ADC_SQR2_SQ6_3                 (0x08UL << ADC_SQR2_SQ6_Pos            ; 0x00000200 
-;ADC_SQR2_SQ6_4                 (0x10UL << ADC_SQR2_SQ6_Pos            ; 0x00000400 
-
-;ADC_SQR2_SQ7_Pos               (12
-;ADC_SQR2_SQ7_Msk               (0x1FUL << ADC_SQR2_SQ7_Pos            ; 0x0001F000 
-;ADC_SQR2_SQ7                   ADC_SQR2_SQ7_Msk                        ; ADC group regular sequencer rank 7 
-;ADC_SQR2_SQ7_0                 (0x01UL << ADC_SQR2_SQ7_Pos            ; 0x00001000 
-;ADC_SQR2_SQ7_1                 (0x02UL << ADC_SQR2_SQ7_Pos            ; 0x00002000 
-;ADC_SQR2_SQ7_2                 (0x04UL << ADC_SQR2_SQ7_Pos            ; 0x00004000 
-;ADC_SQR2_SQ7_3                 (0x08UL << ADC_SQR2_SQ7_Pos            ; 0x00008000 
-;ADC_SQR2_SQ7_4                 (0x10UL << ADC_SQR2_SQ7_Pos            ; 0x00010000 
-
-;ADC_SQR2_SQ8_Pos               (18
-;ADC_SQR2_SQ8_Msk               (0x1FUL << ADC_SQR2_SQ8_Pos            ; 0x007C0000 
-;ADC_SQR2_SQ8                   ADC_SQR2_SQ8_Msk                        ; ADC group regular sequencer rank 8 
-;ADC_SQR2_SQ8_0                 (0x01UL << ADC_SQR2_SQ8_Pos            ; 0x00040000 
-;ADC_SQR2_SQ8_1                 (0x02UL << ADC_SQR2_SQ8_Pos            ; 0x00080000 
-;ADC_SQR2_SQ8_2                 (0x04UL << ADC_SQR2_SQ8_Pos            ; 0x00100000 
-;ADC_SQR2_SQ8_3                 (0x08UL << ADC_SQR2_SQ8_Pos            ; 0x00200000 
-;ADC_SQR2_SQ8_4                 (0x10UL << ADC_SQR2_SQ8_Pos            ; 0x00400000 
-
-;ADC_SQR2_SQ9_Pos               (24
-;ADC_SQR2_SQ9_Msk               (0x1FUL << ADC_SQR2_SQ9_Pos            ; 0x1F000000 
-;ADC_SQR2_SQ9                   ADC_SQR2_SQ9_Msk                        ; ADC group regular sequencer rank 9 
-;ADC_SQR2_SQ9_0                 (0x01UL << ADC_SQR2_SQ9_Pos            ; 0x01000000 
-;ADC_SQR2_SQ9_1                 (0x02UL << ADC_SQR2_SQ9_Pos            ; 0x02000000 
-;ADC_SQR2_SQ9_2                 (0x04UL << ADC_SQR2_SQ9_Pos            ; 0x04000000 
-;ADC_SQR2_SQ9_3                 (0x08UL << ADC_SQR2_SQ9_Pos            ; 0x08000000 
-;ADC_SQR2_SQ9_4                 (0x10UL << ADC_SQR2_SQ9_Pos            ; 0x10000000 
-
-;*******************  Bit definition for ADC_SQR3 register  *****************
-;ADC_SQR3_SQ10_Pos              (0
-;ADC_SQR3_SQ10_Msk              (0x1FUL << ADC_SQR3_SQ10_Pos           ; 0x0000001F 
-;ADC_SQR3_SQ10                  ADC_SQR3_SQ10_Msk                       ; ADC group regular sequencer rank 10 
-;ADC_SQR3_SQ10_0                (0x01UL << ADC_SQR3_SQ10_Pos           ; 0x00000001 
-;ADC_SQR3_SQ10_1                (0x02UL << ADC_SQR3_SQ10_Pos           ; 0x00000002 
-;ADC_SQR3_SQ10_2                (0x04UL << ADC_SQR3_SQ10_Pos           ; 0x00000004 
-;ADC_SQR3_SQ10_3                (0x08UL << ADC_SQR3_SQ10_Pos           ; 0x00000008 
-;ADC_SQR3_SQ10_4                (0x10UL << ADC_SQR3_SQ10_Pos           ; 0x00000010 
-
-;ADC_SQR3_SQ11_Pos              (6
-;ADC_SQR3_SQ11_Msk              (0x1FUL << ADC_SQR3_SQ11_Pos           ; 0x000007C0 
-;ADC_SQR3_SQ11                  ADC_SQR3_SQ11_Msk                       ; ADC group regular sequencer rank 11 
-;ADC_SQR3_SQ11_0                (0x01UL << ADC_SQR3_SQ11_Pos           ; 0x00000040 
-;ADC_SQR3_SQ11_1                (0x02UL << ADC_SQR3_SQ11_Pos           ; 0x00000080 
-;ADC_SQR3_SQ11_2                (0x04UL << ADC_SQR3_SQ11_Pos           ; 0x00000100 
-;ADC_SQR3_SQ11_3                (0x08UL << ADC_SQR3_SQ11_Pos           ; 0x00000200 
-;ADC_SQR3_SQ11_4                (0x10UL << ADC_SQR3_SQ11_Pos           ; 0x00000400 
-
-;ADC_SQR3_SQ12_Pos              (12
-;ADC_SQR3_SQ12_Msk              (0x1FUL << ADC_SQR3_SQ12_Pos           ; 0x0001F000 
-;ADC_SQR3_SQ12                  ADC_SQR3_SQ12_Msk                       ; ADC group regular sequencer rank 12 
-;ADC_SQR3_SQ12_0                (0x01UL << ADC_SQR3_SQ12_Pos           ; 0x00001000 
-;ADC_SQR3_SQ12_1                (0x02UL << ADC_SQR3_SQ12_Pos           ; 0x00002000 
-;ADC_SQR3_SQ12_2                (0x04UL << ADC_SQR3_SQ12_Pos           ; 0x00004000 
-;ADC_SQR3_SQ12_3                (0x08UL << ADC_SQR3_SQ12_Pos           ; 0x00008000 
-;ADC_SQR3_SQ12_4                (0x10UL << ADC_SQR3_SQ12_Pos           ; 0x00010000 
-
-;ADC_SQR3_SQ13_Pos              (18
-;ADC_SQR3_SQ13_Msk              (0x1FUL << ADC_SQR3_SQ13_Pos           ; 0x007C0000 
-;ADC_SQR3_SQ13                  ADC_SQR3_SQ13_Msk                       ; ADC group regular sequencer rank 13 
-;ADC_SQR3_SQ13_0                (0x01UL << ADC_SQR3_SQ13_Pos           ; 0x00040000 
-;ADC_SQR3_SQ13_1                (0x02UL << ADC_SQR3_SQ13_Pos           ; 0x00080000 
-;ADC_SQR3_SQ13_2                (0x04UL << ADC_SQR3_SQ13_Pos           ; 0x00100000 
-;ADC_SQR3_SQ13_3                (0x08UL << ADC_SQR3_SQ13_Pos           ; 0x00200000 
-;ADC_SQR3_SQ13_4                (0x10UL << ADC_SQR3_SQ13_Pos           ; 0x00400000 
-
-;ADC_SQR3_SQ14_Pos              (24
-;ADC_SQR3_SQ14_Msk              (0x1FUL << ADC_SQR3_SQ14_Pos           ; 0x1F000000 
-;ADC_SQR3_SQ14                  ADC_SQR3_SQ14_Msk                       ; ADC group regular sequencer rank 14 
-;ADC_SQR3_SQ14_0                (0x01UL << ADC_SQR3_SQ14_Pos           ; 0x01000000 
-;ADC_SQR3_SQ14_1                (0x02UL << ADC_SQR3_SQ14_Pos           ; 0x02000000 
-;ADC_SQR3_SQ14_2                (0x04UL << ADC_SQR3_SQ14_Pos           ; 0x04000000 
-;ADC_SQR3_SQ14_3                (0x08UL << ADC_SQR3_SQ14_Pos           ; 0x08000000 
-;ADC_SQR3_SQ14_4                (0x10UL << ADC_SQR3_SQ14_Pos           ; 0x10000000 
-
-;*******************  Bit definition for ADC_SQR4 register  *****************
-;ADC_SQR4_SQ15_Pos              (0
-;ADC_SQR4_SQ15_Msk              (0x1FUL << ADC_SQR4_SQ15_Pos           ; 0x0000001F 
-;ADC_SQR4_SQ15                  ADC_SQR4_SQ15_Msk                       ; ADC group regular sequencer rank 15 
-;ADC_SQR4_SQ15_0                (0x01UL << ADC_SQR4_SQ15_Pos           ; 0x00000001 
-;ADC_SQR4_SQ15_1                (0x02UL << ADC_SQR4_SQ15_Pos           ; 0x00000002 
-;ADC_SQR4_SQ15_2                (0x04UL << ADC_SQR4_SQ15_Pos           ; 0x00000004 
-;ADC_SQR4_SQ15_3                (0x08UL << ADC_SQR4_SQ15_Pos           ; 0x00000008 
-;ADC_SQR4_SQ15_4                (0x10UL << ADC_SQR4_SQ15_Pos           ; 0x00000010 
-
-;ADC_SQR4_SQ16_Pos              (6
-;ADC_SQR4_SQ16_Msk              (0x1FUL << ADC_SQR4_SQ16_Pos           ; 0x000007C0 
-;ADC_SQR4_SQ16                  ADC_SQR4_SQ16_Msk                       ; ADC group regular sequencer rank 16 
-;ADC_SQR4_SQ16_0                (0x01UL << ADC_SQR4_SQ16_Pos           ; 0x00000040 
-;ADC_SQR4_SQ16_1                (0x02UL << ADC_SQR4_SQ16_Pos           ; 0x00000080 
-;ADC_SQR4_SQ16_2                (0x04UL << ADC_SQR4_SQ16_Pos           ; 0x00000100 
-;ADC_SQR4_SQ16_3                (0x08UL << ADC_SQR4_SQ16_Pos           ; 0x00000200 
-;ADC_SQR4_SQ16_4                (0x10UL << ADC_SQR4_SQ16_Pos           ; 0x00000400 
+ADC_SQR1_SQ4                   EQU ADC_SQR1_SQ4_Msk                        ; ADC group regular sequencer rank 4 
+ADC_SQ4                        EQU ADC_SQR1_SQ4_Msk                        ; ADC group regular sequencer rank 4 
+ADC_SQ4_0                      EQU 0x01 << ADC_SQR1_SQ4_Pos            ; 0x01000000 
+ADC_SQ4_1                      EQU 0x02 << ADC_SQR1_SQ4_Pos            ; 0x02000000 
+ADC_SQ4_2                      EQU 0x04 << ADC_SQR1_SQ4_Pos            ; 0x04000000 
+ADC_SQ4_3                      EQU 0x08 << ADC_SQR1_SQ4_Pos            ; 0x08000000 
+ADC_SQ4_4                      EQU 0x10 << ADC_SQR1_SQ4_Pos            ; 0x10000000 
 
 ;*******************  Bit definition for ADC_DR register  *******************
 ADC_DR_RDATA_Pos               EQU 0
 ADC_DR_RDATA_Msk               EQU 0xFFFF << ADC_DR_RDATA_Pos          ; 0x0000FFFF 
 ADC_DR_RDATA                   EQU ADC_DR_RDATA_Msk                        ; ADC group regular conversion data 
-
-;*******************  Bit definition for ADC_JSQR register  *****************
-;ADC_JSQR_JL_Pos                (0
-;ADC_JSQR_JL_Msk                (0x3UL << ADC_JSQR_JL_Pos              ; 0x00000003 
-;ADC_JSQR_JL                    ADC_JSQR_JL_Msk                         ; ADC group injected sequencer scan length 
-;ADC_JSQR_JL_0                  (0x1 << ADC_JSQR_JL_Pos              ; 0x00000001 
-;ADC_JSQR_JL_1                  (0x2UL << ADC_JSQR_JL_Pos              ; 0x00000002 
-
-;ADC_JSQR_JEXTSEL_Pos           (2
-;ADC_JSQR_JEXTSEL_Msk           (0x1FUL << ADC_JSQR_JEXTSEL_Pos        ; 0x0000007C 
-;ADC_JSQR_JEXTSEL               ADC_JSQR_JEXTSEL_Msk                    ; ADC group injected external trigger source 
-;ADC_JSQR_JEXTSEL_0             (0x1 << ADC_JSQR_JEXTSEL_Pos         ; 0x00000004 
-;ADC_JSQR_JEXTSEL_1             (0x2UL << ADC_JSQR_JEXTSEL_Pos         ; 0x00000008 
-;ADC_JSQR_JEXTSEL_2             (0x4UL << ADC_JSQR_JEXTSEL_Pos         ; 0x00000010 
-;ADC_JSQR_JEXTSEL_3             (0x8UL << ADC_JSQR_JEXTSEL_Pos         ; 0x00000020 
-;ADC_JSQR_JEXTSEL_4             (0x10UL << ADC_JSQR_JEXTSEL_Pos        ; 0x00000040 
-
-;ADC_JSQR_JEXTEN_Pos            (7
-;ADC_JSQR_JEXTEN_Msk            (0x3UL << ADC_JSQR_JEXTEN_Pos          ; 0x00000180 
-;ADC_JSQR_JEXTEN                ADC_JSQR_JEXTEN_Msk                     ; ADC group injected external trigger polarity 
-;ADC_JSQR_JEXTEN_0              (0x1 << ADC_JSQR_JEXTEN_Pos          ; 0x00000080 
-;ADC_JSQR_JEXTEN_1              (0x2UL << ADC_JSQR_JEXTEN_Pos          ; 0x00000100 
-
-;ADC_JSQR_JSQ1_Pos              (9
-;ADC_JSQR_JSQ1_Msk              (0x1FUL << ADC_JSQR_JSQ1_Pos           ; 0x00003E00 
-;ADC_JSQR_JSQ1                  ADC_JSQR_JSQ1_Msk                       ; ADC group injected sequencer rank 1 
-;ADC_JSQR_JSQ1_0                (0x01UL << ADC_JSQR_JSQ1_Pos           ; 0x00000200 
-;ADC_JSQR_JSQ1_1                (0x02UL << ADC_JSQR_JSQ1_Pos           ; 0x00000400 
-;ADC_JSQR_JSQ1_2                (0x04UL << ADC_JSQR_JSQ1_Pos           ; 0x00000800 
-;ADC_JSQR_JSQ1_3                (0x08UL << ADC_JSQR_JSQ1_Pos           ; 0x00001000 
-;ADC_JSQR_JSQ1_4                (0x10UL << ADC_JSQR_JSQ1_Pos           ; 0x00002000 
-
-;ADC_JSQR_JSQ2_Pos              (15
-;ADC_JSQR_JSQ2_Msk              (0x1FUL << ADC_JSQR_JSQ2_Pos           ; 0x0007C000 
-;ADC_JSQR_JSQ2                  ADC_JSQR_JSQ2_Msk                       ; ADC group injected sequencer rank 2 
-;ADC_JSQR_JSQ2_0                (0x01UL << ADC_JSQR_JSQ2_Pos           ; 0x00004000 
-;ADC_JSQR_JSQ2_1                (0x02UL << ADC_JSQR_JSQ2_Pos           ; 0x00008000 
-;ADC_JSQR_JSQ2_2                (0x04UL << ADC_JSQR_JSQ2_Pos           ; 0x00010000 
-;ADC_JSQR_JSQ2_3                (0x08UL << ADC_JSQR_JSQ2_Pos           ; 0x00020000 
-;ADC_JSQR_JSQ2_4                (0x10UL << ADC_JSQR_JSQ2_Pos           ; 0x00040000 
-
-;ADC_JSQR_JSQ3_Pos              (21
-;ADC_JSQR_JSQ3_Msk              (0x1FUL << ADC_JSQR_JSQ3_Pos           ; 0x03E00000 
-;ADC_JSQR_JSQ3                  ADC_JSQR_JSQ3_Msk                       ; ADC group injected sequencer rank 3 
-;ADC_JSQR_JSQ3_0                (0x01UL << ADC_JSQR_JSQ3_Pos           ; 0x00200000 
-;ADC_JSQR_JSQ3_1                (0x02UL << ADC_JSQR_JSQ3_Pos           ; 0x00400000 
-;ADC_JSQR_JSQ3_2                (0x04UL << ADC_JSQR_JSQ3_Pos           ; 0x00800000 
-;ADC_JSQR_JSQ3_3                (0x08UL << ADC_JSQR_JSQ3_Pos           ; 0x01000000 
-;ADC_JSQR_JSQ3_4                (0x10UL << ADC_JSQR_JSQ3_Pos           ; 0x02000000 
-
-;ADC_JSQR_JSQ4_Pos              (27
-;ADC_JSQR_JSQ4_Msk              (0x1FUL << ADC_JSQR_JSQ4_Pos           ; 0xF8000000 
-;ADC_JSQR_JSQ4                  ADC_JSQR_JSQ4_Msk                       ; ADC group injected sequencer rank 4 
-;ADC_JSQR_JSQ4_0                (0x01UL << ADC_JSQR_JSQ4_Pos           ; 0x08000000 
-;ADC_JSQR_JSQ4_1                (0x02UL << ADC_JSQR_JSQ4_Pos           ; 0x10000000 
-;ADC_JSQR_JSQ4_2                (0x04UL << ADC_JSQR_JSQ4_Pos           ; 0x20000000 
-;ADC_JSQR_JSQ4_3                (0x08UL << ADC_JSQR_JSQ4_Pos           ; 0x40000000 
-;ADC_JSQR_JSQ4_4                (0x10UL << ADC_JSQR_JSQ4_Pos           ; 0x80000000 
-
-;*******************  Bit definition for ADC_OFR1 register  *****************
-;ADC_OFR1_OFFSET1_Pos           (0
-;ADC_OFR1_OFFSET1_Msk           (0xFFFUL << ADC_OFR1_OFFSET1_Pos       ; 0x00000FFF 
-;ADC_OFR1_OFFSET1               ADC_OFR1_OFFSET1_Msk                    ; ADC offset number 1 offset level 
-
-;ADC_OFR1_OFFSETPOS_Pos         (24
-;ADC_OFR1_OFFSETPOS_Msk         (0x1 << ADC_OFR1_OFFSETPOS_Pos       ; 0x01000000 
-;ADC_OFR1_OFFSETPOS             ADC_OFR1_OFFSETPOS_Msk                  ; ADC offset number 1 positive 
-;ADC_OFR1_SATEN_Pos             (25
-;ADC_OFR1_SATEN_Msk             (0x1 << ADC_OFR1_SATEN_Pos           ; 0x02000000 
-;ADC_OFR1_SATEN                 ADC_OFR1_SATEN_Msk                      ; ADC offset number 1 saturation enable 
-
-;ADC_OFR1_OFFSET1_CH_Pos        (26
-;ADC_OFR1_OFFSET1_CH_Msk        (0x1FUL << ADC_OFR1_OFFSET1_CH_Pos     ; 0x7C000000 
-;ADC_OFR1_OFFSET1_CH            ADC_OFR1_OFFSET1_CH_Msk                 ; ADC offset number 1 channel selection 
-;ADC_OFR1_OFFSET1_CH_0          (0x01UL << ADC_OFR1_OFFSET1_CH_Pos     ; 0x04000000 
-;ADC_OFR1_OFFSET1_CH_1          (0x02UL << ADC_OFR1_OFFSET1_CH_Pos     ; 0x08000000 
-;ADC_OFR1_OFFSET1_CH_2          (0x04UL << ADC_OFR1_OFFSET1_CH_Pos     ; 0x10000000 
-;ADC_OFR1_OFFSET1_CH_3          (0x08UL << ADC_OFR1_OFFSET1_CH_Pos     ; 0x20000000 
-;ADC_OFR1_OFFSET1_CH_4          (0x10UL << ADC_OFR1_OFFSET1_CH_Pos     ; 0x40000000 
-
-;ADC_OFR1_OFFSET1_EN_Pos        (31
-;ADC_OFR1_OFFSET1_EN_Msk        (0x1 << ADC_OFR1_OFFSET1_EN_Pos      ; 0x80000000 
-;ADC_OFR1_OFFSET1_EN            ADC_OFR1_OFFSET1_EN_Msk                 ; ADC offset number 1 enable 
-
-;*******************  Bit definition for ADC_OFR2 register  *****************
-;ADC_OFR2_OFFSET2_Pos           (0
-;ADC_OFR2_OFFSET2_Msk           (0xFFFUL << ADC_OFR2_OFFSET2_Pos       ; 0x00000FFF 
-;ADC_OFR2_OFFSET2               ADC_OFR2_OFFSET2_Msk                    ; ADC offset number 2 offset level 
-
-;ADC_OFR2_OFFSETPOS_Pos         (24
-;ADC_OFR2_OFFSETPOS_Msk         (0x1 << ADC_OFR2_OFFSETPOS_Pos       ; 0x01000000 
-;ADC_OFR2_OFFSETPOS             ADC_OFR2_OFFSETPOS_Msk                  ; ADC offset number 2 positive 
-;ADC_OFR2_SATEN_Pos             (25
-;ADC_OFR2_SATEN_Msk             (0x1 << ADC_OFR2_SATEN_Pos           ; 0x02000000 
-;ADC_OFR2_SATEN                 ADC_OFR2_SATEN_Msk                      ; ADC offset number 2 saturation enable 
-
-;ADC_OFR2_OFFSET2_CH_Pos        (26
-;ADC_OFR2_OFFSET2_CH_Msk        (0x1FUL << ADC_OFR2_OFFSET2_CH_Pos     ; 0x7C000000 
-;ADC_OFR2_OFFSET2_CH            ADC_OFR2_OFFSET2_CH_Msk                 ; ADC offset number 2 channel selection 
-;ADC_OFR2_OFFSET2_CH_0          (0x01UL << ADC_OFR2_OFFSET2_CH_Pos     ; 0x04000000 
-;ADC_OFR2_OFFSET2_CH_1          (0x02UL << ADC_OFR2_OFFSET2_CH_Pos     ; 0x08000000 
-;ADC_OFR2_OFFSET2_CH_2          (0x04UL << ADC_OFR2_OFFSET2_CH_Pos     ; 0x10000000 
-;ADC_OFR2_OFFSET2_CH_3          (0x08UL << ADC_OFR2_OFFSET2_CH_Pos     ; 0x20000000 
-;ADC_OFR2_OFFSET2_CH_4          (0x10UL << ADC_OFR2_OFFSET2_CH_Pos     ; 0x40000000 
-
-;ADC_OFR2_OFFSET2_EN_Pos        (31
-;ADC_OFR2_OFFSET2_EN_Msk        (0x1 << ADC_OFR2_OFFSET2_EN_Pos      ; 0x80000000 
-;ADC_OFR2_OFFSET2_EN            ADC_OFR2_OFFSET2_EN_Msk                 ; ADC offset number 2 enable 
-
-;*******************  Bit definition for ADC_OFR3 register  *****************
-;ADC_OFR3_OFFSET3_Pos           (0
-;ADC_OFR3_OFFSET3_Msk           (0xFFFUL << ADC_OFR3_OFFSET3_Pos       ; 0x00000FFF 
-;ADC_OFR3_OFFSET3               ADC_OFR3_OFFSET3_Msk                    ; ADC offset number 3 offset level 
-
-;ADC_OFR3_OFFSETPOS_Pos         (24
-;ADC_OFR3_OFFSETPOS_Msk         (0x1 << ADC_OFR3_OFFSETPOS_Pos       ; 0x01000000 
-;ADC_OFR3_OFFSETPOS             ADC_OFR3_OFFSETPOS_Msk                  ; ADC offset number 3 positive 
-;ADC_OFR3_SATEN_Pos             (25
-;ADC_OFR3_SATEN_Msk             (0x1 << ADC_OFR3_SATEN_Pos           ; 0x02000000 
-;ADC_OFR3_SATEN                 ADC_OFR3_SATEN_Msk                      ; ADC offset number 3 saturation enable 
-
-;ADC_OFR3_OFFSET3_CH_Pos        (26
-;ADC_OFR3_OFFSET3_CH_Msk        (0x1FUL << ADC_OFR3_OFFSET3_CH_Pos     ; 0x7C000000 
-;ADC_OFR3_OFFSET3_CH            ADC_OFR3_OFFSET3_CH_Msk                 ; ADC offset number 3 channel selection 
-;ADC_OFR3_OFFSET3_CH_0          (0x01UL << ADC_OFR3_OFFSET3_CH_Pos     ; 0x04000000 
-;ADC_OFR3_OFFSET3_CH_1          (0x02UL << ADC_OFR3_OFFSET3_CH_Pos     ; 0x08000000 
-;ADC_OFR3_OFFSET3_CH_2          (0x04UL << ADC_OFR3_OFFSET3_CH_Pos     ; 0x10000000 
-;ADC_OFR3_OFFSET3_CH_3          (0x08UL << ADC_OFR3_OFFSET3_CH_Pos     ; 0x20000000 
-;ADC_OFR3_OFFSET3_CH_4          (0x10UL << ADC_OFR3_OFFSET3_CH_Pos     ; 0x40000000 
-
-;ADC_OFR3_OFFSET3_EN_Pos        (31
-;ADC_OFR3_OFFSET3_EN_Msk        (0x1 << ADC_OFR3_OFFSET3_EN_Pos      ; 0x80000000 
-;ADC_OFR3_OFFSET3_EN            ADC_OFR3_OFFSET3_EN_Msk                 ; ADC offset number 3 enable 
-
-;*******************  Bit definition for ADC_OFR4 register  *****************
-;ADC_OFR4_OFFSET4_Pos           (0
-;ADC_OFR4_OFFSET4_Msk           (0xFFFUL << ADC_OFR4_OFFSET4_Pos       ; 0x00000FFF 
-;ADC_OFR4_OFFSET4               ADC_OFR4_OFFSET4_Msk                    ; ADC offset number 4 offset level 
-
-;ADC_OFR4_OFFSETPOS_Pos         (24
-;ADC_OFR4_OFFSETPOS_Msk         (0x1 << ADC_OFR4_OFFSETPOS_Pos       ; 0x01000000 
-;ADC_OFR4_OFFSETPOS             ADC_OFR4_OFFSETPOS_Msk                  ; ADC offset number 4 positive 
-;ADC_OFR4_SATEN_Pos             (25
-;ADC_OFR4_SATEN_Msk             (0x1 << ADC_OFR4_SATEN_Pos           ; 0x02000000 
-;ADC_OFR4_SATEN                 ADC_OFR4_SATEN_Msk                      ; ADC offset number 4 saturation enable 
-
-;ADC_OFR4_OFFSET4_CH_Pos        (26
-;ADC_OFR4_OFFSET4_CH_Msk        (0x1FUL << ADC_OFR4_OFFSET4_CH_Pos     ; 0x7C000000 
-;ADC_OFR4_OFFSET4_CH            ADC_OFR4_OFFSET4_CH_Msk                 ; ADC offset number 4 channel selection 
-;ADC_OFR4_OFFSET4_CH_0          (0x01UL << ADC_OFR4_OFFSET4_CH_Pos     ; 0x04000000 
-;ADC_OFR4_OFFSET4_CH_1          (0x02UL << ADC_OFR4_OFFSET4_CH_Pos     ; 0x08000000 
-;ADC_OFR4_OFFSET4_CH_2          (0x04UL << ADC_OFR4_OFFSET4_CH_Pos     ; 0x10000000 
-;ADC_OFR4_OFFSET4_CH_3          (0x08UL << ADC_OFR4_OFFSET4_CH_Pos     ; 0x20000000 
-;ADC_OFR4_OFFSET4_CH_4          (0x10UL << ADC_OFR4_OFFSET4_CH_Pos     ; 0x40000000 
-
-;ADC_OFR4_OFFSET4_EN_Pos        (31
-;ADC_OFR4_OFFSET4_EN_Msk        (0x1 << ADC_OFR4_OFFSET4_EN_Pos      ; 0x80000000 
-;ADC_OFR4_OFFSET4_EN            ADC_OFR4_OFFSET4_EN_Msk                 ; ADC offset number 4 enable 
-
-;*******************  Bit definition for ADC_JDR1 register  *****************
-;ADC_JDR1_JDATA_Pos             (0
-;ADC_JDR1_JDATA_Msk             (0xFFFFUL << ADC_JDR1_JDATA_Pos        ; 0x0000FFFF 
-;ADC_JDR1_JDATA                 ADC_JDR1_JDATA_Msk                      ; ADC group injected sequencer rank 1 conversion data 
-
-;*******************  Bit definition for ADC_JDR2 register  *****************
-;ADC_JDR2_JDATA_Pos             (0
-;ADC_JDR2_JDATA_Msk             (0xFFFFUL << ADC_JDR2_JDATA_Pos        ; 0x0000FFFF 
-;ADC_JDR2_JDATA                 ADC_JDR2_JDATA_Msk                      ; ADC group injected sequencer rank 2 conversion data 
-
-;*******************  Bit definition for ADC_JDR3 register  *****************
-;ADC_JDR3_JDATA_Pos             (0
-;ADC_JDR3_JDATA_Msk             (0xFFFFUL << ADC_JDR3_JDATA_Pos        ; 0x0000FFFF 
-;ADC_JDR3_JDATA                 ADC_JDR3_JDATA_Msk                      ; ADC group injected sequencer rank 3 conversion data 
-
-;*******************  Bit definition for ADC_JDR4 register  *****************
-;ADC_JDR4_JDATA_Pos             (0
-;ADC_JDR4_JDATA_Msk             (0xFFFFUL << ADC_JDR4_JDATA_Pos        ; 0x0000FFFF 
-;ADC_JDR4_JDATA                 ADC_JDR4_JDATA_Msk                      ; ADC group injected sequencer rank 4 conversion data 
-
-;*******************  Bit definition for ADC_AWD2CR register  ***************
-;ADC_AWD2CR_AWD2CH_Pos          (0
-;ADC_AWD2CR_AWD2CH_Msk          (0x7FFFFUL << ADC_AWD2CR_AWD2CH_Pos    ; 0x0007FFFF 
-;ADC_AWD2CR_AWD2CH              ADC_AWD2CR_AWD2CH_Msk                   ; ADC analog watchdog 2 monitored channel selection 
-;ADC_AWD2CR_AWD2CH_0            (0x00001UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000001 
-;ADC_AWD2CR_AWD2CH_1            (0x00002UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000002 
-;ADC_AWD2CR_AWD2CH_2            (0x00004UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000004 
-;ADC_AWD2CR_AWD2CH_3            (0x00008UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000008 
-;ADC_AWD2CR_AWD2CH_4            (0x00010UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000010 
-;ADC_AWD2CR_AWD2CH_5            (0x00020UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000020 
-;ADC_AWD2CR_AWD2CH_6            (0x00040UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000040 
-;ADC_AWD2CR_AWD2CH_7            (0x00080UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000080 
-;ADC_AWD2CR_AWD2CH_8            (0x00100UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000100 
-;ADC_AWD2CR_AWD2CH_9            (0x00200UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000200 
-;ADC_AWD2CR_AWD2CH_10           (0x00400UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000400 
-;ADC_AWD2CR_AWD2CH_11           (0x00800UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00000800 
-;ADC_AWD2CR_AWD2CH_12           (0x01000UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00001000 
-;ADC_AWD2CR_AWD2CH_13           (0x02000UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00002000 
-;ADC_AWD2CR_AWD2CH_14           (0x04000UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00004000 
-;ADC_AWD2CR_AWD2CH_15           (0x08000UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00008000 
-;ADC_AWD2CR_AWD2CH_16           (0x10000UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00010000 
-;ADC_AWD2CR_AWD2CH_17           (0x20000UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00020000 
-;ADC_AWD2CR_AWD2CH_18           (0x40000UL << ADC_AWD2CR_AWD2CH_Pos    ; 0x00040000 
-
-;*******************  Bit definition for ADC_AWD3CR register  ***************
-;ADC_AWD3CR_AWD3CH_Pos          (0
-;ADC_AWD3CR_AWD3CH_Msk          (0x7FFFFUL << ADC_AWD3CR_AWD3CH_Pos    ; 0x0007FFFF 
-;ADC_AWD3CR_AWD3CH              ADC_AWD3CR_AWD3CH_Msk                   ; ADC analog watchdog 3 monitored channel selection 
-;ADC_AWD3CR_AWD3CH_0            (0x00001UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000001 
-;ADC_AWD3CR_AWD3CH_1            (0x00002UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000002 
-;ADC_AWD3CR_AWD3CH_2            (0x00004UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000004 
-;ADC_AWD3CR_AWD3CH_3            (0x00008UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000008 
-;ADC_AWD3CR_AWD3CH_4            (0x00010UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000010 
-;ADC_AWD3CR_AWD3CH_5            (0x00020UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000020 
-;ADC_AWD3CR_AWD3CH_6            (0x00040UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000040 
-;ADC_AWD3CR_AWD3CH_7            (0x00080UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000080 
-;ADC_AWD3CR_AWD3CH_8            (0x00100UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000100 
-;ADC_AWD3CR_AWD3CH_9            (0x00200UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000200 
-;ADC_AWD3CR_AWD3CH_10           (0x00400UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000400 
-;ADC_AWD3CR_AWD3CH_11           (0x00800UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00000800 
-;ADC_AWD3CR_AWD3CH_12           (0x01000UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00001000 
-;ADC_AWD3CR_AWD3CH_13           (0x02000UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00002000 
-;ADC_AWD3CR_AWD3CH_14           (0x04000UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00004000 
-;ADC_AWD3CR_AWD3CH_15           (0x08000UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00008000 
-;ADC_AWD3CR_AWD3CH_16           (0x10000UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00010000 
-;ADC_AWD3CR_AWD3CH_17           (0x20000UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00020000 
-;ADC_AWD3CR_AWD3CH_18           (0x40000UL << ADC_AWD3CR_AWD3CH_Pos    ; 0x00040000 
 
 ;*******************  Bit definition for ADC_DIFSEL register  ***************
 ADC_DIFSEL_DIFSEL_Pos          EQU 0
@@ -2158,104 +593,7 @@ ADC_DIFSEL_DIFSEL_16           EQU 0x10000 << ADC_DIFSEL_DIFSEL_Pos    ; 0x00010
 ADC_DIFSEL_DIFSEL_17           EQU 0x20000 << ADC_DIFSEL_DIFSEL_Pos    ; 0x00020000 
 ADC_DIFSEL_DIFSEL_18           EQU 0x40000 << ADC_DIFSEL_DIFSEL_Pos    ; 0x00040000 
 
-;*******************  Bit definition for ADC_CALFACT register  **************
-;ADC_CALFACT_CALFACT_S_Pos      (0
-;ADC_CALFACT_CALFACT_S_Msk      (0x7FUL << ADC_CALFACT_CALFACT_S_Pos   ; 0x0000007F 
-;ADC_CALFACT_CALFACT_S          ADC_CALFACT_CALFACT_S_Msk               ; ADC calibration factor in single-ended mode 
-;ADC_CALFACT_CALFACT_S_0        (0x01UL << ADC_CALFACT_CALFACT_S_Pos   ; 0x00000001 
-;ADC_CALFACT_CALFACT_S_1        (0x02UL << ADC_CALFACT_CALFACT_S_Pos   ; 0x00000002 
-;ADC_CALFACT_CALFACT_S_2        (0x04UL << ADC_CALFACT_CALFACT_S_Pos   ; 0x00000004 
-;ADC_CALFACT_CALFACT_S_3        (0x08UL << ADC_CALFACT_CALFACT_S_Pos   ; 0x00000008 
-;ADC_CALFACT_CALFACT_S_4        (0x10UL << ADC_CALFACT_CALFACT_S_Pos   ; 0x00000010 
-;ADC_CALFACT_CALFACT_S_5        (0x20UL << ADC_CALFACT_CALFACT_S_Pos   ; 0x00000020 
-;ADC_CALFACT_CALFACT_S_6        (0x40UL << ADC_CALFACT_CALFACT_S_Pos   ; 0x00000030 
-
-;ADC_CALFACT_CALFACT_D_Pos      (16
-;ADC_CALFACT_CALFACT_D_Msk      (0x7FUL << ADC_CALFACT_CALFACT_D_Pos   ; 0x007F0000 
-;ADC_CALFACT_CALFACT_D          ADC_CALFACT_CALFACT_D_Msk               ; ADC calibration factor in differential mode 
-;ADC_CALFACT_CALFACT_D_0        (0x01UL << ADC_CALFACT_CALFACT_D_Pos   ; 0x00010000 
-;ADC_CALFACT_CALFACT_D_1        (0x02UL << ADC_CALFACT_CALFACT_D_Pos   ; 0x00020000 
-;ADC_CALFACT_CALFACT_D_2        (0x04UL << ADC_CALFACT_CALFACT_D_Pos   ; 0x00040000 
-;ADC_CALFACT_CALFACT_D_3        (0x08UL << ADC_CALFACT_CALFACT_D_Pos   ; 0x00080000 
-;ADC_CALFACT_CALFACT_D_4        (0x10UL << ADC_CALFACT_CALFACT_D_Pos   ; 0x00100000 
-;ADC_CALFACT_CALFACT_D_5        (0x20UL << ADC_CALFACT_CALFACT_D_Pos   ; 0x00200000 
-;ADC_CALFACT_CALFACT_D_6        (0x40UL << ADC_CALFACT_CALFACT_D_Pos   ; 0x00300000 
-
-;*******************  Bit definition for ADC_GCOMP register  ****************
-;ADC_GCOMP_GCOMPCOEFF_Pos       (0
-;ADC_GCOMP_GCOMPCOEFF_Msk       (0x3FFFUL << ADC_GCOMP_GCOMPCOEFF_Pos  ; 0x00003FFF 
-;ADC_GCOMP_GCOMPCOEFF           ADC_GCOMP_GCOMPCOEFF_Msk                ; ADC Gain Compensation Coefficient 
-
 ;************************  ADC Common registers  ****************************
-;*******************  Bit definition for ADC_CSR register  ******************
-;ADC_CSR_ADRDY_MST_Pos          (0
-;ADC_CSR_ADRDY_MST_Msk          (0x1 << ADC_CSR_ADRDY_MST_Pos        ; 0x00000001 
-;ADC_CSR_ADRDY_MST              ADC_CSR_ADRDY_MST_Msk                   ; ADC multimode master ready flag 
-;ADC_CSR_EOSMP_MST_Pos          (1
-;ADC_CSR_EOSMP_MST_Msk          (0x1 << ADC_CSR_EOSMP_MST_Pos        ; 0x00000002 
-;ADC_CSR_EOSMP_MST              ADC_CSR_EOSMP_MST_Msk                   ; ADC multimode master group regular end of sampling flag 
-;ADC_CSR_EOC_MST_Pos            (2
-;ADC_CSR_EOC_MST_Msk            (0x1 << ADC_CSR_EOC_MST_Pos          ; 0x00000004 
-;ADC_CSR_EOC_MST                ADC_CSR_EOC_MST_Msk                     ; ADC multimode master group regular end of unitary conversion flag 
-;ADC_CSR_EOS_MST_Pos            (3
-;ADC_CSR_EOS_MST_Msk            (0x1 << ADC_CSR_EOS_MST_Pos          ; 0x00000008 
-;ADC_CSR_EOS_MST                ADC_CSR_EOS_MST_Msk                     ; ADC multimode master group regular end of sequence conversions flag 
-;ADC_CSR_OVR_MST_Pos            (4
-;ADC_CSR_OVR_MST_Msk            (0x1 << ADC_CSR_OVR_MST_Pos          ; 0x00000010 
-;ADC_CSR_OVR_MST                ADC_CSR_OVR_MST_Msk                     ; ADC multimode master group regular overrun flag 
-;ADC_CSR_JEOC_MST_Pos           (5
-;ADC_CSR_JEOC_MST_Msk           (0x1 << ADC_CSR_JEOC_MST_Pos         ; 0x00000020 
-;ADC_CSR_JEOC_MST               ADC_CSR_JEOC_MST_Msk                    ; ADC multimode master group injected end of unitary conversion flag 
-;ADC_CSR_JEOS_MST_Pos           (6
-;ADC_CSR_JEOS_MST_Msk           (0x1 << ADC_CSR_JEOS_MST_Pos         ; 0x00000040 
-;ADC_CSR_JEOS_MST               ADC_CSR_JEOS_MST_Msk                    ; ADC multimode master group injected end of sequence conversions flag 
-;ADC_CSR_AWD1_MST_Pos           (7
-;ADC_CSR_AWD1_MST_Msk           (0x1 << ADC_CSR_AWD1_MST_Pos         ; 0x00000080 
-;ADC_CSR_AWD1_MST               ADC_CSR_AWD1_MST_Msk                    ; ADC multimode master analog watchdog 1 flag 
-;ADC_CSR_AWD2_MST_Pos           (8
-;ADC_CSR_AWD2_MST_Msk           (0x1 << ADC_CSR_AWD2_MST_Pos         ; 0x00000100 
-;ADC_CSR_AWD2_MST               ADC_CSR_AWD2_MST_Msk                    ; ADC multimode master analog watchdog 2 flag 
-;ADC_CSR_AWD3_MST_Pos           (9
-;ADC_CSR_AWD3_MST_Msk           (0x1 << ADC_CSR_AWD3_MST_Pos         ; 0x00000200 
-;ADC_CSR_AWD3_MST               ADC_CSR_AWD3_MST_Msk                    ; ADC multimode master analog watchdog 3 flag 
-;ADC_CSR_JQOVF_MST_Pos          (10
-;ADC_CSR_JQOVF_MST_Msk          (0x1 << ADC_CSR_JQOVF_MST_Pos        ; 0x00000400 
-;ADC_CSR_JQOVF_MST              ADC_CSR_JQOVF_MST_Msk                   ; ADC multimode master group injected contexts queue overflow flag 
-
-;ADC_CSR_ADRDY_SLV_Pos          (16
-;ADC_CSR_ADRDY_SLV_Msk          (0x1 << ADC_CSR_ADRDY_SLV_Pos        ; 0x00010000 
-;ADC_CSR_ADRDY_SLV              ADC_CSR_ADRDY_SLV_Msk                   ; ADC multimode slave ready flag 
-;ADC_CSR_EOSMP_SLV_Pos          (17
-;ADC_CSR_EOSMP_SLV_Msk          (0x1 << ADC_CSR_EOSMP_SLV_Pos        ; 0x00020000 
-;ADC_CSR_EOSMP_SLV              ADC_CSR_EOSMP_SLV_Msk                   ; ADC multimode slave group regular end of sampling flag 
-;ADC_CSR_EOC_SLV_Pos            (18
-;ADC_CSR_EOC_SLV_Msk            (0x1 << ADC_CSR_EOC_SLV_Pos          ; 0x00040000 
-;ADC_CSR_EOC_SLV                ADC_CSR_EOC_SLV_Msk                     ; ADC multimode slave group regular end of unitary conversion flag 
-;ADC_CSR_EOS_SLV_Pos            (19
-;ADC_CSR_EOS_SLV_Msk            (0x1 << ADC_CSR_EOS_SLV_Pos          ; 0x00080000 
-;ADC_CSR_EOS_SLV                ADC_CSR_EOS_SLV_Msk                     ; ADC multimode slave group regular end of sequence conversions flag 
-;ADC_CSR_OVR_SLV_Pos            (20
-;ADC_CSR_OVR_SLV_Msk            (0x1 << ADC_CSR_OVR_SLV_Pos          ; 0x00100000 
-;ADC_CSR_OVR_SLV                ADC_CSR_OVR_SLV_Msk                     ; ADC multimode slave group regular overrun flag 
-;ADC_CSR_JEOC_SLV_Pos           (21
-;ADC_CSR_JEOC_SLV_Msk           (0x1 << ADC_CSR_JEOC_SLV_Pos         ; 0x00200000 
-;ADC_CSR_JEOC_SLV               ADC_CSR_JEOC_SLV_Msk                    ; ADC multimode slave group injected end of unitary conversion flag 
-;ADC_CSR_JEOS_SLV_Pos           (22
-;ADC_CSR_JEOS_SLV_Msk           (0x1 << ADC_CSR_JEOS_SLV_Pos         ; 0x00400000 
-;ADC_CSR_JEOS_SLV               ADC_CSR_JEOS_SLV_Msk                    ; ADC multimode slave group injected end of sequence conversions flag 
-;ADC_CSR_AWD1_SLV_Pos           (23
-;ADC_CSR_AWD1_SLV_Msk           (0x1 << ADC_CSR_AWD1_SLV_Pos         ; 0x00800000 
-;ADC_CSR_AWD1_SLV               ADC_CSR_AWD1_SLV_Msk                    ; ADC multimode slave analog watchdog 1 flag 
-;ADC_CSR_AWD2_SLV_Pos           (24
-;ADC_CSR_AWD2_SLV_Msk           (0x1 << ADC_CSR_AWD2_SLV_Pos         ; 0x01000000 
-;ADC_CSR_AWD2_SLV               ADC_CSR_AWD2_SLV_Msk                    ; ADC multimode slave analog watchdog 2 flag 
-;ADC_CSR_AWD3_SLV_Pos           (25
-;ADC_CSR_AWD3_SLV_Msk           (0x1 << ADC_CSR_AWD3_SLV_Pos         ; 0x02000000 
-;ADC_CSR_AWD3_SLV               ADC_CSR_AWD3_SLV_Msk                    ; ADC multimode slave analog watchdog 3 flag 
-;ADC_CSR_JQOVF_SLV_Pos          (26
-;ADC_CSR_JQOVF_SLV_Msk          (0x1 << ADC_CSR_JQOVF_SLV_Pos        ; 0x04000000 
-;ADC_CSR_JQOVF_SLV              ADC_CSR_JQOVF_SLV_Msk                   ; ADC multimode slave group injected contexts queue overflow flag 
-
 ;*******************  Bit definition for ADC_CCR register  ******************
 ADC_CCR_DUAL_Pos               EQU 0
 ADC_CCR_DUAL_Msk               EQU 0x1F << ADC_CCR_DUAL_Pos            ; 0x0000001F 
@@ -2265,30 +603,6 @@ ADC_CCR_DUAL_1                 EQU 0x02 << ADC_CCR_DUAL_Pos            ; 0x00000
 ADC_CCR_DUAL_2                 EQU 0x04 << ADC_CCR_DUAL_Pos            ; 0x00000004 
 ADC_CCR_DUAL_3                 EQU 0x08 << ADC_CCR_DUAL_Pos            ; 0x00000008 
 ADC_CCR_DUAL_4                 EQU 0x10 << ADC_CCR_DUAL_Pos            ; 0x00000010 
-
-;ADC_CCR_DELAY_Pos              (8
-;ADC_CCR_DELAY_Msk              (0xFUL << ADC_CCR_DELAY_Pos            ; 0x00000F00 
-;ADC_CCR_DELAY                  ADC_CCR_DELAY_Msk                       ; ADC multimode delay between 2 sampling phases 
-;ADC_CCR_DELAY_0                (0x1 << ADC_CCR_DELAY_Pos            ; 0x00000100 
-;ADC_CCR_DELAY_1                (0x2UL << ADC_CCR_DELAY_Pos            ; 0x00000200 
-;ADC_CCR_DELAY_2                (0x4UL << ADC_CCR_DELAY_Pos            ; 0x00000400 
-;ADC_CCR_DELAY_3                (0x8UL << ADC_CCR_DELAY_Pos            ; 0x00000800 
-
-;ADC_CCR_DMACFG_Pos             (13
-;ADC_CCR_DMACFG_Msk             (0x1 << ADC_CCR_DMACFG_Pos           ; 0x00002000 
-;ADC_CCR_DMACFG                 ADC_CCR_DMACFG_Msk                      ; ADC multimode DMA transfer configuration 
-
-;ADC_CCR_MDMA_Pos               (14
-;ADC_CCR_MDMA_Msk               (0x3UL << ADC_CCR_MDMA_Pos             ; 0x0000C000 
-;ADC_CCR_MDMA                   ADC_CCR_MDMA_Msk                        ; ADC multimode DMA transfer enable 
-;ADC_CCR_MDMA_0                 (0x1 << ADC_CCR_MDMA_Pos             ; 0x00004000 
-;ADC_CCR_MDMA_1                 (0x2UL << ADC_CCR_MDMA_Pos             ; 0x00008000 
-
-;ADC_CCR_CKMODE_Pos             (16
-;ADC_CCR_CKMODE_Msk             (0x3UL << ADC_CCR_CKMODE_Pos           ; 0x00030000 
-;ADC_CCR_CKMODE                 ADC_CCR_CKMODE_Msk                      ; ADC common clock source and prescaler (prescaler only for clock source synchronous) 
-;ADC_CCR_CKMODE_0               (0x1 << ADC_CCR_CKMODE_Pos           ; 0x00010000 
-;ADC_CCR_CKMODE_1               (0x2UL << ADC_CCR_CKMODE_Pos           ; 0x00020000 
 
 ADC_CCR_PRESC_Pos              EQU 18
 ADC_CCR_PRESC_Msk              EQU 0xF << ADC_CCR_PRESC_Pos            ; 0x003C0000 
@@ -2301,303 +615,24 @@ ADC_CCR_PRESC_3                EQU 0x8 << ADC_CCR_PRESC_Pos            ; 0x00200
 ADC_CCR_VREFEN_Pos             EQU 22
 ADC_CCR_VREFEN_Msk             EQU 0x1 << ADC_CCR_VREFEN_Pos           ; 0x00400000 
 ADC_CCR_VREFEN                 EQU ADC_CCR_VREFEN_Msk                      ; ADC internal path to VrefInt enable 
-;ADC_CCR_VSENSESEL_Pos          (23
-;ADC_CCR_VSENSESEL_Msk          (0x1 << ADC_CCR_VSENSESEL_Pos        ; 0x00800000 
-;ADC_CCR_VSENSESEL              ADC_CCR_VSENSESEL_Msk                   ; ADC internal path to temperature sensor enable 
-;ADC_CCR_VBATSEL_Pos            (24
-;ADC_CCR_VBATSEL_Msk            (0x1 << ADC_CCR_VBATSEL_Pos          ; 0x01000000 
-;ADC_CCR_VBATSEL                ADC_CCR_VBATSEL_Msk                     ; ADC internal path to battery voltage enable 
-
-;*******************  Bit definition for ADC_CDR register  ******************
-;ADC_CDR_RDATA_MST_Pos          (0
-;ADC_CDR_RDATA_MST_Msk          (0xFFFFUL << ADC_CDR_RDATA_MST_Pos     ; 0x0000FFFF 
-;ADC_CDR_RDATA_MST              ADC_CDR_RDATA_MST_Msk                   ; ADC multimode master group regular conversion data 
-
-;ADC_CDR_RDATA_SLV_Pos          (16
-;ADC_CDR_RDATA_SLV_Msk          (0xFFFFUL << ADC_CDR_RDATA_SLV_Pos     ; 0xFFFF0000 
-;ADC_CDR_RDATA_SLV              ADC_CDR_RDATA_SLV_Msk                   ; ADC multimode slave group regular conversion data 
-
-
-;****************************************************************************
-;                                                                            
-;                      Analog Comparators (COMP)                             
-;                                                                            
-;****************************************************************************
-;*********************  Bit definition for COMP_CSR register  ***************
-;COMP_CSR_EN_Pos            (0
-;COMP_CSR_EN_Msk            (0x1 << COMP_CSR_EN_Pos                  ; 0x00000001 
-;COMP_CSR_EN                COMP_CSR_EN_Msk                             ; Comparator enable 
-
-;COMP_CSR_INMSEL_Pos        (4
-;COMP_CSR_INMSEL_Msk        (0xFUL << COMP_CSR_INMSEL_Pos              ; 0x00000070 
-;COMP_CSR_INMSEL            COMP_CSR_INMSEL_Msk                         ; Comparator input minus selection 
-;COMP_CSR_INMSEL_0          (0x1 << COMP_CSR_INMSEL_Pos              ; 0x00000010 
-;COMP_CSR_INMSEL_1          (0x2UL << COMP_CSR_INMSEL_Pos              ; 0x00000020 
-;COMP_CSR_INMSEL_2          (0x4UL << COMP_CSR_INMSEL_Pos              ; 0x00000040 
-;COMP_CSR_INMSEL_3          (0x8UL << COMP_CSR_INMSEL_Pos              ; 0x00000080 
-
-;COMP_CSR_INPSEL_Pos        (8
-;COMP_CSR_INPSEL_Msk        (0x1 << COMP_CSR_INPSEL_Pos              ; 0x00000100 
-;COMP_CSR_INPSEL            COMP_CSR_INPSEL_Msk                         ; Comparator input plus selection 
-
-;COMP_CSR_POLARITY_Pos      (15
-;COMP_CSR_POLARITY_Msk      (0x1 << COMP_CSR_POLARITY_Pos            ; 0x00008000 
-;COMP_CSR_POLARITY          COMP_CSR_POLARITY_Msk                       ; Comparator output polarity 
-
-;COMP_CSR_HYST_Pos          (16
-;COMP_CSR_HYST_Msk          (0x7UL << COMP_CSR_HYST_Pos                ; 0x00070000 
-;COMP_CSR_HYST              COMP_CSR_HYST_Msk                           ; Comparator hysteresis 
-;COMP_CSR_HYST_0            (0x1 << COMP_CSR_HYST_Pos                ; 0x00010000 
-;COMP_CSR_HYST_1            (0x2UL << COMP_CSR_HYST_Pos                ; 0x00020000 
-;COMP_CSR_HYST_2            (0x4UL << COMP_CSR_HYST_Pos                ; 0x00040000 
-
-;COMP_CSR_BLANKING_Pos      (19
-;COMP_CSR_BLANKING_Msk      (0x7UL << COMP_CSR_BLANKING_Pos            ; 0x00380000 
-;COMP_CSR_BLANKING          COMP_CSR_BLANKING_Msk                       ; Comparator blanking source 
-;COMP_CSR_BLANKING_0        (0x1 << COMP_CSR_BLANKING_Pos            ; 0x00080000 
-;COMP_CSR_BLANKING_1        (0x2UL << COMP_CSR_BLANKING_Pos            ; 0x00100000 
-;COMP_CSR_BLANKING_2        (0x4UL << COMP_CSR_BLANKING_Pos            ; 0x00200000 
-
-;COMP_CSR_BRGEN_Pos         (22
-;COMP_CSR_BRGEN_Msk         (0x1 << COMP_CSR_BRGEN_Pos               ; 0x00400000 
-;COMP_CSR_BRGEN             COMP_CSR_BRGEN_Msk                          ; Comparator scaler bridge enable 
-
-;COMP_CSR_SCALEN_Pos        (23
-;COMP_CSR_SCALEN_Msk        (0x1 << COMP_CSR_SCALEN_Pos              ; 0x00800000 
-;COMP_CSR_SCALEN            COMP_CSR_SCALEN_Msk                         ; Comparator voltage scaler enable 
-
-;COMP_CSR_VALUE_Pos         (30
-;COMP_CSR_VALUE_Msk         (0x1 << COMP_CSR_VALUE_Pos               ; 0x40000000 
-;COMP_CSR_VALUE             COMP_CSR_VALUE_Msk                          ; Comparator output level 
-
-;COMP_CSR_LOCK_Pos          (31
-;COMP_CSR_LOCK_Msk          (0x1 << COMP_CSR_LOCK_Pos                ; 0x80000000 
-;COMP_CSR_LOCK              COMP_CSR_LOCK_Msk                           ; Comparator lock 
-
-;****************************************************************************
-;                                                                            
-;                          CORDIC calculation unit                           
-;                                                                            
-;****************************************************************************
-;******************  Bit definition for CORDIC_CSR register  ****************
-;CORDIC_CSR_FUNC_Pos      (0
-;CORDIC_CSR_FUNC_Msk      (0xFUL << CORDIC_CSR_FUNC_Pos                ; 0x0000000F 
-;CORDIC_CSR_FUNC          CORDIC_CSR_FUNC_Msk                           ; Function 
-;CORDIC_CSR_FUNC_0        (0x1 << CORDIC_CSR_FUNC_Pos                ; 0x00000001 
-;CORDIC_CSR_FUNC_1        (0x2UL << CORDIC_CSR_FUNC_Pos                ; 0x00000002 
-;CORDIC_CSR_FUNC_2        (0x4UL << CORDIC_CSR_FUNC_Pos                ; 0x00000004 
-;CORDIC_CSR_FUNC_3        (0x8UL << CORDIC_CSR_FUNC_Pos                ; 0x00000008 
-;CORDIC_CSR_PRECISION_Pos (4
-;CORDIC_CSR_PRECISION_Msk (0xFUL << CORDIC_CSR_PRECISION_Pos           ; 0x000000F0 
-;CORDIC_CSR_PRECISION     CORDIC_CSR_PRECISION_Msk                      ; Precision 
-;CORDIC_CSR_PRECISION_0   (0x1 << CORDIC_CSR_PRECISION_Pos           ; 0x00000010 
-;CORDIC_CSR_PRECISION_1   (0x2UL << CORDIC_CSR_PRECISION_Pos           ; 0x00000020 
-;CORDIC_CSR_PRECISION_2   (0x4UL << CORDIC_CSR_PRECISION_Pos           ; 0x00000040 
-;CORDIC_CSR_PRECISION_3   (0x8UL << CORDIC_CSR_PRECISION_Pos           ; 0x00000080 
-;CORDIC_CSR_SCALE_Pos     (8
-;CORDIC_CSR_SCALE_Msk     (0x7UL << CORDIC_CSR_SCALE_Pos               ; 0x00000700 
-;CORDIC_CSR_SCALE         CORDIC_CSR_SCALE_Msk                          ; Scaling factor 
-;CORDIC_CSR_SCALE_0       (0x1 << CORDIC_CSR_SCALE_Pos               ; 0x00000100 
-;CORDIC_CSR_SCALE_1       (0x2UL << CORDIC_CSR_SCALE_Pos               ; 0x00000200 
-;CORDIC_CSR_SCALE_2       (0x4UL << CORDIC_CSR_SCALE_Pos               ; 0x00000400 
-;CORDIC_CSR_IEN_Pos       (16
-;CORDIC_CSR_IEN_Msk       (0x1 << CORDIC_CSR_IEN_Pos                 ; 0x00010000 
-;CORDIC_CSR_IEN           CORDIC_CSR_IEN_Msk                            ; Interrupt Enable 
-;CORDIC_CSR_DMAREN_Pos    (17
-;CORDIC_CSR_DMAREN_Msk    (0x1 << CORDIC_CSR_DMAREN_Pos              ; 0x00020000 
-;CORDIC_CSR_DMAREN        CORDIC_CSR_DMAREN_Msk                         ; DMA Read channel Enable 
-;CORDIC_CSR_DMAWEN_Pos    (18
-;CORDIC_CSR_DMAWEN_Msk    (0x1 << CORDIC_CSR_DMAWEN_Pos              ; 0x00040000 
-;CORDIC_CSR_DMAWEN        CORDIC_CSR_DMAWEN_Msk                         ; DMA Write channel Enable 
-;CORDIC_CSR_NRES_Pos      (19
-;CORDIC_CSR_NRES_Msk      (0x1 << CORDIC_CSR_NRES_Pos                ; 0x00080000 
-;CORDIC_CSR_NRES          CORDIC_CSR_NRES_Msk                           ; Number of results in WDATA register 
-;CORDIC_CSR_NARGS_Pos     (20
-;CORDIC_CSR_NARGS_Msk     (0x1 << CORDIC_CSR_NARGS_Pos               ; 0x00100000 
-;CORDIC_CSR_NARGS         CORDIC_CSR_NARGS_Msk                          ; Number of arguments in RDATA register 
-;CORDIC_CSR_RESSIZE_Pos   (21
-;CORDIC_CSR_RESSIZE_Msk   (0x1 << CORDIC_CSR_RESSIZE_Pos             ; 0x00200000 
-;CORDIC_CSR_RESSIZE       CORDIC_CSR_RESSIZE_Msk                        ; Width of output data 
-;CORDIC_CSR_ARGSIZE_Pos   (22
-;CORDIC_CSR_ARGSIZE_Msk   (0x1 << CORDIC_CSR_ARGSIZE_Pos             ; 0x00400000 
-;CORDIC_CSR_ARGSIZE       CORDIC_CSR_ARGSIZE_Msk                        ; Width of input data 
-;CORDIC_CSR_RRDY_Pos      (31
-;CORDIC_CSR_RRDY_Msk      (0x1 << CORDIC_CSR_RRDY_Pos                ; 0x80000000 
-;CORDIC_CSR_RRDY          CORDIC_CSR_RRDY_Msk                           ; Result Ready Flag 
-
-;******************  Bit definition for CORDIC_WDATA register  **************
-;CORDIC_WDATA_ARG_Pos     (0
-;CORDIC_WDATA_ARG_Msk     (0xFFFFFFFFUL << CORDIC_WDATA_ARG_Pos        ; 0xFFFFFFFF 
-;CORDIC_WDATA_ARG         CORDIC_WDATA_ARG_Msk                          ; Input Argument 
-
-;******************  Bit definition for CORDIC_RDATA register  **************
-;CORDIC_RDATA_RES_Pos     (0
-;CORDIC_RDATA_RES_Msk     (0xFFFFFFFFUL << CORDIC_RDATA_RES_Pos        ; 0xFFFFFFFF 
-;CORDIC_RDATA_RES         CORDIC_RDATA_RES_Msk                          ; Output Result 
-
-;****************************************************************************
-;                                                                            
-;                          CRC calculation unit                              
-;                                                                            
-;****************************************************************************
-;******************  Bit definition for CRC_DR register  ********************
-;CRC_DR_DR_Pos            (0
-;CRC_DR_DR_Msk            (0xFFFFFFFFUL << CRC_DR_DR_Pos               ; 0xFFFFFFFF 
-;CRC_DR_DR                CRC_DR_DR_Msk                                 ; Data register bits 
-
-;******************  Bit definition for CRC_IDR register  *******************
-;CRC_IDR_IDR_Pos          (0
-;CRC_IDR_IDR_Msk          (0xFFFFFFFFUL << CRC_IDR_IDR_Pos             ; 0xFFFFFFFF 
-;CRC_IDR_IDR              CRC_IDR_IDR_Msk                               ; General-purpose 32-bit data register bits 
-
-;*******************  Bit definition for CRC_CR register  *******************
-;CRC_CR_RESET_Pos         (0
-;CRC_CR_RESET_Msk         (0x1 << CRC_CR_RESET_Pos                   ; 0x00000001 
-;CRC_CR_RESET             CRC_CR_RESET_Msk                              ; RESET the CRC computation unit bit 
-;CRC_CR_POLYSIZE_Pos      (3
-;CRC_CR_POLYSIZE_Msk      (0x3UL << CRC_CR_POLYSIZE_Pos                ; 0x00000018 
-;CRC_CR_POLYSIZE          CRC_CR_POLYSIZE_Msk                           ; Polynomial size bits 
-;CRC_CR_POLYSIZE_0        (0x1 << CRC_CR_POLYSIZE_Pos                ; 0x00000008 
-;CRC_CR_POLYSIZE_1        (0x2UL << CRC_CR_POLYSIZE_Pos                ; 0x00000010 
-;CRC_CR_REV_IN_Pos        (5
-;CRC_CR_REV_IN_Msk        (0x3UL << CRC_CR_REV_IN_Pos                  ; 0x00000060 
-;CRC_CR_REV_IN            CRC_CR_REV_IN_Msk                             ; REV_IN Reverse Input Data bits 
-;CRC_CR_REV_IN_0          (0x1 << CRC_CR_REV_IN_Pos                  ; 0x00000020 
-;CRC_CR_REV_IN_1          (0x2UL << CRC_CR_REV_IN_Pos                  ; 0x00000040 
-;CRC_CR_REV_OUT_Pos       (7
-;CRC_CR_REV_OUT_Msk       (0x1 << CRC_CR_REV_OUT_Pos                 ; 0x00000080 
-;CRC_CR_REV_OUT           CRC_CR_REV_OUT_Msk                            ; REV_OUT Reverse Output Data bits 
-
-;******************  Bit definition for CRC_INIT register  ******************
-;CRC_INIT_INIT_Pos        (0
-;CRC_INIT_INIT_Msk        (0xFFFFFFFFUL << CRC_INIT_INIT_Pos           ; 0xFFFFFFFF 
-;CRC_INIT_INIT            CRC_INIT_INIT_Msk                             ; Initial CRC value bits 
-
-;******************  Bit definition for CRC_POL register  *******************
-;CRC_POL_POL_Pos          (0
-;CRC_POL_POL_Msk          (0xFFFFFFFFUL << CRC_POL_POL_Pos             ; 0xFFFFFFFF 
-;CRC_POL_POL              CRC_POL_POL_Msk                               ; Coefficients of the polynomial 
-
-;****************************************************************************
-;                                                                            
-;                          CRS Clock Recovery System                         
-;****************************************************************************
-
-;******************  Bit definition for CRS_CR register  ********************
-;CRS_CR_SYNCOKIE_Pos       (0
-;CRS_CR_SYNCOKIE_Msk       (0x1 << CRS_CR_SYNCOKIE_Pos               ; 0x00000001 
-;CRS_CR_SYNCOKIE           CRS_CR_SYNCOKIE_Msk                          ; SYNC event OK interrupt enable 
-;CRS_CR_SYNCWARNIE_Pos     (1
-;CRS_CR_SYNCWARNIE_Msk     (0x1 << CRS_CR_SYNCWARNIE_Pos             ; 0x00000002 
-;CRS_CR_SYNCWARNIE         CRS_CR_SYNCWARNIE_Msk                        ; SYNC warning interrupt enable 
-;CRS_CR_ERRIE_Pos          (2
-;CRS_CR_ERRIE_Msk          (0x1 << CRS_CR_ERRIE_Pos                  ; 0x00000004 
-;CRS_CR_ERRIE              CRS_CR_ERRIE_Msk                             ; SYNC error or trimming error interrupt enable 
-;CRS_CR_ESYNCIE_Pos        (3
-;CRS_CR_ESYNCIE_Msk        (0x1 << CRS_CR_ESYNCIE_Pos                ; 0x00000008 
-;CRS_CR_ESYNCIE            CRS_CR_ESYNCIE_Msk                           ; Expected SYNC interrupt enable 
-;CRS_CR_CEN_Pos            (5
-;CRS_CR_CEN_Msk            (0x1 << CRS_CR_CEN_Pos                    ; 0x00000020 
-;CRS_CR_CEN                CRS_CR_CEN_Msk                               ; Frequency error counter enable 
-;CRS_CR_AUTOTRIMEN_Pos     (6
-;CRS_CR_AUTOTRIMEN_Msk     (0x1 << CRS_CR_AUTOTRIMEN_Pos             ; 0x00000040 
-;CRS_CR_AUTOTRIMEN         CRS_CR_AUTOTRIMEN_Msk                        ; Automatic trimming enable 
-;CRS_CR_SWSYNC_Pos         (7
-;CRS_CR_SWSYNC_Msk         (0x1 << CRS_CR_SWSYNC_Pos                 ; 0x00000080 
-;CRS_CR_SWSYNC             CRS_CR_SWSYNC_Msk                            ; Generate software SYNC event 
-;CRS_CR_TRIM_Pos           (8
-;CRS_CR_TRIM_Msk           (0x7FUL << CRS_CR_TRIM_Pos                  ; 0x00007F00 
-;CRS_CR_TRIM               CRS_CR_TRIM_Msk                              ; HSI48 oscillator smooth trimming 
-
-;******************  Bit definition for CRS_CFGR register  ********************
-;CRS_CFGR_RELOAD_Pos       (0
-;CRS_CFGR_RELOAD_Msk       (0xFFFFUL << CRS_CFGR_RELOAD_Pos            ; 0x0000FFFF 
-;CRS_CFGR_RELOAD           CRS_CFGR_RELOAD_Msk                          ; Counter reload value 
-;CRS_CFGR_FELIM_Pos        (16
-;CRS_CFGR_FELIM_Msk        (0xFFUL << CRS_CFGR_FELIM_Pos               ; 0x00FF0000 
-;CRS_CFGR_FELIM            CRS_CFGR_FELIM_Msk                           ; Frequency error limit 
-
-;CRS_CFGR_SYNCDIV_Pos      (24
-;CRS_CFGR_SYNCDIV_Msk      (0x7UL << CRS_CFGR_SYNCDIV_Pos              ; 0x07000000 
-;CRS_CFGR_SYNCDIV          CRS_CFGR_SYNCDIV_Msk                         ; SYNC divider 
-;CRS_CFGR_SYNCDIV_0        (0x1 << CRS_CFGR_SYNCDIV_Pos              ; 0x01000000 
-;CRS_CFGR_SYNCDIV_1        (0x2UL << CRS_CFGR_SYNCDIV_Pos              ; 0x02000000 
-;CRS_CFGR_SYNCDIV_2        (0x4UL << CRS_CFGR_SYNCDIV_Pos              ; 0x04000000 
-
-;CRS_CFGR_SYNCSRC_Pos      (28
-;CRS_CFGR_SYNCSRC_Msk      (0x3UL << CRS_CFGR_SYNCSRC_Pos              ; 0x30000000 
-;CRS_CFGR_SYNCSRC          CRS_CFGR_SYNCSRC_Msk                         ; SYNC signal source selection 
-;CRS_CFGR_SYNCSRC_0        (0x1 << CRS_CFGR_SYNCSRC_Pos              ; 0x10000000 
-;CRS_CFGR_SYNCSRC_1        (0x2UL << CRS_CFGR_SYNCSRC_Pos              ; 0x20000000 
-
-;CRS_CFGR_SYNCPOL_Pos      (31
-;CRS_CFGR_SYNCPOL_Msk      (0x1 << CRS_CFGR_SYNCPOL_Pos              ; 0x80000000 
-;CRS_CFGR_SYNCPOL          CRS_CFGR_SYNCPOL_Msk                         ; SYNC polarity selection 
-
-;******************  Bit definition for CRS_ISR register  ********************
-;CRS_ISR_SYNCOKF_Pos       (0
-;CRS_ISR_SYNCOKF_Msk       (0x1 << CRS_ISR_SYNCOKF_Pos               ; 0x00000001 
-;CRS_ISR_SYNCOKF           CRS_ISR_SYNCOKF_Msk                          ; SYNC event OK flag 
-;CRS_ISR_SYNCWARNF_Pos     (1
-;CRS_ISR_SYNCWARNF_Msk     (0x1 << CRS_ISR_SYNCWARNF_Pos             ; 0x00000002 
-;CRS_ISR_SYNCWARNF         CRS_ISR_SYNCWARNF_Msk                        ; SYNC warning flag 
-;CRS_ISR_ERRF_Pos          (2
-;CRS_ISR_ERRF_Msk          (0x1 << CRS_ISR_ERRF_Pos                  ; 0x00000004 
-;CRS_ISR_ERRF              CRS_ISR_ERRF_Msk                             ; Error flag 
-;CRS_ISR_ESYNCF_Pos        (3
-;CRS_ISR_ESYNCF_Msk        (0x1 << CRS_ISR_ESYNCF_Pos                ; 0x00000008 
-;CRS_ISR_ESYNCF            CRS_ISR_ESYNCF_Msk                           ; Expected SYNC flag 
-;CRS_ISR_SYNCERR_Pos       (8
-;CRS_ISR_SYNCERR_Msk       (0x1 << CRS_ISR_SYNCERR_Pos               ; 0x00000100 
-;CRS_ISR_SYNCERR           CRS_ISR_SYNCERR_Msk                          ; SYNC error 
-;CRS_ISR_SYNCMISS_Pos      (9
-;CRS_ISR_SYNCMISS_Msk      (0x1 << CRS_ISR_SYNCMISS_Pos              ; 0x00000200 
-;CRS_ISR_SYNCMISS          CRS_ISR_SYNCMISS_Msk                         ; SYNC missed 
-;CRS_ISR_TRIMOVF_Pos       (10
-;CRS_ISR_TRIMOVF_Msk       (0x1 << CRS_ISR_TRIMOVF_Pos               ; 0x00000400 
-;CRS_ISR_TRIMOVF           CRS_ISR_TRIMOVF_Msk                          ; Trimming overflow or underflow 
-;CRS_ISR_FEDIR_Pos         (15
-;CRS_ISR_FEDIR_Msk         (0x1 << CRS_ISR_FEDIR_Pos                 ; 0x00008000 
-;CRS_ISR_FEDIR             CRS_ISR_FEDIR_Msk                            ; Frequency error direction 
-;CRS_ISR_FECAP_Pos         (16
-;CRS_ISR_FECAP_Msk         (0xFFFFUL << CRS_ISR_FECAP_Pos              ; 0xFFFF0000 
-;CRS_ISR_FECAP             CRS_ISR_FECAP_Msk                            ; Frequency error capture 
-
-;******************  Bit definition for CRS_ICR register  ********************
-;CRS_ICR_SYNCOKC_Pos       (0
-;CRS_ICR_SYNCOKC_Msk       (0x1 << CRS_ICR_SYNCOKC_Pos               ; 0x00000001 
-;CRS_ICR_SYNCOKC           CRS_ICR_SYNCOKC_Msk                          ; SYNC event OK clear flag 
-;CRS_ICR_SYNCWARNC_Pos     (1
-;CRS_ICR_SYNCWARNC_Msk     (0x1 << CRS_ICR_SYNCWARNC_Pos             ; 0x00000002 
-;CRS_ICR_SYNCWARNC         CRS_ICR_SYNCWARNC_Msk                        ; SYNC warning clear flag 
-;CRS_ICR_ERRC_Pos          (2
-;CRS_ICR_ERRC_Msk          (0x1 << CRS_ICR_ERRC_Pos                  ; 0x00000004 
-;CRS_ICR_ERRC              CRS_ICR_ERRC_Msk                             ; Error clear flag 
-;CRS_ICR_ESYNCC_Pos        (3
-;CRS_ICR_ESYNCC_Msk        (0x1 << CRS_ICR_ESYNCC_Pos                ; 0x00000008 
-;CRS_ICR_ESYNCC            CRS_ICR_ESYNCC_Msk                           ; Expected SYNC clear flag 
 
 ;****************************************************************************
 ;                                                                            
 ;                      Digital to Analog Converter                           
 ;                                                                            
 ;****************************************************************************
-;
-; * @brief Specific device feature definitions (not present on all devices in the STM32G4 series)
-; 
-;DAC_CHANNEL2_SUPPORT                           ; DAC feature available only on specific devices: DAC channel 2 available 
 
 ;*******************  Bit definition for DAC_CR register  *******************
 DAC_CR_EN1_Pos              EQU 0
 DAC_CR_EN1_Msk              EQU 0x1 << DAC_CR_EN1_Pos                  ; 0x00000001 
-DAC_CR_EN1                  EQU DAC_CR_EN1_Msk                             ;DAC channel1 enable 
+DAC_CR_EN1                  EQU DAC_CR_EN1_Msk                         ;DAC channel1 enable 
 DAC_CR_TEN1_Pos             EQU 1
 DAC_CR_TEN1_Msk             EQU 0x1 << DAC_CR_TEN1_Pos                 ; 0x00000002 
-DAC_CR_TEN1                 EQU DAC_CR_TEN1_Msk                            ;DAC channel1 Trigger enable 
+DAC_CR_TEN1                 EQU DAC_CR_TEN1_Msk                        ;DAC channel1 Trigger enable 
 
 DAC_CR_TSEL1_Pos            EQU 2
 DAC_CR_TSEL1_Msk            EQU 0xF << DAC_CR_TSEL1_Pos                ; 0x0000003C 
-DAC_CR_TSEL1                EQU DAC_CR_TSEL1_Msk                           ;TSEL1[3:0] (DAC channel1 Trigger selection) 
+DAC_CR_TSEL1                EQU DAC_CR_TSEL1_Msk                       ;TSEL1[3:0] (DAC channel1 Trigger selection) 
 DAC_CR_TSEL1_0              EQU 0x1 << DAC_CR_TSEL1_Pos                ; 0x00000004 
 DAC_CR_TSEL1_1              EQU 0x2 << DAC_CR_TSEL1_Pos                ; 0x00000008 
 DAC_CR_TSEL1_2              EQU 0x4 << DAC_CR_TSEL1_Pos                ; 0x00000010 
@@ -2605,7 +640,7 @@ DAC_CR_TSEL1_3              EQU 0x8 << DAC_CR_TSEL1_Pos                ; 0x00000
 
 DAC_CR_WAVE1_Pos            EQU 6
 DAC_CR_WAVE1_Msk            EQU 0x3 << DAC_CR_WAVE1_Pos                ; 0x000000C0 
-DAC_CR_WAVE1                EQU DAC_CR_WAVE1_Msk                           ;WAVE1[1:0] (DAC channel1 noise/triangle wave generation enable) 
+DAC_CR_WAVE1                EQU DAC_CR_WAVE1_Msk                       ;WAVE1[1:0] (DAC channel1 noise/triangle wave generation enable) 
 DAC_CR_WAVE1_0              EQU 0x1 << DAC_CR_WAVE1_Pos                ; 0x00000040 
 DAC_CR_WAVE1_1              EQU 0x2 << DAC_CR_WAVE1_Pos                ; 0x00000080 
 
@@ -2684,135 +719,6 @@ DAC_SWTRIGR_SWTRIGB2_Pos    EQU 17
 DAC_SWTRIGR_SWTRIGB2_Msk    EQU 0x1 << DAC_SWTRIGR_SWTRIGB2_Pos        ; 0x00020000 
 DAC_SWTRIGR_SWTRIGB2        EQU DAC_SWTRIGR_SWTRIGB2_Msk                   ;DAC channel2 software trigger B 
 
-;****************  Bit definition for DAC_DHR12R1 register  *****************
-;DAC_DHR12R1_DACC1DHR_Pos    (0
-;DAC_DHR12R1_DACC1DHR_Msk    (0xFFFUL << DAC_DHR12R1_DACC1DHR_Pos      ; 0x00000FFF 
-;DAC_DHR12R1_DACC1DHR        DAC_DHR12R1_DACC1DHR_Msk                   ;DAC channel1 12-bit Right aligned data 
-;DAC_DHR12R1_DACC1DHRB_Pos   (16
-;DAC_DHR12R1_DACC1DHRB_Msk   (0xFFFUL << DAC_DHR12R1_DACC1DHRB_Pos     ; 0x0FFF0000 
-;DAC_DHR12R1_DACC1DHRB       DAC_DHR12R1_DACC1DHRB_Msk                  ;DAC channel1 12-bit Right-aligned data B 
-
-;****************  Bit definition for DAC_DHR12L1 register  *****************
-;DAC_DHR12L1_DACC1DHR_Pos    (4
-;DAC_DHR12L1_DACC1DHR_Msk    (0xFFFUL << DAC_DHR12L1_DACC1DHR_Pos      ; 0x0000FFF0 
-;DAC_DHR12L1_DACC1DHR        DAC_DHR12L1_DACC1DHR_Msk                   ;DAC channel1 12-bit Left aligned data 
-;DAC_DHR12L1_DACC1DHRB_Pos   (20
-;DAC_DHR12L1_DACC1DHRB_Msk   (0xFFFUL << DAC_DHR12L1_DACC1DHRB_Pos     ; 0xFFF00000 
-;DAC_DHR12L1_DACC1DHRB       DAC_DHR12L1_DACC1DHRB_Msk                  ;DAC channel1 12-bit Left aligned data B 
-
-;*****************  Bit definition for DAC_DHR8R1 register  *****************
-;DAC_DHR8R1_DACC1DHR_Pos     (0
-;DAC_DHR8R1_DACC1DHR_Msk     (0xFFUL << DAC_DHR8R1_DACC1DHR_Pos        ; 0x000000FF 
-;DAC_DHR8R1_DACC1DHR         DAC_DHR8R1_DACC1DHR_Msk                    ;DAC channel1 8-bit Right aligned data 
-;DAC_DHR8R1_DACC1DHRB_Pos    (8
-;DAC_DHR8R1_DACC1DHRB_Msk    (0xFFUL << DAC_DHR8R1_DACC1DHRB_Pos       ; 0x0000FF00 
-;DAC_DHR8R1_DACC1DHRB        DAC_DHR8R1_DACC1DHRB_Msk                   ;DAC channel1 8-bit Right aligned data B 
-
-;****************  Bit definition for DAC_DHR12R2 register  *****************
-;DAC_DHR12R2_DACC2DHR_Pos    (0
-;DAC_DHR12R2_DACC2DHR_Msk    (0xFFFUL << DAC_DHR12R2_DACC2DHR_Pos      ; 0x00000FFF 
-;DAC_DHR12R2_DACC2DHR        DAC_DHR12R2_DACC2DHR_Msk                   ;DAC channel2 12-bit Right aligned data 
-;DAC_DHR12R2_DACC2DHRB_Pos   (16
-;DAC_DHR12R2_DACC2DHRB_Msk   (0xFFFUL << DAC_DHR12R2_DACC2DHRB_Pos     ; 0x0FFF0000 
-;DAC_DHR12R2_DACC2DHRB       DAC_DHR12R2_DACC2DHRB_Msk                  ;DAC channel2 12-bit Right-aligned data B 
-
-;****************  Bit definition for DAC_DHR12L2 register  *****************
-;DAC_DHR12L2_DACC2DHR_Pos    (4
-;DAC_DHR12L2_DACC2DHR_Msk    (0xFFFUL << DAC_DHR12L2_DACC2DHR_Pos      ; 0x0000FFF0 
-;DAC_DHR12L2_DACC2DHR        DAC_DHR12L2_DACC2DHR_Msk                   ;DAC channel2 12-bit Left aligned data 
-;DAC_DHR12L2_DACC2DHRB_Pos   (20
-;DAC_DHR12L2_DACC2DHRB_Msk   (0xFFFUL << DAC_DHR12L2_DACC2DHRB_Pos     ; 0xFFF00000 
-;DAC_DHR12L2_DACC2DHRB       DAC_DHR12L2_DACC2DHRB_Msk                  ;DAC channel2 12-bit Left aligned data B 
-
-;*****************  Bit definition for DAC_DHR8R2 register  *****************
-;DAC_DHR8R2_DACC2DHR_Pos     (0
-;DAC_DHR8R2_DACC2DHR_Msk     (0xFFUL << DAC_DHR8R2_DACC2DHR_Pos        ; 0x000000FF 
-;DAC_DHR8R2_DACC2DHR         DAC_DHR8R2_DACC2DHR_Msk                    ;DAC channel2 8-bit Right aligned data 
-;DAC_DHR8R2_DACC2DHRB_Pos    (8
-;DAC_DHR8R2_DACC2DHRB_Msk    (0xFFUL << DAC_DHR8R2_DACC2DHRB_Pos       ; 0x0000FF00 
-;DAC_DHR8R2_DACC2DHRB        DAC_DHR8R2_DACC2DHRB_Msk                   ;DAC channel2 8-bit Right aligned data B 
-
-;****************  Bit definition for DAC_DHR12RD register  *****************
-;DAC_DHR12RD_DACC1DHR_Pos    (0
-;DAC_DHR12RD_DACC1DHR_Msk    (0xFFFUL << DAC_DHR12RD_DACC1DHR_Pos      ; 0x00000FFF 
-;DAC_DHR12RD_DACC1DHR        DAC_DHR12RD_DACC1DHR_Msk                   ;DAC channel1 12-bit Right aligned data 
-;DAC_DHR12RD_DACC2DHR_Pos    (16
-;DAC_DHR12RD_DACC2DHR_Msk    (0xFFFUL << DAC_DHR12RD_DACC2DHR_Pos      ; 0x0FFF0000 
-;DAC_DHR12RD_DACC2DHR        DAC_DHR12RD_DACC2DHR_Msk                   ;DAC channel2 12-bit Right aligned data 
-
-;****************  Bit definition for DAC_DHR12LD register  *****************
-;DAC_DHR12LD_DACC1DHR_Pos    (4
-;DAC_DHR12LD_DACC1DHR_Msk    (0xFFFUL << DAC_DHR12LD_DACC1DHR_Pos      ; 0x0000FFF0 
-;DAC_DHR12LD_DACC1DHR        DAC_DHR12LD_DACC1DHR_Msk                   ;DAC channel1 12-bit Left aligned data 
-;DAC_DHR12LD_DACC2DHR_Pos    (20
-;DAC_DHR12LD_DACC2DHR_Msk    (0xFFFUL << DAC_DHR12LD_DACC2DHR_Pos      ; 0xFFF00000 
-;DAC_DHR12LD_DACC2DHR        DAC_DHR12LD_DACC2DHR_Msk                   ;DAC channel2 12-bit Left aligned data 
-
-;*****************  Bit definition for DAC_DHR8RD register  *****************
-;DAC_DHR8RD_DACC1DHR_Pos     (0
-;DAC_DHR8RD_DACC1DHR_Msk     (0xFFUL << DAC_DHR8RD_DACC1DHR_Pos        ; 0x000000FF 
-;DAC_DHR8RD_DACC1DHR         DAC_DHR8RD_DACC1DHR_Msk                    ;DAC channel1 8-bit Right aligned data 
-;DAC_DHR8RD_DACC2DHR_Pos     (8
-;DAC_DHR8RD_DACC2DHR_Msk     (0xFFUL << DAC_DHR8RD_DACC2DHR_Pos        ; 0x0000FF00 
-;DAC_DHR8RD_DACC2DHR         DAC_DHR8RD_DACC2DHR_Msk                    ;DAC channel2 8-bit Right aligned data 
-
-;******************  Bit definition for DAC_DOR1 register  ******************
-;DAC_DOR1_DACC1DOR_Pos       (0
-;DAC_DOR1_DACC1DOR_Msk       (0xFFFUL << DAC_DOR1_DACC1DOR_Pos         ; 0x00000FFF 
-;DAC_DOR1_DACC1DOR           DAC_DOR1_DACC1DOR_Msk                      ;DAC channel1 data output 
-;DAC_DOR1_DACC1DORB_Pos      (16
-;DAC_DOR1_DACC1DORB_Msk      (0xFFFUL << DAC_DOR1_DACC1DORB_Pos        ; 0x0FFF0000 
-;DAC_DOR1_DACC1DORB          DAC_DOR1_DACC1DORB_Msk                     ;DAC channel1 data output B 
-
-;******************  Bit definition for DAC_DOR2 register  ******************
-;DAC_DOR2_DACC2DOR_Pos       (0
-;DAC_DOR2_DACC2DOR_Msk       (0xFFFUL << DAC_DOR2_DACC2DOR_Pos         ; 0x00000FFF 
-;DAC_DOR2_DACC2DOR           DAC_DOR2_DACC2DOR_Msk                      ;DAC channel2 data output 
-;DAC_DOR2_DACC2DORB_Pos      (16
-;DAC_DOR2_DACC2DORB_Msk      (0xFFFUL << DAC_DOR2_DACC2DORB_Pos        ; 0x0FFF0000 
-;DAC_DOR2_DACC2DORB          DAC_DOR2_DACC2DORB_Msk                     ;DAC channel2 data output B 
-
-;*******************  Bit definition for DAC_SR register  *******************
-;DAC_SR_DAC1RDY_Pos          (11
-;DAC_SR_DAC1RDY_Msk          (0x1 << DAC_SR_DAC1RDY_Pos              ; 0x00000800 
-;DAC_SR_DAC1RDY              DAC_SR_DAC1RDY_Msk                         ;DAC channel 1 ready status bit 
-;DAC_SR_DORSTAT1_Pos         (12
-;DAC_SR_DORSTAT1_Msk         (0x1 << DAC_SR_DORSTAT1_Pos             ; 0x00001000 
-;DAC_SR_DORSTAT1             DAC_SR_DORSTAT1_Msk                        ;DAC channel 1 output register status bit 
-;DAC_SR_DMAUDR1_Pos          (13
-;DAC_SR_DMAUDR1_Msk          (0x1 << DAC_SR_DMAUDR1_Pos              ; 0x00002000 
-;DAC_SR_DMAUDR1              DAC_SR_DMAUDR1_Msk                         ;DAC channel1 DMA underrun flag 
-;DAC_SR_CAL_FLAG1_Pos        (14
-;DAC_SR_CAL_FLAG1_Msk        (0x1 << DAC_SR_CAL_FLAG1_Pos            ; 0x00004000 
-;DAC_SR_CAL_FLAG1            DAC_SR_CAL_FLAG1_Msk                       ;DAC channel1 calibration offset status 
-;DAC_SR_BWST1_Pos            (15
-;DAC_SR_BWST1_Msk            (0x1 << DAC_SR_BWST1_Pos                ; 0x00008000 
-;DAC_SR_BWST1                DAC_SR_BWST1_Msk                           ;DAC channel1 busy writing sample time flag 
-
-;DAC_SR_DAC2RDY_Pos          (27
-;DAC_SR_DAC2RDY_Msk          (0x1 << DAC_SR_DAC2RDY_Pos              ; 0x08000000 
-;DAC_SR_DAC2RDY              DAC_SR_DAC2RDY_Msk                         ;DAC channel 2 ready status bit 
-;DAC_SR_DORSTAT2_Pos         (28
-;DAC_SR_DORSTAT2_Msk         (0x1 << DAC_SR_DORSTAT2_Pos             ; 0x10000000 
-;DAC_SR_DORSTAT2             DAC_SR_DORSTAT2_Msk                        ;DAC channel 2 output register status bit 
-;DAC_SR_DMAUDR2_Pos          (29
-;DAC_SR_DMAUDR2_Msk          (0x1 << DAC_SR_DMAUDR2_Pos              ; 0x20000000 
-;DAC_SR_DMAUDR2              DAC_SR_DMAUDR2_Msk                         ;DAC channel2 DMA underrun flag 
-;DAC_SR_CAL_FLAG2_Pos        (30
-;DAC_SR_CAL_FLAG2_Msk        (0x1 << DAC_SR_CAL_FLAG2_Pos            ; 0x40000000 
-;DAC_SR_CAL_FLAG2            DAC_SR_CAL_FLAG2_Msk                       ;DAC channel2 calibration offset status 
-;DAC_SR_BWST2_Pos            (31
-;DAC_SR_BWST2_Msk            (0x1 << DAC_SR_BWST2_Pos                ; 0x80000000 
-;DAC_SR_BWST2                DAC_SR_BWST2_Msk                           ;DAC channel2 busy writing sample time flag 
-
-;******************  Bit definition for DAC_CCR register  *******************
-;DAC_CCR_OTRIM1_Pos          (0
-;DAC_CCR_OTRIM1_Msk          (0x1FUL << DAC_CCR_OTRIM1_Pos             ; 0x0000001F 
-;DAC_CCR_OTRIM1              DAC_CCR_OTRIM1_Msk                         ;DAC channel1 offset trimming value 
-;DAC_CCR_OTRIM2_Pos          (16
-;DAC_CCR_OTRIM2_Msk          (0x1FUL << DAC_CCR_OTRIM2_Pos             ; 0x001F0000 
-;DAC_CCR_OTRIM2              DAC_CCR_OTRIM2_Msk                         ;DAC channel2 offset trimming value 
-
 ;******************  Bit definition for DAC_MCR register  ******************
 DAC_MCR_MODE1_Pos           EQU 0
 DAC_MCR_MODE1_Msk           EQU 0x7 << DAC_MCR_MODE1_Pos               ; 0x00000007 
@@ -2850,912 +756,111 @@ DAC_MCR_SINFORMAT2_Pos      EQU 25
 DAC_MCR_SINFORMAT2_Msk      EQU 0x1 << DAC_MCR_SINFORMAT2_Pos          ; 0x02000000 
 DAC_MCR_SINFORMAT2          EQU DAC_MCR_SINFORMAT2_Msk                     ;DAC Channel 2 enable signed format 
 
-;*****************  Bit definition for DAC_SHSR1 register  *****************
-;DAC_SHSR1_TSAMPLE1_Pos      (0
-;DAC_SHSR1_TSAMPLE1_Msk      (0x3FFUL << DAC_SHSR1_TSAMPLE1_Pos        ; 0x000003FF 
-;DAC_SHSR1_TSAMPLE1          DAC_SHSR1_TSAMPLE1_Msk                     ;DAC channel1 sample time 
-
-;*****************  Bit definition for DAC_SHSR2 register  *****************
-;DAC_SHSR2_TSAMPLE2_Pos      (0
-;DAC_SHSR2_TSAMPLE2_Msk      (0x3FFUL << DAC_SHSR2_TSAMPLE2_Pos        ; 0x000003FF 
-;DAC_SHSR2_TSAMPLE2          DAC_SHSR2_TSAMPLE2_Msk                     ;DAC channel2 sample time 
-
-;*****************  Bit definition for DAC_SHHR register  *****************
-;DAC_SHHR_THOLD1_Pos         (0
-;DAC_SHHR_THOLD1_Msk         (0x3FFUL << DAC_SHHR_THOLD1_Pos           ; 0x000003FF 
-;DAC_SHHR_THOLD1             DAC_SHHR_THOLD1_Msk                        ;DAC channel1 hold time 
-;DAC_SHHR_THOLD2_Pos         (16
-;DAC_SHHR_THOLD2_Msk         (0x3FFUL << DAC_SHHR_THOLD2_Pos           ; 0x03FF0000 
-;DAC_SHHR_THOLD2             DAC_SHHR_THOLD2_Msk                        ;DAC channel2 hold time 
-
-;*****************  Bit definition for DAC_SHRR register  *****************
-;DAC_SHRR_TREFRESH1_Pos      (0
-;DAC_SHRR_TREFRESH1_Msk      (0xFFUL << DAC_SHRR_TREFRESH1_Pos         ; 0x000000FF 
-;DAC_SHRR_TREFRESH1          DAC_SHRR_TREFRESH1_Msk                     ;DAC channel1 refresh time 
-;DAC_SHRR_TREFRESH2_Pos      (16
-;DAC_SHRR_TREFRESH2_Msk      (0xFFUL << DAC_SHRR_TREFRESH2_Pos         ; 0x00FF0000 
-;DAC_SHRR_TREFRESH2          DAC_SHRR_TREFRESH2_Msk                     ;DAC channel2 refresh time 
-
-;*****************  Bit definition for DAC_STR1 register  *****************
-;DAC_STR1_STRSTDATA1_Pos     (0
-;DAC_STR1_STRSTDATA1_Msk     (0xFFFUL << DAC_STR1_STRSTDATA1_Pos       ; 0x00000FFF 
-;DAC_STR1_STRSTDATA1         DAC_STR1_STRSTDATA1_Msk                    ;DAC Channel 1 Sawtooth starting value 
-;DAC_STR1_STDIR1_Pos         (12
-;DAC_STR1_STDIR1_Msk         (0x1 << DAC_STR1_STDIR1_Pos             ; 0x00001000 
-;DAC_STR1_STDIR1             DAC_STR1_STDIR1_Msk                        ;DAC Channel 1 Sawtooth direction setting 
-
-;DAC_STR1_STINCDATA1_Pos     (16
-;DAC_STR1_STINCDATA1_Msk     (0xFFFFUL << DAC_STR1_STINCDATA1_Pos      ; 0xFFFF0000 
-;DAC_STR1_STINCDATA1         DAC_STR1_STINCDATA1_Msk                    ;DAC Channel 1 Sawtooth increment value (12.4 bit format) 
-
-;*****************  Bit definition for DAC_STR2 register  *****************
-;DAC_STR2_STRSTDATA2_Pos     (0
-;DAC_STR2_STRSTDATA2_Msk     (0xFFFUL << DAC_STR2_STRSTDATA2_Pos       ; 0x00000FFF 
-;DAC_STR2_STRSTDATA2         DAC_STR2_STRSTDATA2_Msk                    ;DAC Channel 2 Sawtooth starting value 
-;DAC_STR2_STDIR2_Pos         (12
-;DAC_STR2_STDIR2_Msk         (0x1 << DAC_STR2_STDIR2_Pos             ; 0x00001000 
-;DAC_STR2_STDIR2             DAC_STR2_STDIR2_Msk                        ;DAC Channel 2 Sawtooth direction setting 
-
-;DAC_STR2_STINCDATA2_Pos     (16
-;DAC_STR2_STINCDATA2_Msk     (0xFFFFUL << DAC_STR2_STINCDATA2_Pos      ; 0xFFFF0000 
-;DAC_STR2_STINCDATA2         DAC_STR2_STINCDATA2_Msk                    ;DAC Channel 2 Sawtooth increment value (12.4 bit format) 
-
-;*****************  Bit definition for DAC_STMODR register  ***************
-;DAC_STMODR_STRSTTRIGSEL1_Pos (0
-;DAC_STMODR_STRSTTRIGSEL1_Msk (0xFUL << DAC_STMODR_STRSTTRIGSEL1_Pos   ; 0x0000000F 
-;DAC_STMODR_STRSTTRIGSEL1     DAC_STMODR_STRSTTRIGSEL1_Msk              ;STRSTTRIGSEL1[3:0] (DAC Channel 1 Sawtooth Increment trigger selection) 
-;DAC_STMODR_STRSTTRIGSEL1_0   (0x1 << DAC_STMODR_STRSTTRIGSEL1_Pos   ; 0x00000001 
-;DAC_STMODR_STRSTTRIGSEL1_1   (0x2UL << DAC_STMODR_STRSTTRIGSEL1_Pos   ; 0x00000002 
-;DAC_STMODR_STRSTTRIGSEL1_2   (0x4UL << DAC_STMODR_STRSTTRIGSEL1_Pos   ; 0x00000004 
-;DAC_STMODR_STRSTTRIGSEL1_3   (0x8UL << DAC_STMODR_STRSTTRIGSEL1_Pos   ; 0x00000008 
-
-;DAC_STMODR_STINCTRIGSEL1_Pos (8
-;DAC_STMODR_STINCTRIGSEL1_Msk (0xFUL << DAC_STMODR_STINCTRIGSEL1_Pos   ; 0x0000000F 
-;DAC_STMODR_STINCTRIGSEL1     DAC_STMODR_STINCTRIGSEL1_Msk              ;STINCTRIGSEL1[3:0] (DAC Channel 1 Sawtooth Increment trigger selection) 
-;DAC_STMODR_STINCTRIGSEL1_0   (0x1 << DAC_STMODR_STINCTRIGSEL1_Pos   ; 0x00000001 
-;DAC_STMODR_STINCTRIGSEL1_1   (0x2UL << DAC_STMODR_STINCTRIGSEL1_Pos   ; 0x00000002 
-;DAC_STMODR_STINCTRIGSEL1_2   (0x4UL << DAC_STMODR_STINCTRIGSEL1_Pos   ; 0x00000004 
-;DAC_STMODR_STINCTRIGSEL1_3   (0x8UL << DAC_STMODR_STINCTRIGSEL1_Pos   ; 0x00000008 
-
-;DAC_STMODR_STRSTTRIGSEL2_Pos (16
-;DAC_STMODR_STRSTTRIGSEL2_Msk (0xFUL << DAC_STMODR_STRSTTRIGSEL2_Pos   ; 0x0000000F 
-;DAC_STMODR_STRSTTRIGSEL2     DAC_STMODR_STRSTTRIGSEL2_Msk              ;STRSTTRIGSEL2[3:0] (DAC Channel 2 Sawtooth Increment trigger selection) 
-;DAC_STMODR_STRSTTRIGSEL2_0   (0x1 << DAC_STMODR_STRSTTRIGSEL2_Pos   ; 0x00000001 
-;DAC_STMODR_STRSTTRIGSEL2_1   (0x2UL << DAC_STMODR_STRSTTRIGSEL2_Pos   ; 0x00000002 
-;DAC_STMODR_STRSTTRIGSEL2_2   (0x4UL << DAC_STMODR_STRSTTRIGSEL2_Pos   ; 0x00000004 
-;DAC_STMODR_STRSTTRIGSEL2_3   (0x8UL << DAC_STMODR_STRSTTRIGSEL2_Pos   ; 0x00000008 
-
-;DAC_STMODR_STINCTRIGSEL2_Pos (24
-;DAC_STMODR_STINCTRIGSEL2_Msk (0xFUL << DAC_STMODR_STINCTRIGSEL2_Pos   ; 0x0000000F 
-;DAC_STMODR_STINCTRIGSEL2     DAC_STMODR_STINCTRIGSEL2_Msk              ;STINCTRIGSEL2[3:0] (DAC Channel 2 Sawtooth Increment trigger selection) 
-;DAC_STMODR_STINCTRIGSEL2_0   (0x1 << DAC_STMODR_STINCTRIGSEL2_Pos   ; 0x00000001 
-;DAC_STMODR_STINCTRIGSEL2_1   (0x2UL << DAC_STMODR_STINCTRIGSEL2_Pos   ; 0x00000002 
-;DAC_STMODR_STINCTRIGSEL2_2   (0x4UL << DAC_STMODR_STINCTRIGSEL2_Pos   ; 0x00000004 
-;DAC_STMODR_STINCTRIGSEL2_3   (0x8UL << DAC_STMODR_STINCTRIGSEL2_Pos   ; 0x00000008 
-
-;****************************************************************************
-;                                                                            
-;                                 Debug MCU                                  
-;                                                                            
-;****************************************************************************
-;*******************  Bit definition for DBGMCU_IDCODE register  ************
-;DBGMCU_IDCODE_DEV_ID_Pos               (0
-;DBGMCU_IDCODE_DEV_ID_Msk               (0xFFFUL << DBGMCU_IDCODE_DEV_ID_Pos; 0x00000FFF 
-;DBGMCU_IDCODE_DEV_ID                   DBGMCU_IDCODE_DEV_ID_Msk
-;DBGMCU_IDCODE_REV_ID_Pos               (16
-;DBGMCU_IDCODE_REV_ID_Msk               (0xFFFFUL << DBGMCU_IDCODE_REV_ID_Pos; 0xFFFF0000 
-;DBGMCU_IDCODE_REV_ID                   DBGMCU_IDCODE_REV_ID_Msk
-
-;*******************  Bit definition for DBGMCU_CR register  ****************
-;DBGMCU_CR_DBG_SLEEP_Pos                (0
-;DBGMCU_CR_DBG_SLEEP_Msk                (0x1 << DBGMCU_CR_DBG_SLEEP_Pos; 0x00000001 
-;DBGMCU_CR_DBG_SLEEP                    DBGMCU_CR_DBG_SLEEP_Msk
-;DBGMCU_CR_DBG_STOP_Pos                 (1
-;DBGMCU_CR_DBG_STOP_Msk                 (0x1 << DBGMCU_CR_DBG_STOP_Pos; 0x00000002 
-;DBGMCU_CR_DBG_STOP                     DBGMCU_CR_DBG_STOP_Msk
-;DBGMCU_CR_DBG_STANDBY_Pos              (2
-;DBGMCU_CR_DBG_STANDBY_Msk              (0x1 << DBGMCU_CR_DBG_STANDBY_Pos; 0x00000004 
-;DBGMCU_CR_DBG_STANDBY                  DBGMCU_CR_DBG_STANDBY_Msk
-;DBGMCU_CR_TRACE_IOEN_Pos               (5
-;DBGMCU_CR_TRACE_IOEN_Msk               (0x1 << DBGMCU_CR_TRACE_IOEN_Pos; 0x00000020 
-;DBGMCU_CR_TRACE_IOEN                   DBGMCU_CR_TRACE_IOEN_Msk
-
-;DBGMCU_CR_TRACE_MODE_Pos               (6
-;DBGMCU_CR_TRACE_MODE_Msk               (0x3UL << DBGMCU_CR_TRACE_MODE_Pos; 0x000000C0 
-;DBGMCU_CR_TRACE_MODE                   DBGMCU_CR_TRACE_MODE_Msk
-;DBGMCU_CR_TRACE_MODE_0                 (0x1 << DBGMCU_CR_TRACE_MODE_Pos; 0x00000040 
-;DBGMCU_CR_TRACE_MODE_1                 (0x2UL << DBGMCU_CR_TRACE_MODE_Pos; 0x00000080 
-
-;*******************  Bit definition for DBGMCU_APB1FZR1 register  **********
-;DBGMCU_APB1FZR1_DBG_TIM2_STOP_Pos      (0
-;DBGMCU_APB1FZR1_DBG_TIM2_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_TIM2_STOP_Pos; 0x00000001 
-;DBGMCU_APB1FZR1_DBG_TIM2_STOP          DBGMCU_APB1FZR1_DBG_TIM2_STOP_Msk
-DBGMCU_APB1FZR1_DBG_TIM3_STOP_Pos      EQU 1
-DBGMCU_APB1FZR1_DBG_TIM3_STOP_Msk      EQU 0x1 << DBGMCU_APB1FZR1_DBG_TIM3_STOP_Pos ; 0x00000002 
-DBGMCU_APB1FZR1_DBG_TIM3_STOP          EQU DBGMCU_APB1FZR1_DBG_TIM3_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_TIM4_STOP_Pos      (2
-;DBGMCU_APB1FZR1_DBG_TIM4_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_TIM4_STOP_Pos; 0x00000004 
-;DBGMCU_APB1FZR1_DBG_TIM4_STOP          DBGMCU_APB1FZR1_DBG_TIM4_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_TIM6_STOP_Pos      (4
-;DBGMCU_APB1FZR1_DBG_TIM6_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_TIM6_STOP_Pos; 0x00000010 
-;DBGMCU_APB1FZR1_DBG_TIM6_STOP          DBGMCU_APB1FZR1_DBG_TIM6_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_TIM7_STOP_Pos      (5
-;DBGMCU_APB1FZR1_DBG_TIM7_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_TIM7_STOP_Pos; 0x00000020 
-;DBGMCU_APB1FZR1_DBG_TIM7_STOP          DBGMCU_APB1FZR1_DBG_TIM7_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_RTC_STOP_Pos       (10
-;DBGMCU_APB1FZR1_DBG_RTC_STOP_Msk       (0x1 << DBGMCU_APB1FZR1_DBG_RTC_STOP_Pos; 0x00000400 
-;DBGMCU_APB1FZR1_DBG_RTC_STOP           DBGMCU_APB1FZR1_DBG_RTC_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_WWDG_STOP_Pos      (11
-;DBGMCU_APB1FZR1_DBG_WWDG_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_WWDG_STOP_Pos; 0x00000800 
-;DBGMCU_APB1FZR1_DBG_WWDG_STOP          DBGMCU_APB1FZR1_DBG_WWDG_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_IWDG_STOP_Pos      (12
-;DBGMCU_APB1FZR1_DBG_IWDG_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_IWDG_STOP_Pos; 0x00001000 
-;DBGMCU_APB1FZR1_DBG_IWDG_STOP          DBGMCU_APB1FZR1_DBG_IWDG_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_I2C1_STOP_Pos      (21
-;DBGMCU_APB1FZR1_DBG_I2C1_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_I2C1_STOP_Pos; 0x00200000 
-;DBGMCU_APB1FZR1_DBG_I2C1_STOP          DBGMCU_APB1FZR1_DBG_I2C1_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_I2C2_STOP_Pos      (22
-;DBGMCU_APB1FZR1_DBG_I2C2_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_I2C2_STOP_Pos; 0x00400000 
-;DBGMCU_APB1FZR1_DBG_I2C2_STOP          DBGMCU_APB1FZR1_DBG_I2C2_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_I2C3_STOP_Pos      (30
-;DBGMCU_APB1FZR1_DBG_I2C3_STOP_Msk      (0x1 << DBGMCU_APB1FZR1_DBG_I2C3_STOP_Pos; 0x40000000 
-;DBGMCU_APB1FZR1_DBG_I2C3_STOP          DBGMCU_APB1FZR1_DBG_I2C3_STOP_Msk
-;DBGMCU_APB1FZR1_DBG_LPTIM1_STOP_Pos    (31
-;DBGMCU_APB1FZR1_DBG_LPTIM1_STOP_Msk    (0x1 << DBGMCU_APB1FZR1_DBG_LPTIM1_STOP_Pos; 0x80000000 
-;DBGMCU_APB1FZR1_DBG_LPTIM1_STOP        DBGMCU_APB1FZR1_DBG_LPTIM1_STOP_Msk
-
-
-;*******************  Bit definition for DBGMCU_APB2FZ register  ***********
-;DBGMCU_APB2FZ_DBG_TIM1_STOP_Pos        (11
-;DBGMCU_APB2FZ_DBG_TIM1_STOP_Msk        (0x1 << DBGMCU_APB2FZ_DBG_TIM1_STOP_Pos; 0x00000800 
-;DBGMCU_APB2FZ_DBG_TIM1_STOP            DBGMCU_APB2FZ_DBG_TIM1_STOP_Msk
-;DBGMCU_APB2FZ_DBG_TIM8_STOP_Pos        (13
-;DBGMCU_APB2FZ_DBG_TIM8_STOP_Msk        (0x1 << DBGMCU_APB2FZ_DBG_TIM8_STOP_Pos; 0x00002000 
-;DBGMCU_APB2FZ_DBG_TIM8_STOP            DBGMCU_APB2FZ_DBG_TIM8_STOP_Msk
-;DBGMCU_APB2FZ_DBG_TIM15_STOP_Pos       (16
-;DBGMCU_APB2FZ_DBG_TIM15_STOP_Msk       (0x1 << DBGMCU_APB2FZ_DBG_TIM15_STOP_Pos; 0x00010000 
-;DBGMCU_APB2FZ_DBG_TIM15_STOP           DBGMCU_APB2FZ_DBG_TIM15_STOP_Msk
-;DBGMCU_APB2FZ_DBG_TIM16_STOP_Pos       (17
-;DBGMCU_APB2FZ_DBG_TIM16_STOP_Msk       (0x1 << DBGMCU_APB2FZ_DBG_TIM16_STOP_Pos; 0x00020000 
-;DBGMCU_APB2FZ_DBG_TIM16_STOP           DBGMCU_APB2FZ_DBG_TIM16_STOP_Msk
-;DBGMCU_APB2FZ_DBG_TIM17_STOP_Pos       (18
-;DBGMCU_APB2FZ_DBG_TIM17_STOP_Msk       (0x1 << DBGMCU_APB2FZ_DBG_TIM17_STOP_Pos; 0x00040000 
-;DBGMCU_APB2FZ_DBG_TIM17_STOP           DBGMCU_APB2FZ_DBG_TIM17_STOP_Msk
-
-;****************************************************************************
-;                                                                            
-;                           DMA Controller (DMA)                             
-;                                                                            
-;****************************************************************************
-
-;******************  Bit definition for DMA_ISR register  *******************
-;DMA_ISR_GIF1_Pos       (0
-;DMA_ISR_GIF1_Msk       (0x1 << DMA_ISR_GIF1_Pos                     ; 0x00000001 
-;DMA_ISR_GIF1           DMA_ISR_GIF1_Msk                                ; Channel 1 Global interrupt flag 
-;DMA_ISR_TCIF1_Pos      (1
-;DMA_ISR_TCIF1_Msk      (0x1 << DMA_ISR_TCIF1_Pos                    ; 0x00000002 
-;DMA_ISR_TCIF1          DMA_ISR_TCIF1_Msk                               ; Channel 1 Transfer Complete flag 
-;DMA_ISR_HTIF1_Pos      (2
-;DMA_ISR_HTIF1_Msk      (0x1 << DMA_ISR_HTIF1_Pos                    ; 0x00000004 
-;DMA_ISR_HTIF1          DMA_ISR_HTIF1_Msk                               ; Channel 1 Half Transfer flag 
-;DMA_ISR_TEIF1_Pos      (3
-;DMA_ISR_TEIF1_Msk      (0x1 << DMA_ISR_TEIF1_Pos                    ; 0x00000008 
-;DMA_ISR_TEIF1          DMA_ISR_TEIF1_Msk                               ; Channel 1 Transfer Error flag 
-;DMA_ISR_GIF2_Pos       (4
-;DMA_ISR_GIF2_Msk       (0x1 << DMA_ISR_GIF2_Pos                     ; 0x00000010 
-;DMA_ISR_GIF2           DMA_ISR_GIF2_Msk                                ; Channel 2 Global interrupt flag 
-;DMA_ISR_TCIF2_Pos      (5
-;DMA_ISR_TCIF2_Msk      (0x1 << DMA_ISR_TCIF2_Pos                    ; 0x00000020 
-;DMA_ISR_TCIF2          DMA_ISR_TCIF2_Msk                               ; Channel 2 Transfer Complete flag 
-;DMA_ISR_HTIF2_Pos      (6
-;DMA_ISR_HTIF2_Msk      (0x1 << DMA_ISR_HTIF2_Pos                    ; 0x00000040 
-;DMA_ISR_HTIF2          DMA_ISR_HTIF2_Msk                               ; Channel 2 Half Transfer flag 
-;DMA_ISR_TEIF2_Pos      (7
-;DMA_ISR_TEIF2_Msk      (0x1 << DMA_ISR_TEIF2_Pos                    ; 0x00000080 
-;DMA_ISR_TEIF2          DMA_ISR_TEIF2_Msk                               ; Channel 2 Transfer Error flag 
-;DMA_ISR_GIF3_Pos       (8
-;DMA_ISR_GIF3_Msk       (0x1 << DMA_ISR_GIF3_Pos                     ; 0x00000100 
-;DMA_ISR_GIF3           DMA_ISR_GIF3_Msk                                ; Channel 3 Global interrupt flag 
-;DMA_ISR_TCIF3_Pos      (9
-;DMA_ISR_TCIF3_Msk      (0x1 << DMA_ISR_TCIF3_Pos                    ; 0x00000200 
-;DMA_ISR_TCIF3          DMA_ISR_TCIF3_Msk                               ; Channel 3 Transfer Complete flag 
-;DMA_ISR_HTIF3_Pos      (10
-;DMA_ISR_HTIF3_Msk      (0x1 << DMA_ISR_HTIF3_Pos                    ; 0x00000400 
-;DMA_ISR_HTIF3          DMA_ISR_HTIF3_Msk                               ; Channel 3 Half Transfer flag 
-;DMA_ISR_TEIF3_Pos      (11
-;DMA_ISR_TEIF3_Msk      (0x1 << DMA_ISR_TEIF3_Pos                    ; 0x00000800 
-;DMA_ISR_TEIF3          DMA_ISR_TEIF3_Msk                               ; Channel 3 Transfer Error flag 
-;DMA_ISR_GIF4_Pos       (12
-;DMA_ISR_GIF4_Msk       (0x1 << DMA_ISR_GIF4_Pos                     ; 0x00001000 
-;DMA_ISR_GIF4           DMA_ISR_GIF4_Msk                                ; Channel 4 Global interrupt flag 
-;DMA_ISR_TCIF4_Pos      (13
-;DMA_ISR_TCIF4_Msk      (0x1 << DMA_ISR_TCIF4_Pos                    ; 0x00002000 
-;DMA_ISR_TCIF4          DMA_ISR_TCIF4_Msk                               ; Channel 4 Transfer Complete flag 
-;DMA_ISR_HTIF4_Pos      (14
-;DMA_ISR_HTIF4_Msk      (0x1 << DMA_ISR_HTIF4_Pos                    ; 0x00004000 
-;DMA_ISR_HTIF4          DMA_ISR_HTIF4_Msk                               ; Channel 4 Half Transfer flag 
-;DMA_ISR_TEIF4_Pos      (15
-;DMA_ISR_TEIF4_Msk      (0x1 << DMA_ISR_TEIF4_Pos                    ; 0x00008000 
-;DMA_ISR_TEIF4          DMA_ISR_TEIF4_Msk                               ; Channel 4 Transfer Error flag 
-;DMA_ISR_GIF5_Pos       (16
-;DMA_ISR_GIF5_Msk       (0x1 << DMA_ISR_GIF5_Pos                     ; 0x00010000 
-;DMA_ISR_GIF5           DMA_ISR_GIF5_Msk                                ; Channel 5 Global interrupt flag 
-;DMA_ISR_TCIF5_Pos      (17
-;DMA_ISR_TCIF5_Msk      (0x1 << DMA_ISR_TCIF5_Pos                    ; 0x00020000 
-;DMA_ISR_TCIF5          DMA_ISR_TCIF5_Msk                               ; Channel 5 Transfer Complete flag 
-;DMA_ISR_HTIF5_Pos      (18
-;DMA_ISR_HTIF5_Msk      (0x1 << DMA_ISR_HTIF5_Pos                    ; 0x00040000 
-;DMA_ISR_HTIF5          DMA_ISR_HTIF5_Msk                               ; Channel 5 Half Transfer flag 
-;DMA_ISR_TEIF5_Pos      (19
-;DMA_ISR_TEIF5_Msk      (0x1 << DMA_ISR_TEIF5_Pos                    ; 0x00080000 
-;DMA_ISR_TEIF5          DMA_ISR_TEIF5_Msk                               ; Channel 5 Transfer Error flag 
-;DMA_ISR_GIF6_Pos       (20
-;DMA_ISR_GIF6_Msk       (0x1 << DMA_ISR_GIF6_Pos                     ; 0x00100000 
-;DMA_ISR_GIF6           DMA_ISR_GIF6_Msk                                ; Channel 6 Global interrupt flag 
-;DMA_ISR_TCIF6_Pos      (21
-;DMA_ISR_TCIF6_Msk      (0x1 << DMA_ISR_TCIF6_Pos                    ; 0x00200000 
-;DMA_ISR_TCIF6          DMA_ISR_TCIF6_Msk                               ; Channel 6 Transfer Complete flag 
-;DMA_ISR_HTIF6_Pos      (22
-;DMA_ISR_HTIF6_Msk      (0x1 << DMA_ISR_HTIF6_Pos                    ; 0x00400000 
-;DMA_ISR_HTIF6          DMA_ISR_HTIF6_Msk                               ; Channel 6 Half Transfer flag 
-;DMA_ISR_TEIF6_Pos      (23
-;DMA_ISR_TEIF6_Msk      (0x1 << DMA_ISR_TEIF6_Pos                    ; 0x00800000 
-;DMA_ISR_TEIF6          DMA_ISR_TEIF6_Msk                               ; Channel 6 Transfer Error flag 
-
-;******************  Bit definition for DMA_IFCR register  ******************
-;DMA_IFCR_CGIF1_Pos     (0
-;DMA_IFCR_CGIF1_Msk     (0x1 << DMA_IFCR_CGIF1_Pos                   ; 0x00000001 
-;DMA_IFCR_CGIF1         DMA_IFCR_CGIF1_Msk                              ; Channel 1 Global interrupt clearr 
-;DMA_IFCR_CTCIF1_Pos    (1
-;DMA_IFCR_CTCIF1_Msk    (0x1 << DMA_IFCR_CTCIF1_Pos                  ; 0x00000002 
-;DMA_IFCR_CTCIF1        DMA_IFCR_CTCIF1_Msk                             ; Channel 1 Transfer Complete clear 
-;DMA_IFCR_CHTIF1_Pos    (2
-;DMA_IFCR_CHTIF1_Msk    (0x1 << DMA_IFCR_CHTIF1_Pos                  ; 0x00000004 
-;DMA_IFCR_CHTIF1        DMA_IFCR_CHTIF1_Msk                             ; Channel 1 Half Transfer clear 
-;DMA_IFCR_CTEIF1_Pos    (3
-;DMA_IFCR_CTEIF1_Msk    (0x1 << DMA_IFCR_CTEIF1_Pos                  ; 0x00000008 
-;DMA_IFCR_CTEIF1        DMA_IFCR_CTEIF1_Msk                             ; Channel 1 Transfer Error clear 
-;DMA_IFCR_CGIF2_Pos     (4
-;DMA_IFCR_CGIF2_Msk     (0x1 << DMA_IFCR_CGIF2_Pos                   ; 0x00000010 
-;DMA_IFCR_CGIF2         DMA_IFCR_CGIF2_Msk                              ; Channel 2 Global interrupt clear 
-;DMA_IFCR_CTCIF2_Pos    (5
-;DMA_IFCR_CTCIF2_Msk    (0x1 << DMA_IFCR_CTCIF2_Pos                  ; 0x00000020 
-;DMA_IFCR_CTCIF2        DMA_IFCR_CTCIF2_Msk                             ; Channel 2 Transfer Complete clear 
-;DMA_IFCR_CHTIF2_Pos    (6
-;DMA_IFCR_CHTIF2_Msk    (0x1 << DMA_IFCR_CHTIF2_Pos                  ; 0x00000040 
-;DMA_IFCR_CHTIF2        DMA_IFCR_CHTIF2_Msk                             ; Channel 2 Half Transfer clear 
-;DMA_IFCR_CTEIF2_Pos    (7
-;DMA_IFCR_CTEIF2_Msk    (0x1 << DMA_IFCR_CTEIF2_Pos                  ; 0x00000080 
-;DMA_IFCR_CTEIF2        DMA_IFCR_CTEIF2_Msk                             ; Channel 2 Transfer Error clear 
-;DMA_IFCR_CGIF3_Pos     (8
-;DMA_IFCR_CGIF3_Msk     (0x1 << DMA_IFCR_CGIF3_Pos                   ; 0x00000100 
-;DMA_IFCR_CGIF3         DMA_IFCR_CGIF3_Msk                              ; Channel 3 Global interrupt clear 
-;DMA_IFCR_CTCIF3_Pos    (9
-;DMA_IFCR_CTCIF3_Msk    (0x1 << DMA_IFCR_CTCIF3_Pos                  ; 0x00000200 
-;DMA_IFCR_CTCIF3        DMA_IFCR_CTCIF3_Msk                             ; Channel 3 Transfer Complete clear 
-;DMA_IFCR_CHTIF3_Pos    (10
-;DMA_IFCR_CHTIF3_Msk    (0x1 << DMA_IFCR_CHTIF3_Pos                  ; 0x00000400 
-;DMA_IFCR_CHTIF3        DMA_IFCR_CHTIF3_Msk                             ; Channel 3 Half Transfer clear 
-;DMA_IFCR_CTEIF3_Pos    (11
-;DMA_IFCR_CTEIF3_Msk    (0x1 << DMA_IFCR_CTEIF3_Pos                  ; 0x00000800 
-;DMA_IFCR_CTEIF3        DMA_IFCR_CTEIF3_Msk                             ; Channel 3 Transfer Error clear 
-;DMA_IFCR_CGIF4_Pos     (12
-;DMA_IFCR_CGIF4_Msk     (0x1 << DMA_IFCR_CGIF4_Pos                   ; 0x00001000 
-;DMA_IFCR_CGIF4         DMA_IFCR_CGIF4_Msk                              ; Channel 4 Global interrupt clear 
-;DMA_IFCR_CTCIF4_Pos    (13
-;DMA_IFCR_CTCIF4_Msk    (0x1 << DMA_IFCR_CTCIF4_Pos                  ; 0x00002000 
-;DMA_IFCR_CTCIF4        DMA_IFCR_CTCIF4_Msk                             ; Channel 4 Transfer Complete clear 
-;DMA_IFCR_CHTIF4_Pos    (14
-;DMA_IFCR_CHTIF4_Msk    (0x1 << DMA_IFCR_CHTIF4_Pos                  ; 0x00004000 
-;DMA_IFCR_CHTIF4        DMA_IFCR_CHTIF4_Msk                             ; Channel 4 Half Transfer clear 
-;DMA_IFCR_CTEIF4_Pos    (15
-;DMA_IFCR_CTEIF4_Msk    (0x1 << DMA_IFCR_CTEIF4_Pos                  ; 0x00008000 
-;DMA_IFCR_CTEIF4        DMA_IFCR_CTEIF4_Msk                             ; Channel 4 Transfer Error clear 
-;DMA_IFCR_CGIF5_Pos     (16
-;DMA_IFCR_CGIF5_Msk     (0x1 << DMA_IFCR_CGIF5_Pos                   ; 0x00010000 
-;DMA_IFCR_CGIF5         DMA_IFCR_CGIF5_Msk                              ; Channel 5 Global interrupt clear 
-;DMA_IFCR_CTCIF5_Pos    (17
-;DMA_IFCR_CTCIF5_Msk    (0x1 << DMA_IFCR_CTCIF5_Pos                  ; 0x00020000 
-;DMA_IFCR_CTCIF5        DMA_IFCR_CTCIF5_Msk                             ; Channel 5 Transfer Complete clear 
-;DMA_IFCR_CHTIF5_Pos    (18
-;DMA_IFCR_CHTIF5_Msk    (0x1 << DMA_IFCR_CHTIF5_Pos                  ; 0x00040000 
-;DMA_IFCR_CHTIF5        DMA_IFCR_CHTIF5_Msk                             ; Channel 5 Half Transfer clear 
-;DMA_IFCR_CTEIF5_Pos    (19
-;DMA_IFCR_CTEIF5_Msk    (0x1 << DMA_IFCR_CTEIF5_Pos                  ; 0x00080000 
-;DMA_IFCR_CTEIF5        DMA_IFCR_CTEIF5_Msk                             ; Channel 5 Transfer Error clear 
-;DMA_IFCR_CGIF6_Pos     (20
-;DMA_IFCR_CGIF6_Msk     (0x1 << DMA_IFCR_CGIF6_Pos                   ; 0x00100000 
-;DMA_IFCR_CGIF6         DMA_IFCR_CGIF6_Msk                              ; Channel 6 Global interrupt clear 
-;DMA_IFCR_CTCIF6_Pos    (21
-;DMA_IFCR_CTCIF6_Msk    (0x1 << DMA_IFCR_CTCIF6_Pos                  ; 0x00200000 
-;DMA_IFCR_CTCIF6        DMA_IFCR_CTCIF6_Msk                             ; Channel 6 Transfer Complete clear 
-;DMA_IFCR_CHTIF6_Pos    (22
-;DMA_IFCR_CHTIF6_Msk    (0x1 << DMA_IFCR_CHTIF6_Pos                  ; 0x00400000 
-;DMA_IFCR_CHTIF6        DMA_IFCR_CHTIF6_Msk                             ; Channel 6 Half Transfer clear 
-;DMA_IFCR_CTEIF6_Pos    (23
-;DMA_IFCR_CTEIF6_Msk    (0x1 << DMA_IFCR_CTEIF6_Pos                  ; 0x00800000 
-;DMA_IFCR_CTEIF6        DMA_IFCR_CTEIF6_Msk                             ; Channel 6 Transfer Error clear 
-
-;******************  Bit definition for DMA_CCR register  *******************
-;DMA_CCR_EN_Pos         (0
-;DMA_CCR_EN_Msk         (0x1 << DMA_CCR_EN_Pos                       ; 0x00000001 
-;DMA_CCR_EN             DMA_CCR_EN_Msk                                  ; Channel enable                      
-;DMA_CCR_TCIE_Pos       (1
-;DMA_CCR_TCIE_Msk       (0x1 << DMA_CCR_TCIE_Pos                     ; 0x00000002 
-;DMA_CCR_TCIE           DMA_CCR_TCIE_Msk                                ; Transfer complete interrupt enable  
-;DMA_CCR_HTIE_Pos       (2
-;DMA_CCR_HTIE_Msk       (0x1 << DMA_CCR_HTIE_Pos                     ; 0x00000004 
-;DMA_CCR_HTIE           DMA_CCR_HTIE_Msk                                ; Half Transfer interrupt enable      
-;DMA_CCR_TEIE_Pos       (3
-;DMA_CCR_TEIE_Msk       (0x1 << DMA_CCR_TEIE_Pos                     ; 0x00000008 
-;DMA_CCR_TEIE           DMA_CCR_TEIE_Msk                                ; Transfer error interrupt enable     
-;DMA_CCR_DIR_Pos        (4
-;DMA_CCR_DIR_Msk        (0x1 << DMA_CCR_DIR_Pos                      ; 0x00000010 
-;DMA_CCR_DIR            DMA_CCR_DIR_Msk                                 ; Data transfer direction             
-;DMA_CCR_CIRC_Pos       (5
-;DMA_CCR_CIRC_Msk       (0x1 << DMA_CCR_CIRC_Pos                     ; 0x00000020 
-;DMA_CCR_CIRC           DMA_CCR_CIRC_Msk                                ; Circular mode                       
-;DMA_CCR_PINC_Pos       (6
-;DMA_CCR_PINC_Msk       (0x1 << DMA_CCR_PINC_Pos                     ; 0x00000040 
-;DMA_CCR_PINC           DMA_CCR_PINC_Msk                                ; Peripheral increment mode           
-;DMA_CCR_MINC_Pos       (7
-;DMA_CCR_MINC_Msk       (0x1 << DMA_CCR_MINC_Pos                     ; 0x00000080 
-;DMA_CCR_MINC           DMA_CCR_MINC_Msk                                ; Memory increment mode               
-
-;DMA_CCR_PSIZE_Pos      (8
-;DMA_CCR_PSIZE_Msk      (0x3UL << DMA_CCR_PSIZE_Pos                    ; 0x00000300 
-;DMA_CCR_PSIZE          DMA_CCR_PSIZE_Msk                               ; PSIZE[1:0] bits (Peripheral size)   
-;DMA_CCR_PSIZE_0        (0x1 << DMA_CCR_PSIZE_Pos                    ; 0x00000100 
-;DMA_CCR_PSIZE_1        (0x2UL << DMA_CCR_PSIZE_Pos                    ; 0x00000200 
-
-;DMA_CCR_MSIZE_Pos      (10
-;DMA_CCR_MSIZE_Msk      (0x3UL << DMA_CCR_MSIZE_Pos                    ; 0x00000C00 
-;DMA_CCR_MSIZE          DMA_CCR_MSIZE_Msk                               ; MSIZE[1:0] bits (Memory size)       
-;DMA_CCR_MSIZE_0        (0x1 << DMA_CCR_MSIZE_Pos                    ; 0x00000400 
-;DMA_CCR_MSIZE_1        (0x2UL << DMA_CCR_MSIZE_Pos                    ; 0x00000800 
-
-;DMA_CCR_PL_Pos         (12
-;DMA_CCR_PL_Msk         (0x3UL << DMA_CCR_PL_Pos                       ; 0x00003000 
-;DMA_CCR_PL             DMA_CCR_PL_Msk                                  ; PL[1:0] bits(Channel Priority level)
-;DMA_CCR_PL_0           (0x1 << DMA_CCR_PL_Pos                       ; 0x00001000 
-;DMA_CCR_PL_1           (0x2UL << DMA_CCR_PL_Pos                       ; 0x00002000 
-
-;DMA_CCR_MEM2MEM_Pos    (14
-;DMA_CCR_MEM2MEM_Msk    (0x1 << DMA_CCR_MEM2MEM_Pos                  ; 0x00004000 
-;DMA_CCR_MEM2MEM        DMA_CCR_MEM2MEM_Msk                             ; Memory to memory mode               
-
-;*****************  Bit definition for DMA_CNDTR register  ******************
-;DMA_CNDTR_NDT_Pos      (0
-;DMA_CNDTR_NDT_Msk      (0xFFFFUL << DMA_CNDTR_NDT_Pos                 ; 0x0000FFFF 
-;DMA_CNDTR_NDT          DMA_CNDTR_NDT_Msk                               ; Number of data to Transfer          
-
-;*****************  Bit definition for DMA_CPAR register  *******************
-;DMA_CPAR_PA_Pos        (0
-;DMA_CPAR_PA_Msk        (0xFFFFFFFFUL << DMA_CPAR_PA_Pos               ; 0xFFFFFFFF 
-;DMA_CPAR_PA            DMA_CPAR_PA_Msk                                 ; Peripheral Address                  
-
-;*****************  Bit definition for DMA_CMAR register  *******************
-;DMA_CMAR_MA_Pos        (0
-;DMA_CMAR_MA_Msk        (0xFFFFFFFFUL << DMA_CMAR_MA_Pos               ; 0xFFFFFFFF 
-;DMA_CMAR_MA            DMA_CMAR_MA_Msk                                 ; Memory Address                      
-
-;****************************************************************************
-;                                                                            
-;                             DMAMUX Controller                              
-;                                                                            
-;****************************************************************************
-
-;*******************  Bits definition for DMAMUX_CxCR register  *************
-;DMAMUX_CxCR_DMAREQ_ID_Pos                    (0
-;DMAMUX_CxCR_DMAREQ_ID_Msk                    (0xFFUL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x000000FF 
-;DMAMUX_CxCR_DMAREQ_ID                        DMAMUX_CxCR_DMAREQ_ID_Msk
-;DMAMUX_CxCR_DMAREQ_ID_0                      (0x01UL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x00000001 
-;DMAMUX_CxCR_DMAREQ_ID_1                      (0x02UL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x00000002 
-;DMAMUX_CxCR_DMAREQ_ID_2                      (0x04UL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x00000004 
-;DMAMUX_CxCR_DMAREQ_ID_3                      (0x08UL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x00000008 
-;DMAMUX_CxCR_DMAREQ_ID_4                      (0x10UL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x00000010 
-;DMAMUX_CxCR_DMAREQ_ID_5                      (0x20UL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x00000020 
-;DMAMUX_CxCR_DMAREQ_ID_6                      (0x40UL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x00000040 
-;DMAMUX_CxCR_DMAREQ_ID_7                      (0x80UL << DMAMUX_CxCR_DMAREQ_ID_Pos; 0x00000080 
-
-;DMAMUX_CxCR_SOIE_Pos                         (8
-;DMAMUX_CxCR_SOIE_Msk                         (0x1 << DMAMUX_CxCR_SOIE_Pos; 0x00000100 
-;DMAMUX_CxCR_SOIE                             DMAMUX_CxCR_SOIE_Msk
-
-;DMAMUX_CxCR_EGE_Pos                          (9
-;DMAMUX_CxCR_EGE_Msk                          (0x1 << DMAMUX_CxCR_EGE_Pos; 0x00000200 
-;DMAMUX_CxCR_EGE                              DMAMUX_CxCR_EGE_Msk
-
-;DMAMUX_CxCR_SE_Pos                           (16
-;DMAMUX_CxCR_SE_Msk                           (0x1 << DMAMUX_CxCR_SE_Pos; 0x00010000 
-;DMAMUX_CxCR_SE                               DMAMUX_CxCR_SE_Msk
-
-;DMAMUX_CxCR_SPOL_Pos                         (17
-;DMAMUX_CxCR_SPOL_Msk                         (0x3UL << DMAMUX_CxCR_SPOL_Pos; 0x00060000 
-;DMAMUX_CxCR_SPOL                             DMAMUX_CxCR_SPOL_Msk
-;DMAMUX_CxCR_SPOL_0                           (0x1 << DMAMUX_CxCR_SPOL_Pos; 0x00020000 
-;DMAMUX_CxCR_SPOL_1                           (0x2UL << DMAMUX_CxCR_SPOL_Pos; 0x00040000 
-
-;DMAMUX_CxCR_NBREQ_Pos                        (19
-;DMAMUX_CxCR_NBREQ_Msk                        (0x1FUL << DMAMUX_CxCR_NBREQ_Pos; 0x00F80000 
-;DMAMUX_CxCR_NBREQ                            DMAMUX_CxCR_NBREQ_Msk
-;DMAMUX_CxCR_NBREQ_0                          (0x01UL << DMAMUX_CxCR_NBREQ_Pos; 0x00080000 
-;DMAMUX_CxCR_NBREQ_1                          (0x02UL << DMAMUX_CxCR_NBREQ_Pos; 0x00100000 
-;DMAMUX_CxCR_NBREQ_2                          (0x04UL << DMAMUX_CxCR_NBREQ_Pos; 0x00200000 
-;DMAMUX_CxCR_NBREQ_3                          (0x08UL << DMAMUX_CxCR_NBREQ_Pos; 0x00400000 
-;DMAMUX_CxCR_NBREQ_4                          (0x10UL << DMAMUX_CxCR_NBREQ_Pos; 0x00800000 
-
-;DMAMUX_CxCR_SYNC_ID_Pos                      (24
-;DMAMUX_CxCR_SYNC_ID_Msk                      (0x1FUL << DMAMUX_CxCR_SYNC_ID_Pos; 0x1F000000 
-;DMAMUX_CxCR_SYNC_ID                          DMAMUX_CxCR_SYNC_ID_Msk
-;DMAMUX_CxCR_SYNC_ID_0                        (0x01UL << DMAMUX_CxCR_SYNC_ID_Pos; 0x01000000 
-;DMAMUX_CxCR_SYNC_ID_1                        (0x02UL << DMAMUX_CxCR_SYNC_ID_Pos; 0x02000000 
-;DMAMUX_CxCR_SYNC_ID_2                        (0x04UL << DMAMUX_CxCR_SYNC_ID_Pos; 0x04000000 
-;DMAMUX_CxCR_SYNC_ID_3                        (0x08UL << DMAMUX_CxCR_SYNC_ID_Pos; 0x08000000 
-;DMAMUX_CxCR_SYNC_ID_4                        (0x10UL << DMAMUX_CxCR_SYNC_ID_Pos; 0x10000000 
-
-;*******************  Bits definition for DMAMUX_CSR register  ***************
-;DMAMUX_CSR_SOF0_Pos                          (0
-;DMAMUX_CSR_SOF0_Msk                          (0x1 << DMAMUX_CSR_SOF0_Pos; 0x00000001 
-;DMAMUX_CSR_SOF0                              DMAMUX_CSR_SOF0_Msk
-;DMAMUX_CSR_SOF1_Pos                          (1
-;DMAMUX_CSR_SOF1_Msk                          (0x1 << DMAMUX_CSR_SOF1_Pos; 0x00000002 
-;DMAMUX_CSR_SOF1                              DMAMUX_CSR_SOF1_Msk
-;DMAMUX_CSR_SOF2_Pos                          (2
-;DMAMUX_CSR_SOF2_Msk                          (0x1 << DMAMUX_CSR_SOF2_Pos; 0x00000004 
-;DMAMUX_CSR_SOF2                              DMAMUX_CSR_SOF2_Msk
-;DMAMUX_CSR_SOF3_Pos                          (3
-;DMAMUX_CSR_SOF3_Msk                          (0x1 << DMAMUX_CSR_SOF3_Pos; 0x00000008 
-;DMAMUX_CSR_SOF3                              DMAMUX_CSR_SOF3_Msk
-;DMAMUX_CSR_SOF4_Pos                          (4
-;DMAMUX_CSR_SOF4_Msk                          (0x1 << DMAMUX_CSR_SOF4_Pos; 0x00000010 
-;DMAMUX_CSR_SOF4                              DMAMUX_CSR_SOF4_Msk
-;DMAMUX_CSR_SOF5_Pos                          (5
-;DMAMUX_CSR_SOF5_Msk                          (0x1 << DMAMUX_CSR_SOF5_Pos; 0x00000020 
-;DMAMUX_CSR_SOF5                              DMAMUX_CSR_SOF5_Msk
-;DMAMUX_CSR_SOF6_Pos                          (6
-;DMAMUX_CSR_SOF6_Msk                          (0x1 << DMAMUX_CSR_SOF6_Pos; 0x00000040 
-;DMAMUX_CSR_SOF6                              DMAMUX_CSR_SOF6_Msk
-;DMAMUX_CSR_SOF7_Pos                          (7
-;DMAMUX_CSR_SOF7_Msk                          (0x1 << DMAMUX_CSR_SOF7_Pos; 0x00000080 
-;DMAMUX_CSR_SOF7                              DMAMUX_CSR_SOF7_Msk
-;DMAMUX_CSR_SOF8_Pos                          (8
-;DMAMUX_CSR_SOF8_Msk                          (0x1 << DMAMUX_CSR_SOF8_Pos; 0x00000100 
-;DMAMUX_CSR_SOF8                              DMAMUX_CSR_SOF8_Msk
-;DMAMUX_CSR_SOF9_Pos                          (9
-;DMAMUX_CSR_SOF9_Msk                          (0x1 << DMAMUX_CSR_SOF9_Pos; 0x00000200 
-;DMAMUX_CSR_SOF9                              DMAMUX_CSR_SOF9_Msk
-;DMAMUX_CSR_SOF10_Pos                         (10
-;DMAMUX_CSR_SOF10_Msk                         (0x1 << DMAMUX_CSR_SOF10_Pos; 0x00000400 
-;DMAMUX_CSR_SOF10                             DMAMUX_CSR_SOF10_Msk
-;DMAMUX_CSR_SOF11_Pos                         (11
-;DMAMUX_CSR_SOF11_Msk                         (0x1 << DMAMUX_CSR_SOF11_Pos; 0x00000800 
-;DMAMUX_CSR_SOF11                              DMAMUX_CSR_SOF11_Msk
-
-;*******************  Bits definition for DMAMUX_CFR register  ***************
-;DMAMUX_CFR_CSOF0_Pos                         (0
-;DMAMUX_CFR_CSOF0_Msk                         (0x1 << DMAMUX_CFR_CSOF0_Pos; 0x00000001 
-;DMAMUX_CFR_CSOF0                             DMAMUX_CFR_CSOF0_Msk
-;DMAMUX_CFR_CSOF1_Pos                         (1
-;DMAMUX_CFR_CSOF1_Msk                         (0x1 << DMAMUX_CFR_CSOF1_Pos; 0x00000002 
-;DMAMUX_CFR_CSOF1                             DMAMUX_CFR_CSOF1_Msk
-;DMAMUX_CFR_CSOF2_Pos                         (2
-;DMAMUX_CFR_CSOF2_Msk                         (0x1 << DMAMUX_CFR_CSOF2_Pos; 0x00000004 
-;DMAMUX_CFR_CSOF2                             DMAMUX_CFR_CSOF2_Msk
-;DMAMUX_CFR_CSOF3_Pos                         (3
-;DMAMUX_CFR_CSOF3_Msk                         (0x1 << DMAMUX_CFR_CSOF3_Pos; 0x00000008 
-;DMAMUX_CFR_CSOF3                             DMAMUX_CFR_CSOF3_Msk
-;DMAMUX_CFR_CSOF4_Pos                         (4
-;DMAMUX_CFR_CSOF4_Msk                         (0x1 << DMAMUX_CFR_CSOF4_Pos; 0x00000010 
-;DMAMUX_CFR_CSOF4                             DMAMUX_CFR_CSOF4_Msk
-;DMAMUX_CFR_CSOF5_Pos                         (5
-;DMAMUX_CFR_CSOF5_Msk                         (0x1 << DMAMUX_CFR_CSOF5_Pos; 0x00000020 
-;DMAMUX_CFR_CSOF5                             DMAMUX_CFR_CSOF5_Msk
-;DMAMUX_CFR_CSOF6_Pos                         (6
-;DMAMUX_CFR_CSOF6_Msk                         (0x1 << DMAMUX_CFR_CSOF6_Pos; 0x00000040 
-;DMAMUX_CFR_CSOF6                             DMAMUX_CFR_CSOF6_Msk
-;DMAMUX_CFR_CSOF7_Pos                         (7
-;DMAMUX_CFR_CSOF7_Msk                         (0x1 << DMAMUX_CFR_CSOF7_Pos; 0x00000080 
-;DMAMUX_CFR_CSOF7                             DMAMUX_CFR_CSOF7_Msk
-;DMAMUX_CFR_CSOF8_Pos                         (8
-;DMAMUX_CFR_CSOF8_Msk                         (0x1 << DMAMUX_CFR_CSOF8_Pos; 0x00000100 
-;DMAMUX_CFR_CSOF8                             DMAMUX_CFR_CSOF8_Msk
-;DMAMUX_CFR_CSOF9_Pos                         (9
-;DMAMUX_CFR_CSOF9_Msk                         (0x1 << DMAMUX_CFR_CSOF9_Pos; 0x00000200 
-;DMAMUX_CFR_CSOF9                             DMAMUX_CFR_CSOF9_Msk
-;DMAMUX_CFR_CSOF10_Pos                        (10
-;DMAMUX_CFR_CSOF10_Msk                        (0x1 << DMAMUX_CFR_CSOF10_Pos; 0x00000400 
-;DMAMUX_CFR_CSOF10                            DMAMUX_CFR_CSOF10_Msk
-;DMAMUX_CFR_CSOF11_Pos                        (11
-;DMAMUX_CFR_CSOF11_Msk                        (0x1 << DMAMUX_CFR_CSOF11_Pos; 0x00000800 
-;DMAMUX_CFR_CSOF11                            DMAMUX_CFR_CSOF11_Msk
-
-;*******************  Bits definition for DMAMUX_RGxCR register  ***********
-;DMAMUX_RGxCR_SIG_ID_Pos                      (0
-;DMAMUX_RGxCR_SIG_ID_Msk                      (0x1FUL << DMAMUX_RGxCR_SIG_ID_Pos; 0x0000001F 
-;DMAMUX_RGxCR_SIG_ID                          DMAMUX_RGxCR_SIG_ID_Msk
-;DMAMUX_RGxCR_SIG_ID_0                        (0x01UL << DMAMUX_RGxCR_SIG_ID_Pos; 0x00000001 
-;DMAMUX_RGxCR_SIG_ID_1                        (0x02UL << DMAMUX_RGxCR_SIG_ID_Pos; 0x00000002 
-;DMAMUX_RGxCR_SIG_ID_2                        (0x04UL << DMAMUX_RGxCR_SIG_ID_Pos; 0x00000004 
-;DMAMUX_RGxCR_SIG_ID_3                        (0x08UL << DMAMUX_RGxCR_SIG_ID_Pos; 0x00000008 
-;DMAMUX_RGxCR_SIG_ID_4                        (0x10UL << DMAMUX_RGxCR_SIG_ID_Pos; 0x00000010 
-
-;DMAMUX_RGxCR_OIE_Pos                         (8
-;DMAMUX_RGxCR_OIE_Msk                         (0x1 << DMAMUX_RGxCR_OIE_Pos; 0x00000100 
-;DMAMUX_RGxCR_OIE                             DMAMUX_RGxCR_OIE_Msk
-
-;DMAMUX_RGxCR_GE_Pos                          (16
-;DMAMUX_RGxCR_GE_Msk                          (0x1 << DMAMUX_RGxCR_GE_Pos; 0x00010000 
-;DMAMUX_RGxCR_GE                              DMAMUX_RGxCR_GE_Msk
-
-;DMAMUX_RGxCR_GPOL_Pos                        (17
-;DMAMUX_RGxCR_GPOL_Msk                        (0x3UL << DMAMUX_RGxCR_GPOL_Pos; 0x00060000 
-;DMAMUX_RGxCR_GPOL                            DMAMUX_RGxCR_GPOL_Msk
-;DMAMUX_RGxCR_GPOL_0                          (0x1 << DMAMUX_RGxCR_GPOL_Pos; 0x00020000 
-;DMAMUX_RGxCR_GPOL_1                          (0x2UL << DMAMUX_RGxCR_GPOL_Pos; 0x00040000 
-
-;DMAMUX_RGxCR_GNBREQ_Pos                      (19
-;DMAMUX_RGxCR_GNBREQ_Msk                      (0x1FUL << DMAMUX_RGxCR_GNBREQ_Pos; 0x00F80000 
-;DMAMUX_RGxCR_GNBREQ                          DMAMUX_RGxCR_GNBREQ_Msk
-;DMAMUX_RGxCR_GNBREQ_0                        (0x01UL << DMAMUX_RGxCR_GNBREQ_Pos; 0x00080000 
-;DMAMUX_RGxCR_GNBREQ_1                        (0x02UL << DMAMUX_RGxCR_GNBREQ_Pos; 0x00100000 
-;DMAMUX_RGxCR_GNBREQ_2                        (0x04UL << DMAMUX_RGxCR_GNBREQ_Pos; 0x00200000 
-;DMAMUX_RGxCR_GNBREQ_3                        (0x08UL << DMAMUX_RGxCR_GNBREQ_Pos; 0x00400000 
-;DMAMUX_RGxCR_GNBREQ_4                        (0x10UL << DMAMUX_RGxCR_GNBREQ_Pos; 0x00800000 
-
-;*******************  Bits definition for DMAMUX_RGSR register  *************
-;DMAMUX_RGSR_OF0_Pos                          (0
-;DMAMUX_RGSR_OF0_Msk                          (0x1 << DMAMUX_RGSR_OF0_Pos; 0x00000001 
-;DMAMUX_RGSR_OF0                              DMAMUX_RGSR_OF0_Msk
-;DMAMUX_RGSR_OF1_Pos                          (1
-;DMAMUX_RGSR_OF1_Msk                          (0x1 << DMAMUX_RGSR_OF1_Pos; 0x00000002 
-;DMAMUX_RGSR_OF1                              DMAMUX_RGSR_OF1_Msk
-;DMAMUX_RGSR_OF2_Pos                          (2
-;DMAMUX_RGSR_OF2_Msk                          (0x1 << DMAMUX_RGSR_OF2_Pos; 0x00000004 
-;DMAMUX_RGSR_OF2                              DMAMUX_RGSR_OF2_Msk
-;DMAMUX_RGSR_OF3_Pos                          (3
-;DMAMUX_RGSR_OF3_Msk                          (0x1 << DMAMUX_RGSR_OF3_Pos; 0x00000008 
-;DMAMUX_RGSR_OF3                              DMAMUX_RGSR_OF3_Msk
-
-;*******************  Bits definition for DMAMUX_RGCFR register  ***********
-;DMAMUX_RGCFR_COF0_Pos                        (0
-;DMAMUX_RGCFR_COF0_Msk                        (0x1 << DMAMUX_RGCFR_COF0_Pos; 0x00000001 
-;DMAMUX_RGCFR_COF0                            DMAMUX_RGCFR_COF0_Msk
-;DMAMUX_RGCFR_COF1_Pos                        (1
-;DMAMUX_RGCFR_COF1_Msk                        (0x1 << DMAMUX_RGCFR_COF1_Pos; 0x00000002 
-;DMAMUX_RGCFR_COF1                            DMAMUX_RGCFR_COF1_Msk
-;DMAMUX_RGCFR_COF2_Pos                        (2
-;DMAMUX_RGCFR_COF2_Msk                        (0x1 << DMAMUX_RGCFR_COF2_Pos; 0x00000004 
-;DMAMUX_RGCFR_COF2                            DMAMUX_RGCFR_COF2_Msk
-;DMAMUX_RGCFR_COF3_Pos                        (3
-;DMAMUX_RGCFR_COF3_Msk                        (0x1 << DMAMUX_RGCFR_COF3_Pos; 0x00000008 
-;DMAMUX_RGCFR_COF3                            DMAMUX_RGCFR_COF3_Msk
-
-;******************* Bits definition for DMAMUX_IPHW_CFGR2  *****************
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ0_Pos       (0
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ0_Msk       (0x1 << DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ0_Pos; 0x00000001 
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ0           DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ0_Msk
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ1_Pos       (1
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ1_Msk       (0x1 << DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ1_Pos; 0x00000002 
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ1           DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ1_Msk
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ2_Pos       (2
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ2_Msk       (0x1 << DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ2_Pos; 0x00000004 
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ2           DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ2_Msk
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ3_Pos       (3
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ3_Msk       (0x1 << DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ3_Pos; 0x00000008 
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ3           DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ3_Msk
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ4_Pos       (4
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ4_Msk       (0x1 << DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ4_Pos; 0x00000010 
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ4           DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ4_Msk
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ5_Pos       (5
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ5_Msk       (0x1 << DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ5_Pos; 0x00000020 
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ5           DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ5_Msk
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ6_Pos       (6
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ6_Msk       (0x1 << DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ6_Pos; 0x00000040 
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ6           DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ6_Msk
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ7_Pos       (7
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ7_Msk       (0x1 << DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ7_Pos; 0x00000080 
-;DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ7           DMAMUX_IPHW_CFGR2_NUM_DMA_EXT_REQ7_Msk
-
-;******************* Bits definition for DMAMUX_IPHW_CFGR1  *****************
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS0_Pos       (0
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS0_Msk       (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS0_Pos; 0x00000001 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS0           DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS0_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS1_Pos       (1
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS1_Msk       (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS1_Pos; 0x00000002 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS1           DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS1_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS2_Pos       (2
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS2_Msk       (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS2_Pos; 0x00000004 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS2           DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS2_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS3_Pos       (3
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS3_Msk       (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS3_Pos; 0x00000008 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS3           DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS3_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS4_Pos       (4
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS4_Msk       (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS4_Pos; 0x00000010 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS4           DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS4_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS5_Pos       (5
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS5_Msk       (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS5_Pos; 0x00000020 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS5           DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS5_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS6_Pos       (6
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS6_Msk       (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS6_Pos; 0x00000040 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS6           DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS6_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS7_Pos       (7
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS7_Msk       (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS7_Pos; 0x00000080 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS7           DMAMUX_IPHW_CFGR1_NUM_DMA_STREAMS7_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ0_Pos    (8
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ0_Msk    (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ0_Pos; 0x00000100 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ0        DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ0_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ1_Pos    (9
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ1_Msk    (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ1_Pos; 0x00000200 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ1        DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ1_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ2_Pos    (10
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ2_Msk    (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ2_Pos; 0x00000400 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ2        DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ2_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ3_Pos    (11
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ3_Msk    (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ3_Pos; 0x00000800 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ3        DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ3_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ4_Pos    (12
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ4_Msk    (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ4_Pos; 0x00001000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ4        DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ4_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ5_Pos    (13
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ5_Msk    (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ5_Pos; 0x00002000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ5        DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ5_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ6_Pos    (14
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ6_Msk    (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ6_Pos; 0x00004000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ6        DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ6_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ7_Pos    (15
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ7_Msk    (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ7_Pos; 0x00008000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ7        DMAMUX_IPHW_CFGR1_NUM_DMA_PERIPH_REQ7_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG0_Pos          (16
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG0_Msk          (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG0_Pos; 0x00010000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG0              DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG0_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG1_Pos          (17
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG1_Msk          (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG1_Pos; 0x00020000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG1              DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG1_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG2_Pos          (18
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG2_Msk          (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG2_Pos; 0x00040000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG2              DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG2_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG3_Pos          (19
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG3_Msk          (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG3_Pos; 0x00080000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG3              DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG3_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG4_Pos          (20
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG4_Msk          (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG4_Pos; 0x00100000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG4              DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG4_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG5_Pos          (21
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG5_Msk          (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG5_Pos; 0x00200000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG5              DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG5_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG6_Pos          (22
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG6_Msk          (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG6_Pos; 0x00400000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG6              DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG6_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG7_Pos          (23
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG7_Msk          (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG7_Pos; 0x00800000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG7              DMAMUX_IPHW_CFGR1_NUM_DMA_TRIG7_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN0_Pos        (24
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN0_Msk        (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN0_Pos; 0x01000000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN0            DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN0_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN1_Pos        (25
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN1_Msk        (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN1_Pos; 0x02000000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN1            DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN1_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN2_Pos        (26
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN2_Msk        (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN2_Pos; 0x04000000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN2            DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN2_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN3_Pos        (27
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN3_Msk        (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN3_Pos; 0x08000000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN3            DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN3_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN4_Pos        (28
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN4_Msk        (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN4_Pos; 0x10000000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN4            DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN4_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN5_Pos        (29
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN5_Msk        (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN5_Pos; 0x20000000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN5            DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN5_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN6_Pos        (30
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN6_Msk        (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN6_Pos; 0x40000000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN6            DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN6_Msk
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN7_Pos        (31
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN7_Msk        (0x1 << DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN7_Pos; 0x80000000 
-;DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN7            DMAMUX_IPHW_CFGR1_NUM_DMA_REQGEN7_Msk
-
-
 ;****************************************************************************
 ;                                                                            
 ;                    External Interrupt/Event Controller                     
 ;                                                                            
 ;****************************************************************************
 ;******************  Bit definition for EXTI_IMR1 register  *****************
-EXTI_IMR1_IM0_Pos        EQU 0
-EXTI_IMR1_IM0_Msk        EQU 0x1 << EXTI_IMR1_IM0_Pos                  ; 0x00000001 
-EXTI_IMR1_IM0            EQU EXTI_IMR1_IM0_Msk                             ; Interrupt Mask on line 0 
-EXTI_IMR1_IM1_Pos        EQU 1
-EXTI_IMR1_IM1_Msk        EQU 0x1 << EXTI_IMR1_IM1_Pos                  ; 0x00000002 
-EXTI_IMR1_IM1            EQU EXTI_IMR1_IM1_Msk                             ; Interrupt Mask on line 1 
-EXTI_IMR1_IM2_Pos        EQU 2
-EXTI_IMR1_IM2_Msk        EQU 0x1 << EXTI_IMR1_IM2_Pos                  ; 0x00000004 
-EXTI_IMR1_IM2            EQU EXTI_IMR1_IM2_Msk                             ; Interrupt Mask on line 2 
-EXTI_IMR1_IM3_Pos        EQU 3
-EXTI_IMR1_IM3_Msk        EQU 0x1 << EXTI_IMR1_IM3_Pos                  ; 0x00000008 
-EXTI_IMR1_IM3            EQU EXTI_IMR1_IM3_Msk                             ; Interrupt Mask on line 3 
-EXTI_IMR1_IM4_Pos        EQU 4
-EXTI_IMR1_IM4_Msk        EQU 0x1 << EXTI_IMR1_IM4_Pos                  ; 0x00000010 
-EXTI_IMR1_IM4            EQU EXTI_IMR1_IM4_Msk                             ; Interrupt Mask on line 4 
-EXTI_IMR1_IM5_Pos        EQU 5
-EXTI_IMR1_IM5_Msk        EQU 0x1 << EXTI_IMR1_IM5_Pos                  ; 0x00000020 
-EXTI_IMR1_IM5            EQU EXTI_IMR1_IM5_Msk                             ; Interrupt Mask on line 5 
-EXTI_IMR1_IM6_Pos        EQU 6
-EXTI_IMR1_IM6_Msk        EQU 0x1 << EXTI_IMR1_IM6_Pos                  ; 0x00000040 
-EXTI_IMR1_IM6            EQU EXTI_IMR1_IM6_Msk                             ; Interrupt Mask on line 6 
-EXTI_IMR1_IM7_Pos        EQU 7
-EXTI_IMR1_IM7_Msk        EQU 0x1 << EXTI_IMR1_IM7_Pos                  ; 0x00000080 
-EXTI_IMR1_IM7            EQU EXTI_IMR1_IM7_Msk                             ; Interrupt Mask on line 7 
-EXTI_IMR1_IM8_Pos        EQU 8
-EXTI_IMR1_IM8_Msk        EQU 0x1 << EXTI_IMR1_IM8_Pos                  ; 0x00000100 
-EXTI_IMR1_IM8            EQU EXTI_IMR1_IM8_Msk                             ; Interrupt Mask on line 8 
-EXTI_IMR1_IM9_Pos        EQU 9
-EXTI_IMR1_IM9_Msk        EQU 0x1 << EXTI_IMR1_IM9_Pos                  ; 0x00000200 
-EXTI_IMR1_IM9            EQU EXTI_IMR1_IM9_Msk                             ; Interrupt Mask on line 9 
-EXTI_IMR1_IM10_Pos       EQU 10
-EXTI_IMR1_IM10_Msk       EQU 0x1 << EXTI_IMR1_IM10_Pos                 ; 0x00000400 
-EXTI_IMR1_IM10           EQU EXTI_IMR1_IM10_Msk                            ; Interrupt Mask on line 10 
-EXTI_IMR1_IM11_Pos       EQU 11
-EXTI_IMR1_IM11_Msk       EQU 0x1 << EXTI_IMR1_IM11_Pos                 ; 0x00000800 
-EXTI_IMR1_IM11           EQU EXTI_IMR1_IM11_Msk                            ; Interrupt Mask on line 11 
-EXTI_IMR1_IM12_Pos       EQU 12
-EXTI_IMR1_IM12_Msk       EQU 0x1 << EXTI_IMR1_IM12_Pos                 ; 0x00001000 
-EXTI_IMR1_IM12           EQU EXTI_IMR1_IM12_Msk                            ; Interrupt Mask on line 12 
-EXTI_IMR1_IM13_Pos       EQU 13
-EXTI_IMR1_IM13_Msk       EQU 0x1 << EXTI_IMR1_IM13_Pos                 ; 0x00002000 
-EXTI_IMR1_IM13           EQU EXTI_IMR1_IM13_Msk                            ; Interrupt Mask on line 13 
-EXTI_IMR1_IM14_Pos       EQU 14
-EXTI_IMR1_IM14_Msk       EQU 0x1 << EXTI_IMR1_IM14_Pos                 ; 0x00004000 
-EXTI_IMR1_IM14           EQU EXTI_IMR1_IM14_Msk                            ; Interrupt Mask on line 14 
-EXTI_IMR1_IM15_Pos       EQU 15
-EXTI_IMR1_IM15_Msk       EQU 0x1 << EXTI_IMR1_IM15_Pos                 ; 0x00008000 
-EXTI_IMR1_IM15           EQU EXTI_IMR1_IM15_Msk                            ; Interrupt Mask on line 15 
-EXTI_IMR1_IM16_Pos       EQU 16
-EXTI_IMR1_IM16_Msk       EQU 0x1 << EXTI_IMR1_IM16_Pos                 ; 0x00010000 
-EXTI_IMR1_IM16           EQU EXTI_IMR1_IM16_Msk                            ; Interrupt Mask on line 16 
-EXTI_IMR1_IM17_Pos       EQU 17
-EXTI_IMR1_IM17_Msk       EQU 0x1 << EXTI_IMR1_IM17_Pos                 ; 0x00020000 
-EXTI_IMR1_IM17           EQU EXTI_IMR1_IM17_Msk                            ; Interrupt Mask on line 17 
-EXTI_IMR1_IM18_Pos       EQU 18
-EXTI_IMR1_IM18_Msk       EQU 0x1 << EXTI_IMR1_IM18_Pos                 ; 0x00040000 
-EXTI_IMR1_IM18           EQU EXTI_IMR1_IM18_Msk                            ; Interrupt Mask on line 18 
-EXTI_IMR1_IM19_Pos       EQU 19
-EXTI_IMR1_IM19_Msk       EQU 0x1 << EXTI_IMR1_IM19_Pos                 ; 0x00080000 
-EXTI_IMR1_IM19           EQU EXTI_IMR1_IM19_Msk                            ; Interrupt Mask on line 19 
-EXTI_IMR1_IM20_Pos       EQU 20
-EXTI_IMR1_IM20_Msk       EQU 0x1 << EXTI_IMR1_IM20_Pos                 ; 0x00100000 
-EXTI_IMR1_IM20           EQU EXTI_IMR1_IM20_Msk                            ; Interrupt Mask on line 20 
-EXTI_IMR1_IM21_Pos       EQU 21
-EXTI_IMR1_IM21_Msk       EQU 0x1 << EXTI_IMR1_IM21_Pos                 ; 0x00200000 
-EXTI_IMR1_IM21           EQU EXTI_IMR1_IM21_Msk                            ; Interrupt Mask on line 21 
-EXTI_IMR1_IM22_Pos       EQU 22
-EXTI_IMR1_IM22_Msk       EQU 0x1 << EXTI_IMR1_IM22_Pos                 ; 0x00400000 
-EXTI_IMR1_IM22           EQU EXTI_IMR1_IM22_Msk                            ; Interrupt Mask on line 22 
-EXTI_IMR1_IM23_Pos       EQU 23
-EXTI_IMR1_IM23_Msk       EQU 0x1 << EXTI_IMR1_IM23_Pos                 ; 0x00800000 
-EXTI_IMR1_IM23           EQU EXTI_IMR1_IM23_Msk                            ; Interrupt Mask on line 23 
-EXTI_IMR1_IM24_Pos       EQU 24
-EXTI_IMR1_IM24_Msk       EQU 0x1 << EXTI_IMR1_IM24_Pos                 ; 0x01000000 
-EXTI_IMR1_IM24           EQU EXTI_IMR1_IM24_Msk                            ; Interrupt Mask on line 24 
-EXTI_IMR1_IM25_Pos       EQU 25
-EXTI_IMR1_IM25_Msk       EQU 0x1 << EXTI_IMR1_IM25_Pos                 ; 0x02000000 
-EXTI_IMR1_IM25           EQU EXTI_IMR1_IM25_Msk                            ; Interrupt Mask on line 25 
-EXTI_IMR1_IM26_Pos       EQU 26
-EXTI_IMR1_IM26_Msk       EQU 0x1 << EXTI_IMR1_IM26_Pos                 ; 0x04000000 
-EXTI_IMR1_IM26           EQU EXTI_IMR1_IM26_Msk                            ; Interrupt Mask on line 26 
-EXTI_IMR1_IM27_Pos       EQU 27
-EXTI_IMR1_IM27_Msk       EQU 0x1 << EXTI_IMR1_IM27_Pos                 ; 0x08000000 
-EXTI_IMR1_IM27           EQU EXTI_IMR1_IM27_Msk                            ; Interrupt Mask on line 27 
-EXTI_IMR1_IM28_Pos       EQU 28
-EXTI_IMR1_IM28_Msk       EQU 0x1 << EXTI_IMR1_IM28_Pos                 ; 0x10000000 
-EXTI_IMR1_IM28           EQU EXTI_IMR1_IM28_Msk                            ; Interrupt Mask on line 28 
-EXTI_IMR1_IM29_Pos       EQU 29
-EXTI_IMR1_IM29_Msk       EQU 0x1 << EXTI_IMR1_IM29_Pos                 ; 0x20000000 
-EXTI_IMR1_IM29           EQU EXTI_IMR1_IM29_Msk                            ; Interrupt Mask on line 29 
-EXTI_IMR1_IM30_Pos       EQU 30
-EXTI_IMR1_IM30_Msk       EQU 0x1 << EXTI_IMR1_IM30_Pos                 ; 0x40000000 
-EXTI_IMR1_IM30           EQU EXTI_IMR1_IM30_Msk                            ; Interrupt Mask on line 30 
-EXTI_IMR1_IM_Pos         EQU 0
-EXTI_IMR1_IM_Msk         EQU 0x7FFFFFFF << EXTI_IMR1_IM_Pos            ; 0x7FFFFFFF 
-EXTI_IMR1_IM             EQU EXTI_IMR1_IM_Msk                              ; Interrupt Mask All 
-
-;******************  Bit definition for EXTI_EMR1 register  *****************
-;EXTI_EMR1_EM0_Pos        (0
-;EXTI_EMR1_EM0_Msk        (0x1 << EXTI_EMR1_EM0_Pos                  ; 0x00000001 
-;EXTI_EMR1_EM0            EXTI_EMR1_EM0_Msk                             ; Event Mask on line 0 
-;EXTI_EMR1_EM1_Pos        (1
-;EXTI_EMR1_EM1_Msk        (0x1 << EXTI_EMR1_EM1_Pos                  ; 0x00000002 
-;EXTI_EMR1_EM1            EXTI_EMR1_EM1_Msk                             ; Event Mask on line 1 
-;EXTI_EMR1_EM2_Pos        (2
-;EXTI_EMR1_EM2_Msk        (0x1 << EXTI_EMR1_EM2_Pos                  ; 0x00000004 
-;EXTI_EMR1_EM2            EXTI_EMR1_EM2_Msk                             ; Event Mask on line 2 
-;EXTI_EMR1_EM3_Pos        (3
-;EXTI_EMR1_EM3_Msk        (0x1 << EXTI_EMR1_EM3_Pos                  ; 0x00000008 
-;EXTI_EMR1_EM3            EXTI_EMR1_EM3_Msk                             ; Event Mask on line 3 
-;EXTI_EMR1_EM4_Pos        (4
-;EXTI_EMR1_EM4_Msk        (0x1 << EXTI_EMR1_EM4_Pos                  ; 0x00000010 
-;EXTI_EMR1_EM4            EXTI_EMR1_EM4_Msk                             ; Event Mask on line 4 
-;EXTI_EMR1_EM5_Pos        (5
-;EXTI_EMR1_EM5_Msk        (0x1 << EXTI_EMR1_EM5_Pos                  ; 0x00000020 
-;EXTI_EMR1_EM5            EXTI_EMR1_EM5_Msk                             ; Event Mask on line 5 
-;EXTI_EMR1_EM6_Pos        (6
-;EXTI_EMR1_EM6_Msk        (0x1 << EXTI_EMR1_EM6_Pos                  ; 0x00000040 
-;EXTI_EMR1_EM6            EXTI_EMR1_EM6_Msk                             ; Event Mask on line 6 
-;EXTI_EMR1_EM7_Pos        (7
-;EXTI_EMR1_EM7_Msk        (0x1 << EXTI_EMR1_EM7_Pos                  ; 0x00000080 
-;EXTI_EMR1_EM7            EXTI_EMR1_EM7_Msk                             ; Event Mask on line 7 
-;EXTI_EMR1_EM8_Pos        (8
-;EXTI_EMR1_EM8_Msk        (0x1 << EXTI_EMR1_EM8_Pos                  ; 0x00000100 
-;EXTI_EMR1_EM8            EXTI_EMR1_EM8_Msk                             ; Event Mask on line 8 
-;EXTI_EMR1_EM9_Pos        (9
-;EXTI_EMR1_EM9_Msk        (0x1 << EXTI_EMR1_EM9_Pos                  ; 0x00000200 
-;EXTI_EMR1_EM9            EXTI_EMR1_EM9_Msk                             ; Event Mask on line 9 
-;EXTI_EMR1_EM10_Pos       (10
-;EXTI_EMR1_EM10_Msk       (0x1 << EXTI_EMR1_EM10_Pos                 ; 0x00000400 
-;EXTI_EMR1_EM10           EXTI_EMR1_EM10_Msk                            ; Event Mask on line 10 
-;EXTI_EMR1_EM11_Pos       (11
-;EXTI_EMR1_EM11_Msk       (0x1 << EXTI_EMR1_EM11_Pos                 ; 0x00000800 
-;EXTI_EMR1_EM11           EXTI_EMR1_EM11_Msk                            ; Event Mask on line 11 
-;EXTI_EMR1_EM12_Pos       (12
-;EXTI_EMR1_EM12_Msk       (0x1 << EXTI_EMR1_EM12_Pos                 ; 0x00001000 
-;EXTI_EMR1_EM12           EXTI_EMR1_EM12_Msk                            ; Event Mask on line 12 
-;EXTI_EMR1_EM13_Pos       (13
-;EXTI_EMR1_EM13_Msk       (0x1 << EXTI_EMR1_EM13_Pos                 ; 0x00002000 
-;EXTI_EMR1_EM13           EXTI_EMR1_EM13_Msk                            ; Event Mask on line 13 
-;EXTI_EMR1_EM14_Pos       (14
-;EXTI_EMR1_EM14_Msk       (0x1 << EXTI_EMR1_EM14_Pos                 ; 0x00004000 
-;EXTI_EMR1_EM14           EXTI_EMR1_EM14_Msk                            ; Event Mask on line 14 
-;EXTI_EMR1_EM15_Pos       (15
-;EXTI_EMR1_EM15_Msk       (0x1 << EXTI_EMR1_EM15_Pos                 ; 0x00008000 
-;EXTI_EMR1_EM15           EXTI_EMR1_EM15_Msk                            ; Event Mask on line 15 
-;EXTI_EMR1_EM16_Pos       (16
-;EXTI_EMR1_EM16_Msk       (0x1 << EXTI_EMR1_EM16_Pos                 ; 0x00010000 
-;EXTI_EMR1_EM16           EXTI_EMR1_EM16_Msk                            ; Event Mask on line 16 
-;EXTI_EMR1_EM17_Pos       (17
-;EXTI_EMR1_EM17_Msk       (0x1 << EXTI_EMR1_EM17_Pos                 ; 0x00020000 
-;EXTI_EMR1_EM17           EXTI_EMR1_EM17_Msk                            ; Event Mask on line 17 
-;EXTI_EMR1_EM18_Pos       (18
-;EXTI_EMR1_EM18_Msk       (0x1 << EXTI_EMR1_EM18_Pos                 ; 0x00040000 
-;EXTI_EMR1_EM18           EXTI_EMR1_EM18_Msk                            ; Event Mask on line 18 
-;EXTI_EMR1_EM19_Pos       (19
-;EXTI_EMR1_EM19_Msk       (0x1 << EXTI_EMR1_EM19_Pos                 ; 0x00080000 
-;EXTI_EMR1_EM19           EXTI_EMR1_EM19_Msk                            ; Event Mask on line 19 
-;EXTI_EMR1_EM20_Pos       (20
-;EXTI_EMR1_EM20_Msk       (0x1 << EXTI_EMR1_EM20_Pos                 ; 0x00100000 
-;EXTI_EMR1_EM20           EXTI_EMR1_EM20_Msk                            ; Event Mask on line 20 
-;EXTI_EMR1_EM21_Pos       (21
-;EXTI_EMR1_EM21_Msk       (0x1 << EXTI_EMR1_EM21_Pos                 ; 0x00200000 
-;EXTI_EMR1_EM21           EXTI_EMR1_EM21_Msk                            ; Event Mask on line 21 
-;EXTI_EMR1_EM22_Pos       (22
-;EXTI_EMR1_EM22_Msk       (0x1 << EXTI_EMR1_EM22_Pos                 ; 0x00400000 
-;EXTI_EMR1_EM22           EXTI_EMR1_EM22_Msk                            ; Event Mask on line 22 
-;EXTI_EMR1_EM23_Pos       (23
-;EXTI_EMR1_EM23_Msk       (0x1 << EXTI_EMR1_EM23_Pos                 ; 0x00800000 
-;EXTI_EMR1_EM23           EXTI_EMR1_EM23_Msk                            ; Event Mask on line 23 
-;EXTI_EMR1_EM24_Pos       (24
-;EXTI_EMR1_EM24_Msk       (0x1 << EXTI_EMR1_EM24_Pos                 ; 0x01000000 
-;EXTI_EMR1_EM24           EXTI_EMR1_EM24_Msk                            ; Event Mask on line 24 
-;EXTI_EMR1_EM25_Pos       (25
-;EXTI_EMR1_EM25_Msk       (0x1 << EXTI_EMR1_EM25_Pos                 ; 0x02000000 
-;EXTI_EMR1_EM25           EXTI_EMR1_EM25_Msk                            ; Event Mask on line 25 
-;EXTI_EMR1_EM26_Pos       (26
-;EXTI_EMR1_EM26_Msk       (0x1 << EXTI_EMR1_EM26_Pos                 ; 0x04000000 
-;EXTI_EMR1_EM26           EXTI_EMR1_EM26_Msk                            ; Event Mask on line 26 
-;EXTI_EMR1_EM27_Pos       (27
-;EXTI_EMR1_EM27_Msk       (0x1 << EXTI_EMR1_EM27_Pos                 ; 0x08000000 
-;EXTI_EMR1_EM27           EXTI_EMR1_EM27_Msk                            ; Event Mask on line 27 
-;EXTI_EMR1_EM28_Pos       (28
-;EXTI_EMR1_EM28_Msk       (0x1 << EXTI_EMR1_EM28_Pos                 ; 0x10000000 
-;EXTI_EMR1_EM28           EXTI_EMR1_EM28_Msk                            ; Event Mask on line 28 
-;EXTI_EMR1_EM29_Pos       (29
-;EXTI_EMR1_EM29_Msk       (0x1 << EXTI_EMR1_EM29_Pos                 ; 0x20000000 
-;EXTI_EMR1_EM29           EXTI_EMR1_EM29_Msk                            ; Event Mask on line 29 
-;EXTI_EMR1_EM30_Pos       (30
-;EXTI_EMR1_EM30_Msk       (0x1 << EXTI_EMR1_EM30_Pos                 ; 0x40000000 
-;EXTI_EMR1_EM30           EXTI_EMR1_EM30_Msk                            ; Event Mask on line 30 
+EXTI_IMR1_IM0_Pos           EQU 0
+EXTI_IMR1_IM0_Msk           EQU 0x1 << EXTI_IMR1_IM0_Pos                  ; 0x00000001 
+EXTI_IMR1_IM0               EQU EXTI_IMR1_IM0_Msk                             ; Interrupt Mask on line 0 
+EXTI_IMR1_IM1_Pos           EQU 1
+EXTI_IMR1_IM1_Msk           EQU 0x1 << EXTI_IMR1_IM1_Pos                  ; 0x00000002 
+EXTI_IMR1_IM1               EQU EXTI_IMR1_IM1_Msk                             ; Interrupt Mask on line 1 
+EXTI_IMR1_IM2_Pos           EQU 2
+EXTI_IMR1_IM2_Msk           EQU 0x1 << EXTI_IMR1_IM2_Pos                  ; 0x00000004 
+EXTI_IMR1_IM2               EQU EXTI_IMR1_IM2_Msk                             ; Interrupt Mask on line 2 
+EXTI_IMR1_IM3_Pos           EQU 3
+EXTI_IMR1_IM3_Msk           EQU 0x1 << EXTI_IMR1_IM3_Pos                  ; 0x00000008 
+EXTI_IMR1_IM3               EQU EXTI_IMR1_IM3_Msk                             ; Interrupt Mask on line 3 
+EXTI_IMR1_IM4_Pos           EQU 4
+EXTI_IMR1_IM4_Msk           EQU 0x1 << EXTI_IMR1_IM4_Pos                  ; 0x00000010 
+EXTI_IMR1_IM4               EQU EXTI_IMR1_IM4_Msk                             ; Interrupt Mask on line 4 
+EXTI_IMR1_IM5_Pos           EQU 5
+EXTI_IMR1_IM5_Msk           EQU 0x1 << EXTI_IMR1_IM5_Pos                  ; 0x00000020 
+EXTI_IMR1_IM5               EQU EXTI_IMR1_IM5_Msk                             ; Interrupt Mask on line 5 
+EXTI_IMR1_IM6_Pos           EQU 6
+EXTI_IMR1_IM6_Msk           EQU 0x1 << EXTI_IMR1_IM6_Pos                  ; 0x00000040 
+EXTI_IMR1_IM6               EQU EXTI_IMR1_IM6_Msk                             ; Interrupt Mask on line 6 
+EXTI_IMR1_IM7_Pos           EQU 7
+EXTI_IMR1_IM7_Msk           EQU 0x1 << EXTI_IMR1_IM7_Pos                  ; 0x00000080 
+EXTI_IMR1_IM7               EQU EXTI_IMR1_IM7_Msk                             ; Interrupt Mask on line 7 
+EXTI_IMR1_IM8_Pos           EQU 8
+EXTI_IMR1_IM8_Msk           EQU 0x1 << EXTI_IMR1_IM8_Pos                  ; 0x00000100 
+EXTI_IMR1_IM8               EQU EXTI_IMR1_IM8_Msk                             ; Interrupt Mask on line 8 
+EXTI_IMR1_IM9_Pos           EQU 9
+EXTI_IMR1_IM9_Msk           EQU 0x1 << EXTI_IMR1_IM9_Pos                  ; 0x00000200 
+EXTI_IMR1_IM9               EQU EXTI_IMR1_IM9_Msk                             ; Interrupt Mask on line 9 
+EXTI_IMR1_IM10_Pos          EQU 10
+EXTI_IMR1_IM10_Msk          EQU 0x1 << EXTI_IMR1_IM10_Pos                 ; 0x00000400 
+EXTI_IMR1_IM10              EQU EXTI_IMR1_IM10_Msk                            ; Interrupt Mask on line 10 
+EXTI_IMR1_IM11_Pos          EQU 11
+EXTI_IMR1_IM11_Msk          EQU 0x1 << EXTI_IMR1_IM11_Pos                 ; 0x00000800 
+EXTI_IMR1_IM11              EQU EXTI_IMR1_IM11_Msk                            ; Interrupt Mask on line 11 
+EXTI_IMR1_IM12_Pos          EQU 12
+EXTI_IMR1_IM12_Msk          EQU 0x1 << EXTI_IMR1_IM12_Pos                 ; 0x00001000 
+EXTI_IMR1_IM12              EQU EXTI_IMR1_IM12_Msk                            ; Interrupt Mask on line 12 
+EXTI_IMR1_IM13_Pos          EQU 13
+EXTI_IMR1_IM13_Msk          EQU 0x1 << EXTI_IMR1_IM13_Pos                 ; 0x00002000 
+EXTI_IMR1_IM13              EQU EXTI_IMR1_IM13_Msk                            ; Interrupt Mask on line 13 
+EXTI_IMR1_IM14_Pos          EQU 14
+EXTI_IMR1_IM14_Msk          EQU 0x1 << EXTI_IMR1_IM14_Pos                 ; 0x00004000 
+EXTI_IMR1_IM14              EQU EXTI_IMR1_IM14_Msk                            ; Interrupt Mask on line 14 
+EXTI_IMR1_IM15_Pos          EQU 15
+EXTI_IMR1_IM15_Msk          EQU 0x1 << EXTI_IMR1_IM15_Pos                 ; 0x00008000 
+EXTI_IMR1_IM15              EQU EXTI_IMR1_IM15_Msk                            ; Interrupt Mask on line 15 
+EXTI_IMR1_IM16_Pos          EQU 16
+EXTI_IMR1_IM16_Msk          EQU 0x1 << EXTI_IMR1_IM16_Pos                 ; 0x00010000 
+EXTI_IMR1_IM16              EQU EXTI_IMR1_IM16_Msk                            ; Interrupt Mask on line 16 
+EXTI_IMR1_IM17_Pos          EQU 17
+EXTI_IMR1_IM17_Msk          EQU 0x1 << EXTI_IMR1_IM17_Pos                 ; 0x00020000 
+EXTI_IMR1_IM17              EQU EXTI_IMR1_IM17_Msk                            ; Interrupt Mask on line 17 
+EXTI_IMR1_IM18_Pos          EQU 18
+EXTI_IMR1_IM18_Msk          EQU 0x1 << EXTI_IMR1_IM18_Pos                 ; 0x00040000 
+EXTI_IMR1_IM18              EQU EXTI_IMR1_IM18_Msk                            ; Interrupt Mask on line 18 
+EXTI_IMR1_IM19_Pos          EQU 19
+EXTI_IMR1_IM19_Msk          EQU 0x1 << EXTI_IMR1_IM19_Pos                 ; 0x00080000 
+EXTI_IMR1_IM19              EQU EXTI_IMR1_IM19_Msk                            ; Interrupt Mask on line 19 
+EXTI_IMR1_IM20_Pos          EQU 20
+EXTI_IMR1_IM20_Msk          EQU 0x1 << EXTI_IMR1_IM20_Pos                 ; 0x00100000 
+EXTI_IMR1_IM20              EQU EXTI_IMR1_IM20_Msk                            ; Interrupt Mask on line 20 
+EXTI_IMR1_IM21_Pos          EQU 21
+EXTI_IMR1_IM21_Msk          EQU 0x1 << EXTI_IMR1_IM21_Pos                 ; 0x00200000 
+EXTI_IMR1_IM21              EQU EXTI_IMR1_IM21_Msk                            ; Interrupt Mask on line 21 
+EXTI_IMR1_IM22_Pos          EQU 22
+EXTI_IMR1_IM22_Msk          EQU 0x1 << EXTI_IMR1_IM22_Pos                 ; 0x00400000 
+EXTI_IMR1_IM22              EQU EXTI_IMR1_IM22_Msk                            ; Interrupt Mask on line 22 
+EXTI_IMR1_IM23_Pos          EQU 23
+EXTI_IMR1_IM23_Msk          EQU 0x1 << EXTI_IMR1_IM23_Pos                 ; 0x00800000 
+EXTI_IMR1_IM23              EQU EXTI_IMR1_IM23_Msk                            ; Interrupt Mask on line 23 
+EXTI_IMR1_IM24_Pos          EQU 24
+EXTI_IMR1_IM24_Msk          EQU 0x1 << EXTI_IMR1_IM24_Pos                 ; 0x01000000 
+EXTI_IMR1_IM24              EQU EXTI_IMR1_IM24_Msk                            ; Interrupt Mask on line 24 
+EXTI_IMR1_IM25_Pos          EQU 25
+EXTI_IMR1_IM25_Msk          EQU 0x1 << EXTI_IMR1_IM25_Pos                 ; 0x02000000 
+EXTI_IMR1_IM25              EQU EXTI_IMR1_IM25_Msk                            ; Interrupt Mask on line 25 
+EXTI_IMR1_IM26_Pos          EQU 26
+EXTI_IMR1_IM26_Msk          EQU 0x1 << EXTI_IMR1_IM26_Pos                 ; 0x04000000 
+EXTI_IMR1_IM26              EQU EXTI_IMR1_IM26_Msk                            ; Interrupt Mask on line 26 
+EXTI_IMR1_IM27_Pos          EQU 27
+EXTI_IMR1_IM27_Msk          EQU 0x1 << EXTI_IMR1_IM27_Pos                 ; 0x08000000 
+EXTI_IMR1_IM27              EQU EXTI_IMR1_IM27_Msk                            ; Interrupt Mask on line 27 
+EXTI_IMR1_IM28_Pos          EQU 28
+EXTI_IMR1_IM28_Msk          EQU 0x1 << EXTI_IMR1_IM28_Pos                 ; 0x10000000 
+EXTI_IMR1_IM28              EQU EXTI_IMR1_IM28_Msk                            ; Interrupt Mask on line 28 
+EXTI_IMR1_IM29_Pos          EQU 29
+EXTI_IMR1_IM29_Msk          EQU 0x1 << EXTI_IMR1_IM29_Pos                 ; 0x20000000 
+EXTI_IMR1_IM29              EQU EXTI_IMR1_IM29_Msk                            ; Interrupt Mask on line 29 
+EXTI_IMR1_IM30_Pos          EQU 30
+EXTI_IMR1_IM30_Msk          EQU 0x1 << EXTI_IMR1_IM30_Pos                 ; 0x40000000 
+EXTI_IMR1_IM30              EQU EXTI_IMR1_IM30_Msk                            ; Interrupt Mask on line 30 
+EXTI_IMR1_IM_Pos            EQU 0
+EXTI_IMR1_IM_Msk            EQU 0x7FFFFFFF << EXTI_IMR1_IM_Pos            ; 0x7FFFFFFF 
+EXTI_IMR1_IM                EQU EXTI_IMR1_IM_Msk                              ; Interrupt Mask All 
 
 ;*****************  Bit definition for EXTI_RTSR1 register  *****************
-EXTI_RTSR1_RT0_Pos       EQU 0
+EXTI_RTSR1_RT0_Pos          EQU 0
 EXTI_RTSR1_RT0_Msk       EQU 0x1 << EXTI_RTSR1_RT0_Pos                 ; 0x00000001 
 EXTI_RTSR1_RT0           EQU EXTI_RTSR1_RT0_Msk                            ; Rising trigger event configuration bit of line 0 
 EXTI_RTSR1_RT1_Pos       EQU 1
